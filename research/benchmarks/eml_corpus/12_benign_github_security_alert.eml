@@ -1,0 +1,12 @@
+From: "GitHub" <notifications@github.com>
+To: victim@company.com
+Subject: [GitHub] A security advisory was published for your repository
+Return-Path: <noreply@github.com>
+Reply-To: <notifications@github.com>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-12-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=pass (google.com: domain of noreply@github.com designates 192.30.252.204 as permitted sender) dkim=pass (signature was verified) dmarc=pass (p=reject)
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body><p>A high-severity security advisory was published affecting dependabot dependencies.</p><p><a href="https://github.com/my-org/my-repo/security/advisories">View Security Advisory on GitHub</a></p></body></html>

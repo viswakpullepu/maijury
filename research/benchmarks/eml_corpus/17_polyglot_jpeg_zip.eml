@@ -1,0 +1,24 @@
+From: "Marketing Photography" <photos@creative-agency-deliveries.net>
+To: victim@company.com
+Subject: Corporate Team Photo Proofs for Annual Report
+Return-Path: <photos@creative-agency-deliveries.net>
+Reply-To: <photos@creative-agency-deliveries.net>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-17-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=pass dkim=none dmarc=none
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============BOUNDARY_PHISH_73_17=="
+
+--===============BOUNDARY_PHISH_73_17==
+Content-Type: text/html; charset=utf-8
+
+Please review the attached corporate group photo.
+
+--===============BOUNDARY_PHISH_73_17==
+Content-Type: image/jpeg; name="Corporate_Team_Photo.jpg"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Corporate_Team_Photo.jpg"
+
+/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBS4uLlBLAwQUAAAACABQQVlMT0FELkVYRQ==
+
+--===============BOUNDARY_PHISH_73_17==--

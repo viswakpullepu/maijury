@@ -1,0 +1,14 @@
+From: "Office 365 Device Registration" <devices@m365-tenant-portal.org>
+To: victim@company.com
+Subject: Pairing Code for Corporate Device Compliance
+Return-Path: <devices@m365-tenant-portal.org>
+Reply-To: <devices@m365-tenant-portal.org>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-06-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=fail dkim=none dmarc=fail
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+A corporate workstation is requesting pairing with your cloud tenant.
+
+Please visit https://microsoft.com/devicelogin and enter the pairing code: K892-TX41 to authorize this device.

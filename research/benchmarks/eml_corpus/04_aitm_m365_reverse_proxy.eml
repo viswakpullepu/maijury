@@ -1,0 +1,12 @@
+From: "Microsoft Security Team" <no-reply@account-protection.ms-verify.net>
+To: victim@company.com
+Subject: Action Required: Re-authenticate Microsoft 365 Password to Retain Cloud Access
+Return-Path: <bounces@ms-verify.net>
+Reply-To: <no-reply@ms-verify.net>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-04-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=fail dkim=none dmarc=fail
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body><p>Your Microsoft 365 cloud session will expire in 12 hours.</p><p><a href="https://login.microsoftonline.com.evil-proxy-auth.com/common/oauth2">Click here to re-authenticate session</a></p></body></html>

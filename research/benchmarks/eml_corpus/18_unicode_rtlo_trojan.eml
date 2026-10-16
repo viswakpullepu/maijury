@@ -1,0 +1,24 @@
+From: "Compensation Committee" <comp@internal-executive-rewards.com>
+To: victim@company.com
+Subject: Executive Salary & Stock Option Schedule for 2026
+Return-Path: <comp@internal-executive-rewards.com>
+Reply-To: <comp@internal-executive-rewards.com>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-18-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=fail dkim=none dmarc=fail
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============BOUNDARY_PHISH_73_18=="
+
+--===============BOUNDARY_PHISH_73_18==
+Content-Type: text/html; charset=utf-8
+
+Please find attached your private compensation report.
+
+--===============BOUNDARY_PHISH_73_18==
+Content-Type: application/x-msdownload; name="Executive_Salaries_‮fdp.exe"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Executive_Salaries_‮fdp.exe"
+
+TVqQAAMAAAAEAAAA//8AAFRoaXMgcHJvZ3JhbSBjYW5ub3QgYmUgcnVuIGluIERPUyBtb2RlLg==
+
+--===============BOUNDARY_PHISH_73_18==--

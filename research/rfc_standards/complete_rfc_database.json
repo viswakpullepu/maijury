@@ -1,0 +1,37 @@
+{
+  "RFC_7208_SPF": {
+    "title": "RFC 7208 - Sender Policy Framework (SPF) for Authorizing Use of Domains in Email, Version 1",
+    "url": "https://datatracker.ietf.org/doc/html/rfc7208",
+    "summary": "Internet Engineering Task Force (IETF)                      S. Kitterman\nRequest for Comments: 7208                  Kitterman Technical Services\nObsoletes: "
+  },
+  "RFC_6376_DKIM": {
+    "title": "RFC 6376 - DomainKeys Identified Mail (DKIM) Signatures",
+    "url": "https://datatracker.ietf.org/doc/html/rfc6376",
+    "summary": "Internet Engineering Task Force (IETF)                   D. Crocker, Ed.\nRequest for Comments: 6376                   Brandenburg InternetWorking\nObsoletes: "
+  },
+  "RFC_7489_DMARC": {
+    "title": "RFC 7489 - Domain-based Message Authentication, Reporting, and Conformance (DMARC)",
+    "url": "https://datatracker.ietf.org/doc/html/rfc7489",
+    "summary": "Independent Submission                                 M. Kucherawy, Ed.\nRequest for Comments: 7489\nCategory: Informational                                   E. Zwicky, Ed.\nISSN: 2070-1721                                                   Yahoo!\n                                                              March 2015\n\n\nDomain-based Message Authentication, Reporting, and Conformance (DMARC)\n\nAbstract\n\n   Domain-based Message Authentication, Reporting, and Conformance\n   (DMARC) is a scalable mechanism by which a mail-originating\n   organization can express domain-level policies and preferences for\n   message validation, disposition, and reporting, that a mail-receiving\n   organization can use to improve mail handling.\n\n   Originators of Internet Mail need to be able to associate reliable\n   and authenticated domain identifiers with messages, communicate\n   policies about messages that use those identifiers, and report about\n   mail using those identifiers.  These abilities have several benefits:\n   Receivers can provide feedback to Domain Owners about the use of\n   their domains; this feedback can provide valuable insight about the\n   management of internal operations and the presence of external domain\n   name abuse.\n\n   DMARC does not produce or encourage elevated delivery privilege of\n   authenticated email.  DMARC is a mechanism for policy distribution\n   that enables increasingly strict handling of messages that fail\n   authentication checks, ranging from no action, through altered\n   delivery, up to message rejection.\n\nStatus of This Memo\n\n   This document is not an Internet Standards Track specification; it is\n   published for informational purposes.\n\n   This is a contribution to the RFC Series, independently of any other\n   RFC stream.  The RFC Editor has chosen to publish this document at\n   its discretion and makes no statement about its value for\n   implementation or deployment.  Documents approved for publication by\n   the RFC Editor are not a candidate for any level of Internet\n   Standard; see "
+  },
+  "RFC_8617_ARC": {
+    "title": "RFC 8617 - The Authenticated Received Chain (ARC) Protocol",
+    "url": "https://datatracker.ietf.org/doc/html/rfc8617",
+    "summary": "Internet Engineering Task Force (IETF)                       K. Andersen\nRequest for Comments: 8617                                      LinkedIn\nCategory: Experimental                                      B. Long, Ed.\nISSN: 2070-1721                                                   Google\n                                                           S. Blank, Ed.\n                                                                Valimail\n                                                       M. Kucherawy, Ed.\n                                                                     TDP\n                                                               July 2019\n\n\n            "
+  },
+  "RFC_8461_MTA_STS": {
+    "title": "RFC 8461 - SMTP MTA Strict Transport Security (MTA-STS)",
+    "url": "https://datatracker.ietf.org/doc/html/rfc8461",
+    "summary": "Internet Engineering Task Force (IETF)                       D. Margolis\nRequest for Comments: 8461                                     M. Risher\nCategory: Standards Track                                   Google, Inc.\nISSN: 2070-1721                                          B. Ramakrishnan\n                                                              Oath, Inc.\n                                                              A. Brotman\n                                                           Comcast, Inc.\n                                                                J. Jones\n                                                         Microsoft, Inc.\n                                                          September 2018\n\n\n              "
+  },
+  "RFC_7672_DANE": {
+    "title": "RFC 7672 - SMTP Security via Opportunistic DNS-Based Authentication of Named Entities (DANE) Transport Layer Security (TLS)",
+    "url": "https://datatracker.ietf.org/doc/html/rfc7672",
+    "summary": "Internet Engineering Task Force (IETF)                       V. Dukhovni\nRequest for Comments: 7672                                     Two Sigma\nCategory: Standards Track                                    W. Hardaker\nISSN: 2070-1721                                                  Parsons\n                                                            October 2015\n\n\n   "
+  },
+  "RFC_8601_Auth_Results": {
+    "title": "RFC 8601 - Message Header Field for Indicating Message Authentication Status",
+    "url": "https://datatracker.ietf.org/doc/html/rfc8601",
+    "summary": "Internet Engineering Task Force (IETF)                      M. Kucherawy\nRequest for Comments: 8601                                      May 2019\nObsoletes: "
+  }
+}

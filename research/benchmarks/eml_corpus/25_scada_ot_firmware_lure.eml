@@ -1,0 +1,16 @@
+From: "Siemens Industrial Automation" <support@siemens-industry-updates.net>
+To: victim@company.com
+Subject: Siemens S7-1500 PLC Critical Security Update - Zero-day vulnerability
+Return-Path: <support@siemens-industry-updates.net>
+Reply-To: <support@siemens-industry-updates.net>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-25-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=fail dkim=none dmarc=fail
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+Dear Plant Engineer,
+
+A critical zero-day vulnerability has been discovered in the Modbus TCP stack of Siemens S7-1500 PLCs. An emergency patch is required immediately to prevent physical plant shutdown.
+
+Download and apply the firmware patch without delay: http://siemens-patch-depot.net/download/firmware_s7_v4.bin

@@ -1,0 +1,12 @@
+From: "Microsoft Security Team" <security@account-security-alert.net>
+To: victim@company.com
+Subject: Immediate Attention: Unauthorized Login Attempt Detected on Azure
+Return-Path: <security@account-security-alert.net>
+Reply-To: <security@account-security-alert.net>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-21-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=fail dkim=none dmarc=fail
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body><p>An unauthorized login was detected from foreign territory.</p><p>Review activity here: <a href="http://www.microsоft.com/security">https://www.microsoft.com/security</a></p></body></html>

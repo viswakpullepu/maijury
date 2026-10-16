@@ -1,0 +1,12 @@
+From: "PayPal Security Center" <service@paypal-billing-verification.com>
+To: victim@company.com
+Subject: Your PayPal Account Access Has Been Limited
+Return-Path: <service@paypal-billing-verification.com>
+Reply-To: <service@paypal-billing-verification.com>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-23-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=none dkim=none dmarc=none
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body><p>Unusual activity was flagged on your account.</p><p>Restore full account access here: <a href="https://evil-credential-harvester.net/signin">https://www.paypal.com/signin</a></p></body></html>

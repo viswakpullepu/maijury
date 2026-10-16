@@ -1,0 +1,12 @@
+{
+  "CISA_Stop_Ransomware_Phishing": {
+    "title": "Stop Ransomware | CISA",
+    "url": "https://www.cisa.gov/stopransomware",
+    "content": "An official website of the United States government"
+  },
+  "MITRE_T1204_User_Execution": {
+    "title": "User Execution: Malicious File, Sub-technique T1204.002 - Enterprise | MITRE ATT&CK\u00ae",
+    "url": "https://attack.mitre.org/techniques/T1204/002/",
+    "content": "An adversary may rely upon a user opening a malicious file in order to gain execution. Users may be subjected to social engineering to get them to open a file that will lead to code execution. This user action will typically be observed as follow-on behavior from \n\nAdversaries may employ various forms of "
+  }
+}

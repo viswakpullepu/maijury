@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 240" width="100%" height="240" style="background:#090b10;border-radius:16px;">
+  <defs>
+    <linearGradient id="metricCard" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141824"/>
+      <stop offset="100%" stop-color="#0e111a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1100" height="240" rx="16" fill="#090b10" stroke="#1e2436" stroke-width="1.5"/>
+
+  <!-- Card 1: Detection Rate -->
+  <g transform="translate(40, 35)">
+    <rect width="235" height="170" rx="12" fill="url(#metricCard)" stroke="#222a3d" stroke-width="1.5"/>
+    <text x="24" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="11.5" font-weight="700" fill="#f87171" letter-spacing="0.5">DETECTION RATE</text>
+    <text x="24" y="85" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="38" font-weight="800" fill="#f1f5f9">100.0%</text>
+    <text x="24" y="118" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" fill="#94a3b8">Renamed PEs, Macros,</text>
+    <text x="24" y="136" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" fill="#94a3b8">Encrypted ZIPs caught</text>
+    <rect x="24" y="152" width="187" height="4" rx="2" fill="#22c55e"/>
+  </g>
+
+  <!-- Card 2: False Positive Rate -->
+  <g transform="translate(295, 35)">
+    <rect width="235" height="170" rx="12" fill="url(#metricCard)" stroke="#222a3d" stroke-width="1.5"/>
+    <text x="24" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="11.5" font-weight="700" fill="#4ade80" letter-spacing="0.5">FALSE POSITIVE RATE</text>
+    <text x="24" y="85" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="38" font-weight="800" fill="#22c55e">0.00%</text>
+    <text x="24" y="118" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" fill="#94a3b8">Zero benign invoices or</text>
+    <text x="24" y="136" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" fill="#94a3b8">legit urgency alerts</text>
+    <rect x="24" y="152" width="187" height="4" rx="2" fill="#22c55e"/>
+  </g>
+
+  <!-- Card 3: Execution Latency -->
+  <g transform="translate(550, 35)">
+    <rect width="235" height="170" rx="12" fill="url(#metricCard)" stroke="#222a3d" stroke-width="1.5"/>
+    <text x="24" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="11.5" font-weight="700" fill="#60a5fa" letter-spacing="0.5">AVG ADJUDICATION SPEED</text>
+    <text x="24" y="85" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="38" font-weight="800" fill="#60a5fa">1.84 <tspan font-size="20">ms</tspan></text>
+    <text x="24" y="118" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" fill="#94a3b8">Sub-millisecond forensic</text>
+    <text x="24" y="136" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" fill="#94a3b8">in-memory byte analysis</text>
+    <rect x="24" y="152" width="187" height="4" rx="2" fill="#3b82f6"/>
+  </g>
+
+  <!-- Card 4: Zero-Execution Guarantee -->
+  <g transform="translate(805, 35)">
+    <rect width="255" height="170" rx="12" fill="url(#metricCard)" stroke="#222a3d" stroke-width="1.5"/>
+    <text x="24" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="11.5" font-weight="700" fill="#c084fc" letter-spacing="0.5">ZERO-EXECUTION GUARANTEE</text>
+    <text x="24" y="85" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="38" font-weight="800" fill="#c084fc">100%</text>
+    <text x="24" y="118" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" fill="#94a3b8">Pure buffered byte streams;</text>
+    <text x="24" y="136" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" fill="#94a3b8">zero host execution</text>
+    <rect x="24" y="152" width="207" height="4" rx="2" fill="#a855f7"/>
+  </g>
+</svg>

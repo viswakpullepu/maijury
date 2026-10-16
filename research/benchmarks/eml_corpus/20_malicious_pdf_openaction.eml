@@ -1,0 +1,24 @@
+From: "Clerk of the Court" <notice@federal-court-summons-portal.gov.us.org>
+To: victim@company.com
+Subject: Mandatory Court Appearance Subpoena: Notice #CIV-9902
+Return-Path: <notice@federal-court-summons-portal.gov.us.org>
+Reply-To: <notice@federal-court-summons-portal.gov.us.org>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-20-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=fail dkim=none dmarc=fail
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============BOUNDARY_PHISH_73_20=="
+
+--===============BOUNDARY_PHISH_73_20==
+Content-Type: text/html; charset=utf-8
+
+A federal subpoena has been issued. Open the attached legal notice immediately to acknowledge service.
+
+--===============BOUNDARY_PHISH_73_20==
+Content-Type: application/pdf; name="Federal_Court_Subpoena_Notice.pdf"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Federal_Court_Subpoena_Notice.pdf"
+
+JVBERi0xLjcKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgL09wZW5BY3Rpb24gMyAwIFIgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0FjdGlvbiAvUyAvSmF2YVNjcmlwdCAvSlMgKGFwcC5hbGVydCgnTWFsd2FyZSBUcmlnZ2VyZWQnKTspID4+CmVuZG9iagolJUVPRg==
+
+--===============BOUNDARY_PHISH_73_20==--

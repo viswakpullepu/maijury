@@ -1,0 +1,76 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+
+# Node & Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment & OAuth Credentials (Zero Secret Leakage)
+.env
+.env.local
+.env.*.local
+*.env
+credentials.json
+token.json
+vault_tokens.enc
+*.enc
+
+# Spool Processing
+backend/incoming/processed/*
+!backend/incoming/processed/.gitkeep
+backend/incoming/*.eml
+backend/incoming/*.msg
+!backend/incoming/.gitkeep
+
+# IDE & OS Files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Scrapers & Temp
+.firecrawl/
+scratch/
+
+# Keys & Secret Storage
+*.key
+.master.key
+backend/security/.master.key
+
+# Logs & Audit
+*.jsonl
+backend/logs/*
+!backend/logs/.gitkeep
+

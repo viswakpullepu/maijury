@@ -1,0 +1,698 @@
+BOD 18-01: Enhance Email and Web Security | CISA
+
+[Skip to main content](#main)
+
+![U.S. flag](/profiles/cisad8_gov/themes/custom/gesso/dist/images/us_flag_small.png)
+
+An official website of the United States government
+
+Here’s how you know
+
+![Dot gov](/profiles/cisad8_gov/themes/custom/gesso/dist/images/icon-dot-gov.svg)
+
+**Official websites use .gov**
+  
+ A **.gov** website belongs to an official government organization in the United States.
+
+![HTTPS](/profiles/cisad8_gov/themes/custom/gesso/dist/images/icon-https.svg)
+
+**Secure .gov websites use HTTPS**
+  
+ A **lock** () or **https://** means you’ve safely connected to the .gov website. Share sensitive information only on official, secure websites.
+
+[Staying Secure at Events](/staying-secure-large-scale-events)[no-cost Cyber Services](/resources-tools/resources/free-cybersecurity-services-and-tools "Free Cyber Services")[Cybersecurity Awareness Month](/cybersecurity-awareness-month)[KEV Catalog](/kev)[Report A Cyber Issue](/report)
+
+[![Cybersecurity & Infrastructure Security Agency logo America’s Cyber Security Defense Agency National Coordinator For Critical Infrastructure Security and Resilience](/sites/default/files/images/SVG/header_logo_tagline_update.svg)![Cybersecurity & Infrastructure Security Agency logo America’s Cyber Security Defense Agency National Coordinator For Critical Infrastructure Security and Resilience](/sites/default/files/images/SVG/header_logo_tagline_update.png)](/)
+
+[![CISA Logo](/sites/default/files/images/SVG/mobile_logo_wordmark.svg)](/)
+
+Search
+
+Menu
+
+![America's Cyber Defense Agency](/sites/default/files/images/SVG/header_tagline_mobile_update.svg)
+
+Close
+
+* Topics
+
+  [Topics](/topics)
+
+  [Cybersecurity Best Practices](/topics/cybersecurity-best-practices)
+
+  [Cyber Threats and Response](/topics/cyber-threats-and-response)
+
+  [Critical Infrastructure Security and Resilience](/topics/critical-infrastructure-security-and-resilience)
+
+  [Election Security](/topics/election-security)
+
+  [Emergency Communications](/topics/emergency-communications)
+
+  [Industrial Control Systems](/topics/industrial-control-systems)
+
+  [Information and Communications Technology Supply Chain Security](/topics/information-communications-technology-supply-chain-security)
+
+  [Partnerships and Collaboration](/topics/partnerships-and-collaboration)
+
+  [Physical Security](/topics/physical-security)
+
+  [Risk Management](/topics/risk-management)
+
+  [How can we help?](/audiences)
+
+  [Government](/topics/government)[Educational Institutions](/topics/educational-institutions)[Industry](/topics/industry)[State, Local, Tribal, and Territorial](/topics/state-local-tribal-and-territorial)[Individuals and Families](/topics/individuals-and-families)[Small and Medium Businesses](/topics/small-and-medium-businesses)[Find Help Locally](/audiences/find-help-locally)[Faith-Based Community](/audiences/faith-based-community)[Executives](/audiences/executives)[High-Risk Communities](/audiences/high-risk-communities)
+* [Spotlight](/spotlight)
+* Resources & Tools
+
+  [Resources & Tools](/resources-tools)
+
+  [All Resources & Tools](/resources-tools/all-resources-tools)
+
+  [Services](/resources-tools/services)
+
+  [Programs](/resources-tools/programs)
+
+  [Resources](/resources-tools/resources)
+
+  [Training](/resources-tools/training)
+
+  [Groups](/resources-tools/groups)
+* News & Events
+
+  [News & Events](/news-events)
+
+  [Directives](/news-events/directives)
+
+  [News](/news-events/news)
+
+  [Events](/news-events/events)
+
+  [Cybersecurity Alerts & Advisories](/news-events/cybersecurity-advisories)
+
+  [Request a CISA Speaker](/news-events/request-speaker)
+
+  [Congressional Testimony](/news-events/congressional-testimony)
+
+  [CISA Conferences](/news-events/cisa-conferences)
+
+  [CISA Live!](/cisa-live)
+* Careers
+
+  [Careers](/careers)
+
+  [Benefits & Perks](/careers/benefits-perks)
+
+  [Hiring and Recruitment](/careers/hiring-and-recruitment)
+
+  [New Employee Orientation & Onboarding](/careers/new-employee-orientation-and-onboarding)
+
+  [Students & Recent Graduates](/careers/students-recent-graduates-employment-opportunities)
+
+  [Veteran and Military Spouses](/careers/veteran-and-military-spouse-employment-opportunities)
+* About
+
+  [About](/about)
+
+  [Divisions & Offices](/about/divisions-offices)
+
+  [Regions](/about/regions)
+
+  [Leadership](/about/leadership)
+
+  [Doing Business with CISA](/about/doing-business-cisa)
+
+  [Site Links](/site-links)
+
+  [CISA GitHub](/cisa-github)
+
+  [CISA Central](/about/cisa-central)
+
+  [Contact Us](/about/contact-us)
+
+  [Subscribe](/about/contact-us/subscribe-updates-cisa)
+
+  [Transparency and Accountability](/about/transparency-and-accountability)
+
+  [Policies & Plans](/about/policies-plans)
+
+[Staying Secure at Events](/staying-secure-large-scale-events)[no-cost Cyber Services](/resources-tools/resources/free-cybersecurity-services-and-tools "Free Cyber Services")[Cybersecurity Awareness Month](/cybersecurity-awareness-month)[KEV Catalog](/kev)[Report A Cyber Issue](/report)
+
+Breadcrumb
+
+1. [Home](/)
+2. [News & Events](/news-events)
+3. [Cybersecurity Directives](/news-events/directives)
+4. BOD 18-01: Enhance Email and Web Security
+
+Share:
+
+[Opens in a new window](https://www.facebook.com/sharer/sharer.php?u=https://www.cisa.gov/news-events/directives/bod-18-01-enhance-email-and-web-security&title=BOD%2018-01%3A%20Enhance%20Email%20and%20Web%20Security "Share to Facebook")
+[Opens in a new window](https://twitter.com/intent/tweet?text=BOD%2018-01%3A%20Enhance%20Email%20and%20Web%20Security+https://www.cisa.gov/news-events/directives/bod-18-01-enhance-email-and-web-security "Share to X")
+[Opens in a new window](https://www.linkedin.com/sharing/share-offsite/?url=https://www.cisa.gov/news-events/directives/bod-18-01-enhance-email-and-web-security "Share to LinkedIn")
+
+Binding Operational Directives
+
+BOD 18-01: Enhance Email and Web Security
+=========================================
+
+October 16, 2017
+
+Related topics:
+
+[Cybersecurity Best Practices](/topics/cybersecurity-best-practices)
+
+[News & Events](/news-events)
+-----------------------------
+
+* [Directives](/news-events/directives)
+* [News](/news-events/news)
+* [Events](/news-events/events)
+* [Cybersecurity Alerts & Advisories](/news-events/cybersecurity-advisories)
+* [Request a CISA Speaker](/news-events/request-speaker)
+* [Congressional Testimony](/news-events/congressional-testimony)
+* [CISA Conferences](/news-events/cisa-conferences)
+* [CISA Live!](/cisa-live)
+
+This page contains a web-friendly version of the Department of Homeland Security’s Binding Operational Directive 18-01, “*Enhance Email and Web Security*”, and provides technical guidance and best practices to assist in its implementation.
+
+**For an overview of this directive’s requirements, review the checklist.**
+
+### Temporary policy exception
+
+DHS acknowledges that there is a significant constraint around disabling 3DES in mail environments. As a result, the Department issued a [temporary policy exception](/sites/default/files/2023-01/18-01-exception.pdf "Temporary Policy Exception for BOD 18-01") on this requirement on September 20, 2018.
+
+*A binding operational directive is a*[*compulsory direction*](https://www.congress.gov/113/plaws/publ283/PLAW-113publ283.pdf#page=2 "compulsory direction")*to federal, executive branch, departments and agencies for purposes of safeguarding federal information and information systems.*
+
+*The Department of Homeland Security (DHS) develops and oversees the implementation of binding operational directives pursuant to the*[*Federal Information Security Modernization Act of 2014*](https://www.congress.gov/113/plaws/publ283/PLAW-113publ283.pdf#page=3 "Federal Information Security Modernization Act of 2014")*.*
+
+*Federal agencies are*[*required*](https://www.congress.gov/113/plaws/publ283/PLAW-113publ283.pdf#page=6 "required")*to comply with DHS-developed directives.*
+
+*DHS binding operational directives do not apply to statutorily defined “National Security Systems” nor to certain systems operated by the Department of Defense or the Intelligence Community.*[*Id. § 3553(d)-(e)*](https://www.congress.gov/113/plaws/publ283/PLAW-113publ283.pdf#page=5 "Id. § 3553(d)-(e)")*.*
+
+### Background
+
+Federal agency “cyber hygiene” greatly impacts user security. By implementing specific security standards that have been widely adopted in industry, federal agencies can ensure the integrity and confidentiality of internet-delivered data, minimize spam, and better protect users who might otherwise fall victim to a phishing email that appears to come from a government-owned system.
+
+Based on current network scan data and a clear potential for harm, this directive requires actions related to two topics: email security and web security.
+
+#### A. Email Security
+
+##### STARTTLS
+
+When enabled by a receiving mail server, **STARTTLS** signals to a sending mail server that the capability to encrypt an email in transit is present. While it does not force the use of encryption, enabling STARTTLS makes passive man-in-the-middle attacks more difficult.
+
+##### Email Authentication
+
+**SPF** (Sender Policy Framework) and **DKIM** (DomainKeys Identified Mail) allow a sending domain to effectively “watermark” their emails, making unauthorized emails (e.g., spam, phishing email) easy to detect. When an email is received that doesn’t pass an agency’s posted SPF/DKIM rules, **DMARC** (Domain-based Message Authentication, Reporting & Conformance) tells a recipient what the domain owner would like done with the message.
+
+**Setting a DMARC policy of “reject” provides the strongest protection against spoofed email**, ensuring that unauthenticated messages are rejected at the mail server, even before delivery. Additionally, DMARC reports provide a mechanism for an agency to be made aware of the source of an apparent forgery, information that they wouldn’t normally receive otherwise. Multiple recipients can be defined for the receipt of DMARC reports.
+
+#### B. Web Security
+
+Hypertext Transfer Protocol (HTTP) connections can be easily monitored, modified, and impersonated; HTTPS remedies each vulnerability. HTTP Strict Transport Security (HSTS) ensures that browsers always use an https:// connection, and removes the ability for users to click through certificate-related warnings.
+
+In 2015, [OMB M-15-13](https://https.cio.gov/) required all existing Federal websites and web services to be accessible through a secure connection (HTTPS-only, with HSTS). In 2017, the .gov registry began [automatically preloading](https://home.dotgov.gov/management/preloading/) new federal .gov domains as HSTS-only in modern browsers.
+
+Federal agencies must make more progress on HTTPS and HSTS deployment, including by removing support for known-weak cryptographic protocols and ciphers. According to DHS’s Cyber Hygiene scanning data, seven of the ten most common vulnerabilities seen across federal agency networks at the issuance of this directive would be addressed through complying with the required actions in this directive related to web security.
+
+### Required Actions
+
+All agencies are **required** to:
+
+1. Within 30 calendar days after issuance of this directive, develop and provide to DHS an “Agency Plan of Action for BOD 18-01” to:
+   1. **Enhance email security by**:
+      1. Within 90 days after issuance of this directive, configuring.
+         * All internet-facing mail servers to offer STARTTLS, and
+         * All second-level agency domains to have valid SPF/DMARC records, with at minimum a DMARC policy of “p=none” and at least one address defined as a recipient of aggregate and/or failure reports.
+      2. Within 120 days after issuance of this directive, ensuring:
+         * Secure Sockets Layer (SSL)v2 and SSLv3 are disabled on mail servers, and
+         * 3DES and RC4 ciphers are disabled on mail servers (see [temporary policy exception](https://www.cisa.gov/binding-operational-directive-18-01#temporary-policy-exception) for 3DES).
+      3. Within 15 days of the establishment of centralized National Cybersecurity & Communications Integration Center (NCCIC) reporting location, adding the NCCIC as a recipient of DMARC aggregate reports.
+      4. Within one year after issuance of this directive, setting a DMARC policy of “reject” for all second-level domains and mail-sending hosts.
+   2. **Enhance web security by**:
+      1. Within 120 days after issuance of this directive, ensuring:
+         * All publicly accessible Federal websites and web services provide service through a secure connection ([HTTPS-only, with HSTS](https://https.cio.gov/)),
+         * Secure Sockets Layer (SSL)v2 and SSLv3 are disabled on mail servers, and
+         * 3DES and RC4 ciphers are disabled on mail servers (see [temporary policy exception](/sites/default/files/2023-01/18-01-exception.pdf) for 3DES).
+         * Identifying and providing a list to DHS of agency second-level domains that can be HSTS preloaded, for which HTTPS will be enforced for all subdomains.
+2. Upon delivery of its Agency Plan of Action for BOD 18-01 within 30 days of this directive per required action 1, begin implementing that plan.
+3. At 60 calendar days after issuance of this directive, provide a report to DHS on the status of that implementation. Continue to report every 30 calendar days thereafter until implementation of the agency’s BOD 18-01 plan is complete.
+
+### DHS Actions
+
+* DHS will review each Agency Plan of Action for BOD 18-01 upon receipt, and contact agencies with any concerns.
+* DHS will coordinate agency-provided lists of domains for HSTS preloading with DotGov.
+* DHS will rely on its National Cybersecurity Assessments & Technical Services team scanning for tracking and verifying progress.
+* DHS will notify agencies when the NCCIC establishes a central location for the collection of agency DMARC aggregate reports, described above at [II(1)(a)(iii)](https://www.cisa.gov/binding-operational-directive-18-01#ii-required-actions).
+* DHS will provide additional guidance through a DHS BOD coordination call and other engagements and products following the issuance of this directive.
+
+### Potential Budgetary Implications
+
+DHS understands that compliance with this BOD could result in budgetary implications. Agency Chief Information Officers (CIOs) and procurement officers should coordinate with the agency Chief Financial Officer (CFO), as appropriate.
+
+### Introduction to Email Authentication
+
+The Department of Homeland Security seeks to incentivize the **thoughtful deployment of email authentication technologies** and generally increase the security of messages to and from government agencies. Email that fraudulently uses a Federal domain should be easy to detect.
+
+This section is a recital and elaboration of key points in two recent Federal documents:
+
+1. [Special Publication 800-177, Trustworthy Email](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-177.pdf "Special Publication 800-177"), which the National Institute of Standards and Technology issued in September 2016
+2. [Businesses Can Help Stop Phishing and Protect their Brands Using Email Authentication](https://www.ftc.gov/system/files/documents/reports/businesses-can-help-stop-phishing-protect-their-brands-using-email-authentication-ftc-staff/email_authentication_staff_perspective.pdf "Businesses Can Help Stop Phishing and Protect their Brands Using Email Authentication"), issued in March 2017 by the Federal Trade Commission’s Bureau of Consumer Protection based on a study performed by the Office of Technology Research and Investigation
+
+### What is email authentication?
+
+“Email authentication” refers to a set of technologies that enable:
+
+* a domain owner to assert control over its domains, making them harder to successfully spoof in email.
+* the recipient of an email to have reasonable confidence that a message which purports to be from a given domain is genuine or not.
+
+Email authentication can impede the delivery of phishing emails that attempt to play off an organization’s domain names. This protects:
+
+* the sender’s reputation and keeps likely-harmful emails out of recipient mailboxes.
+* the public who might receive authoritative-sounding emails claiming to be from a .gov address.
+* internal government users who may rely on information that appears to come, e.g., from an important colleague.
+
+There are three predominant forms of email authentication technology: SPF, DKIM, and DMARC. Conceptually, each operate similarly:
+
+1. When an email arrives at a recipient mail server, it queries the sending domain’s DNS to check for relevant email authentication records.
+2. If email authentication records are found, the server evaluates the email it received against the email authentication records and makes a determination: deliver it, deliver it but mark it as questionable, or discard it altogether.
+
+See [SP 800-177, section 4](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-177.pdf "Special Publication 800-177") for a detailed technical description.
+
+### What are the standards that enable email authentication?
+
+#### SPF & DKIM
+
+* **SPF**, or Sender Policy Framework, enables a mail sender to detail the canonical source(s) (IP addresses, or domains to find those IP addresses) authorized to send email on a domain’s behalf.
+
+  Once set, a receiver authenticates a piece of mail by comparing the IP address of the sending email server against the addresses listed on the SPF record. The SPF record is found by querying at the domain used in the email address asserted at the initial SMTP transaction, called the [RFC5321.From](https://tools.ietf.org/html/rfc5321#section-4.1.1.2 "Simple Mail Transfer Protocol") address, or [envelope From:](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-177.pdf#page=22 "Special Publication 800-177") address ([among other names](https://en.wikipedia.org/wiki/Bounce_address "Bounce Address")). If the IP address of the sender is listed in the SPF record, the message is considered authentic.
+
+  *Detailed information can be found in*[*SP 800-177, section 4.4*](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-177.pdf "Special Publication 800-177")*and*[*RFC 7208*](https://tools.ietf.org/html/rfc7208 "Sender Policy Framework (SPF)")*.*
+* **DKIM**, or DomainKeys Identified Mail, involves the cryptographic signing of individual email messages. A receiver authenticates a piece of DKIM-signed mail by using the public key posted at the domain given in the DKIM header and comparing the signature embedded in the header with one the receiver calculates. If the signatures match, the message is considered authentic.
+
+  *Detailed information can be found in*[*SP 800-177, section 4.5*](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-177.pdf "Special Publication 800-177")*and*[*RFC 6376*](https://tools.ietf.org/html/rfc6376 "DomainKeys Identified Mail (DKIM) Signatures")*.*
+
+In effect, both these techniques **allow a sending domain to “watermark” emails from their domain**, making spoofed emails easier to detect.
+
+However, there is no inherent or widely-implemented mechanism in either standard to signal what a recipient should do with messages that fail SPF/DKIM validation. DMARC serves this role.
+
+### DMARC
+
+Domain-based Message Authentication, Reporting and Conformance, or **DMARC**, serves three primary functions:
+
+* *Authentication*: It verifies alignment between the domain listed in the email address that gets displayed to an email recipient and the outcome of SPF and DKIM authentication checks.
+* *Reporting*: It enables a reporting mechanism so an email sender can validate their email authentication setup is working as expected.
+* *Conformance*: It allows a domain owner to establish what the final disposition of email that fails email authentication checks should be.
+
+### Alignment and Conformance
+
+Different than the RFC5321.From address that is sent in the initial SMTP transaction, the `RFC5322.From` address (also known as the [`message-From`](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-177r1.pdf) address) is typically the email address that is represented as the sender in email clients. DMARC requires “[alignment](https://tools.ietf.org/html/rfc7489#section-3.1)” between the domain in this very visible address and the domains that are authenticated in SPF and DKIM. This alignment can be “strict” (an exact match) or “relaxed” (must be a subdomain of the parent domain). Alignment is fully tunable in DMARC, with different options for SPF and DKIM alignment. DMARC’s [default for alignment](https://tools.ietf.org/html/rfc7489#section-6.3) is “relaxed”.
+
+In order to satisfy DMARC filtering, *at least one of either SPF or DKIM*[*must*](https://tools.ietf.org/html/rfc7489#section-4.2) “pass” their authentication checks and be in alignment with the domain in the `message-From` address.
+
+If not, DMARC allows a sender to set one of three separate policy states for email disposition:
+
+1. block delivery of unauthenticated messages (noted in the DMARC record as `p=reject`),
+2. place unauthenticated messages in the recipient’s junk email folder (`p=quarantine`), or
+3. specify no guidance on how to treat unauthenticated messages (`p=none`). This setting should be viewed as a temporary policy setting before getting to `p=quarantine` and `p=reject`, and is only meaningful when coupled with reporting.
+
+In other words, by using DMARC, a sending domain can instruct receiving email servers to **block delivery of all unauthenticated messages – such as phishing messages** – that claim to be from the sending domain.
+
+### Reporting
+
+DMARC also enables a sending domain to request that participating email providers send it automatically generated reports about authentication results, thereby enabling the sending domain to monitor whether its SPF and DKIM policies are working properly.
+
+In addition to monitoring proper configuration, this is valuable information one would not normally receive: if an attacker spoofs your domain, they are not likely to copy you on the spoofed email.
+
+*More detailed information about DMARC can be found in*[*SP 800-177, section 4.6*](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-177.pdf "Special Publication 800-177")*and*[*RFC 7489*](https://tools.ietf.org/html/rfc7489)*.*
+
+#### What are DMARC reports?
+
+DMARC reports are summaries of email authentication results that are automatically sent by [participating email providers](http://dmarc.io/sources/). They detail what the email provider saw from your domain over a given period of time, and facilitate the process of graduating to `p=reject`.
+
+There are two kinds of reports:
+
+1. [aggregate reports](https://tools.ietf.org/html/rfc7489#section-7.2)
+2. [failure reports](https://tools.ietf.org/html/rfc7489#section-7.3) (sometimes called forensic reports)
+
+Both reports provide information like the sending and receiving email domains, the DMARC policy that the email recipient discovered and applied, the identifier that was evaluated by SPF and/or DKIM and whether it was in alignment, the number of successful authentications, and the totals for all messages received. Aggregate reports are normally delivered once daily from mail receivers, whereas failure reports are sent immediately after an authentication failure. Failure reports include additional information about identity alignment, and can even include much of the body of the email and email headers; this can lead to an unintended exposure of private information. Failure reports are only sent by a handful of ISPs, none of which are US-based.
+
+#### See the Compliance Guide for more info.
+
+* What process should be followed in order to implement email authentication?
+* Can email authentication hinder my organization’s ability to deliver email?
+
+### HTTPS
+
+### Background
+
+In 2015, the White House Office of Management and Budget (OMB) issued memorandum [M-15-13](https://www.whitehouse.gov/wp-content/uploads/legacy_drupal_files/omb/memoranda/2015/m-15-13.pdf "M-15-13"), “A Policy to Require Secure Connections across Federal Websites and Web Services”, and a companion site at [https.cio.gov](https://https.cio.gov/ "The HTTPS-Only Standard"). This policy requires **all publicly-accessible Federal websites and web services** to enforce the use of Hypertext Transfer Protocol Secure (HTTPS), and to use HTTP Strict Transport Security (HSTS).
+
+The [memo](https://https.cio.gov/#background "The HTTPS-Only Standard") details why HTTPS and HSTS are so important:
+
+*The unencrypted HTTP protocol does not protect data from interception or alteration, which can subject users to eavesdropping, tracking, and the modification of received data… Unencrypted HTTP connections create a privacy vulnerability and expose potentially sensitive information about users of unencrypted Federal websites and services. Data sent over HTTP is susceptible to interception, manipulation, and impersonation. This data can include browser identity, website content, search terms, and other user-submitted information.*
+
+*HSTS …instruct[s] compliant browsers to assume HTTPS going forward. This reduces insecure redirects, and protects users against attacks that attempt to downgrade connections to plain HTTP.*
+
+Over the last two years, this policy’s implementation has enabled the federal government to [outpace the private sector](https://18f.gsa.gov/2017/01/04/tracking-the-us-governments-progress-on-moving-https/#did-we-need-a-formal-https-policy) in the deployment of HTTPS.
+
+### Moving Ahead
+
+M-15-13 also contemplates that “[p]rotocols and web standards improve regularly” and that “Federal websites and services should deploy HTTPS in a manner that allows for rapid updates to certificates, cipher choices (including forward secrecy), protocol versions, and other configuration elements.”
+
+**BOD 18-01 directs agencies to make more progress on HTTPS and HSTS deployment**, including by removing support for known-weak cryptographic protocols and ciphers. These are:
+
+#### Protocols
+
+* **SSLv2:** [Released in 1995.](https://tools.ietf.org/html/draft-hickman-netscape-ssl-00) Most modern clients do not support SSLv2, but the [DROWN](https://drownattack.com/) attack demonstrated that *merely serving* SSLv2 enables the inspection of traffic encrypted with more modern TLS versions.
+* **SSLv3:** [Released in 1996.](https://tools.ietf.org/html/rfc6101) Considered to be insecure after the [POODLE](https://www.openssl.org/~bodo/ssl-poodle.pdf) attack was published in 2014. Turning off SSLv3 effectively removes support for Internet Explorer 6.
+
+#### Ciphers
+
+* **RC4:** In 2014, [NIST marked RC4 as “not approved”](https://www.nist.gov/publications/release-nist-special-publication-800-52-revision-1-guidelines-selection-configuration) for use in Federal information systems.
+* **3DES:** In 2017, [NIST urged all users of 3DES to migrate](https://csrc.nist.gov/News/2017/Update-to-Current-Use-and-Deprecation-of-TDEA) as soon as possible.
+
+BOD 18-01 requires that these protocols and ciphers cease being offered on internet-facing web and email servers.
+
+**Note**: see temporary policy exception for 3DES in mail environments.
+
+#### Preloading
+
+The directive also requires that agencies identify and provide a list to DHS of agency second-level domains that can be HSTS preloaded. Agencies should review their list of second-level domains (including any not yet using the .gov top-level domain, as required by [M-17-06](https://www.whitehouse.gov/wp-content/uploads/legacy_drupal_files/omb/memoranda/2017/m-17-06.pdf "M-17-06")) and analyze which can be preloaded.
+
+#### See the Compliance Guide below for more info.
+
+* How does the web security requirement in BOD 18-01 differ from M-15-13?
+* How should the list of second-level domains to be preloaded be shared with DHS?
+* [https.cio.gov contains the M-15-13 compliance guide](https://https.cio.gov/guide/), which should be followed in implementing the HTTPS/HSTS requirements of BOD-18-01. See also:
+  + [Introduction to HTTPS](https://https.cio.gov/faq/)
+  + [HTTP Strict Transport Security](https://https.cio.gov/hsts/)
+
+### Compliance Guide
+
+This page provides implementation guidance for Binding Operational Directive 18-01 (BOD 18-01), which requires certain email and web security actions from Federal agencies.
+
+#### Checklist
+
+* Within **30 days** of BOD issuance *(November 16th, 2017)*, submit an “Agency Plan of Action” to [FNR.BOD@hq.dhs.gov](mailto:FNR.BOD@hq.dhs.gov) and begin implementing the plan.
+* At **60 days** *(December 15th, 2017)* after BOD issuance (**and at every 30 days until full implementation**), provide a status report of plan implementation to [FNR.BOD@hq.dhs.gov](mailto:FNR.BOD@hq.dhs.gov).
+* Within **90 days** *(January 15, 2018)* of BOD issuance:
+  + Configure all internet-facing mail servers to offer STARTTLS.
+  + Configure all second-level domains to have valid SPF/DMARC records, with at minimum a DMARC policy of “p=none” and at least one address defined as a recipient of aggregate and/or failure reports.
+* By **120 days** *(February 13, 2018)* after BOD issuance:
+  + Ensure all publicly accessible Federal websites and web services provide service through a secure connection (HTTPS-only, with HSTS).
+  + Identify agency second-level domains that can be HSTS preloaded, and provide a list to DHS at [FNR.BOD@hq.dhs.gov](mailto:FNR.BOD@hq.dhs.gov).
+  + Disable SSLv2 and SSLv3 on web and mail servers.
+  + Disable 3DES and RC4 ciphers on web and mail servers.
+    - See the [temporary policy exception on this requirement](/sites/default/files/2023-01/18-01-exception.pdf).
+* Within **15 days of the establishment of a centralized NCCIC reporting location**, add DHS as a recipient of DMARC aggregate reports (`reports@dmarc.cyber.dhs.gov`).
+* Within **one year** *(October 16, 2018)* of BOD issuance, set a DMARC policy of “reject” for all second-level domains and mail-sending hosts.
+
+### Frequently Asked Questions
+
+#### What is the scope of BOD 18-01?
+
+The Directive applies to internet-facing agency information systems, which encompasses those systems directly managed by an agency as well as those operated on an agency’s behalf. Its primary focus is on agency mail and web infrastructure, regardless of domain suffix.
+
+#### What is a second-level domain?
+
+A “second-level domain” is the domain name your organization has directly registered, inclusive of the top-level domain. In the example `www.dhs.gov`, the second-level domain is `dhs.gov`.
+
+Some examples of top-level domains (TLDs; sometimes called “[public suffixes](https://publicsuffix.org/learn/)”) are `.gov`, `.mil`, `.fed.us`, `.org`, or `.com`. OMB memorandum [M-17-06](https://www.whitehouse.gov/wp-content/uploads/legacy_drupal_files/omb/memoranda/2017/m-17-06.pdf "M-17-06") requires that federal agencies use the `.gov` or `.mil` TLDs.
+
+#### How does the web security requirement in BOD 18-01 differ from M-15-13?
+
+BOD 18-01 incorporates parallel language to M-15-13 with regard to HTTPS deployment. The [Compliance Guide at https.cio.gov](https://https.cio.gov/guide/) **should be consulted** in implementing HTTPS and HSTS.
+
+BOD 18-01 also mandates two additional steps:
+
+1. *The disabling of old SSL versions (SSLv2 and SSLv3) and legacy cipher suites (3DES and RC4)*. In 2014, [NIST marked SSLv2/v3 and RC4 as “not approved”](https://www.nist.gov/publications/release-nist-special-publication-800-52-revision-1-guidelines-selection-configuration), and in 2017, [NIST urged all users of 3DES to migrate](https://csrc.nist.gov/News/2017/Update-to-Current-Use-and-Deprecation-of-TDEA) as soon as possible.
+2. *Requiring a review of second-level domains that can be submitted for HSTS preloading and to submit this list to DHS*.
+
+[Preloading a domain](https://https.cio.gov/hsts/#hsts-preloading) enforces the use of HTTPS across an entire zone, and is technical compliance with the HTTPS usage requirements of BOD 18-01. Preloading allows agencies to avoid inventorying and configuring an HSTS policy for every individual subdomain, though this necessarily impacts all subdomains present on the domain, including intranet subdomains. Thus, all subdomains will need to support HTTPS in order to remain reachable for use in major browsers. Even with these two obstructions, preloading a domain can be a reality with coordinated effort.
+
+Second-level .gov domains that are [only used to redirect visitors to other websites](https://https.cio.gov/guide/#what-about-domains-that-are-only-used-to-redirect-visitors-to-other-websites) and are not used on intranets are excellent preloading candidates. However, DHS **strongly recommends** that federal agencies perform a thorough evaluation of those domains that are highly trafficked or otherwise have significant value. Those are likely to be the domains that citizens and intra-agency users stand to benefit most from the always-HTTPS approach that preloading provides.
+
+#### My device is HTTPS already and doesn’t natively support HSTS. Can DHS mark this a false positive?
+
+No. HSTS is intended to protect users, not servers. Even if a device is [HTTPS-only and doesn’t respond over port 80](https://https.cio.gov/guide/#if-plain-http-is-entirely-disabled-on-my-server-do-i-still-need-hsts), users are at risk from [insecure redirects](https://https.cio.gov/hsts/#background). Without HSTS, clients may still issue HTTP requests even when the server does not support them, and an attacker with an on-path vantage point can redirect or spoof these requests for malicious purposes.
+
+The best mitigation for this threat is to [preload your domains](https://https.cio.gov/hsts/#hsts-preloading).
+
+We encourage you to request that your vendors support HSTS in their products. Some federal agencies have had [success in these requests](https://18f.gsa.gov/2017/05/25/from-launch-to-landing-how-nasa-took-control-of-its-https-mission/#leadership-buy-in), and DHS is happy to assist you in the request.
+
+#### How should the list of second-level domains to be preloaded be shared with DHS?
+
+You are encouraged to [preload your domains yourself](https://https.cio.gov/hsts/#how-to-preload-a-domain) and then to report the set of preloaded domains to DHS in your Agency Plan of Action.
+
+Where preloading directly is infeasible (for example, when HTTP is only served on subdomains, not on the ‘www’ of the base domain or at the domain root directly), you should include domains to preload in your Agency Plan of Action and DHS will coordinate the preloading with the [DotGov program](https://home.dotgov.gov/).
+
+#### What process should be followed in order to implement email authentication?
+
+For all second-level domains and all mail-sending hosts generally, make a plan to implement [SPF](/binding-operational-directive-18-01#spf--dkim), [DKIM](/binding-operational-directive-18-01#spf--dkim) (mail-senders only), and [DMARC](/binding-operational-directive-18-01#dmarc), **with a goal of setting** `p=reject` **on all second-level domains**.
+
+[NIST Special Publication 800-177, section 4.6.1](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-177.pdf "Special Publication 800-177") recommends:
+
+*When implementing email authentication for a domain for the first time, a sending domain owner is advised to first publish a DMARC [resource record] with a “none” policy before deploying SPF or DKIM. This allows the sending domain owner to immediately receive reports indicating the volume of email being sent that purports to be from their domain. These reports can be used in crafting an email authentication policy that reduces the risk of errors.*
+
+See Resources for implementation case studies.
+
+#### How should DMARC be deployed?
+
+DMARC was developed to enable cautious deployment. While the standard has three policy states (none, quarantine, and reject), it also has a [`pct`](https://tools.ietf.org/html/rfc7489#section-6.3), or percent, option that a domain owner can use to tell recipients what volume of messages should have the policy applied. When `pct` is left unspecified, the default value of 100% is used.
+
+Rolling DMARC out incrementally by increasing the policy state and percent value over time, while carefully monitoring daily DMARC aggregate reports, is a good strategy to get to p=reject.
+
+One [Google support document](https://support.google.com/a/answer/2466563?hl=en) offers a nominal deployment:
+
+1. Monitor all (p=none)
+2. Quarantine 1%
+3. Quarantine 5%
+4. Quarantine 10%
+5. Quarantine 25%
+6. Quarantine 50%
+7. Quarantine all
+8. Reject 1%
+9. Reject 5%
+10. Reject 10%
+11. Reject 25%
+12. Reject 50%
+13. Reject all
+
+By the DMARC deadline, p=reject must be at `pct=100` either explicitly or implicitly.
+
+#### Why is `p=reject` required?
+
+A primary goal of the Directive is to make it hard to successfully spoof government services. A DMARC policy of `p=none` allows you to gather insight into those systems that are sending mail using your domain – including imposters. But `p=none` doesn’t actually delay or stop unauthenticated mail from being delivered. It should be viewed as a temporary state on the path to higher levels of enforcement.
+
+`p=quarantine` is where a domain’s policy starts to be enforced. This means that, for most users, unauthenticated mail from a domain with `p=quarantine` would be placed in a junk email folder. Since the message is delivered, though, a user could still find it and be harmed by it.
+
+Only a policy of `p=reject` blocks delivery of unauthenticated message completely.
+
+#### Does using `p=reject` mean that leads or anonymous sources may not be able to send us emails?
+
+No. Having legitimate email inadvertently filtered is a common concern for any organization employing traditional spam-filtering technologies. DMARC is fundamentally different from spam-filtering in how it protects from malicious email, however.
+
+DMARC protects a domain from being impersonated without detection. It allows a domain owner to specify the authentication requirements for any email that uses their domain name, and tells a receiving email server what to do if the message fails to authenticate properly.
+
+An email from a lead or anonymous source to e.g, fed@agency.gov is not implicated by the DMARC policy at agency.gov unless the source is sending it so as to appear as though it was coming from agency.gov. This is an email that could be very harmful: it’s the equivalent of someone calling you while credibly impersonating your boss – and it can be stopped by sending a policy of p=reject.
+
+In other words, your organization’s DMARC policies, as set in public DNS, have no effect on the deliverability of email coming from domains you don’t own. People who seek to email anonymously can still do so, unaffected by your domain’s DMARC policy.
+
+#### What are the ramifications of setting subdomain policies?
+
+Subdomains can have their own `p=` policy set (e.g., at `_dmarc.subdomain.domain.gov`), but otherwise they inherit the `p=` policy set at the second-level domain or, if present, the subdomain policy ([`sp=`](https://tools.ietf.org/html/rfc7489#section-6.3)) at the second-level domain.
+
+Setting `p=reject` at the second-level domain is intended by the Directive so as to cascade throughout the zone, protecting all subdomains against spoofing. This is thwarted, though, when a policy weaker than `p=reject` is set on any subdomain directly or via an`sp=` tag set on a second-level domain.
+
+While you work to properly authenticate email sent from subdomains, it is reasonable to set weaker-than-reject `p=` policies on subdomains or by setting an `sp=` on second-level domains. However, at one year after BOD issuance, the second-level domain **must be at**`p=reject`**with no**`sp=`**policies set at the second-level domain nor subdomains with explicit policies less restrictive than**`reject`**.**
+
+#### What should be done with domains that do not send mail?
+
+Even if you do not send mail from your domain, anyone can spoof it to give the *appearance* that mail is coming from you. Setting a DMARC policy of `p=reject` signals to recipient mail servers to reject any email purportedly sent from the domain, protecting your reputation and your stakeholders from likely malicious actors.
+
+The following steps should be taken for second-level domains that don’t send mail:
+
+* Set a DMARC policy of `p=reject`. But before setting `p=reject`, you are **strongly encouraged** to first set a policy of `p=none`, specify a target address to receive DMARC reports at, and then review DMARC reports to confirm that no authorized mail is sent from the domain. Once you’ve confirmed that authorized email would not be interfered with, move the DMARC policy to `p=reject`.
+* An SPF “null record” should be added in DNS. A null record tells recipients that this domain sends no mail, and looks like this:
+
+`"v=spf1 -all"`
+
+DMARC policies set at a second-level domain act as a wildcard, covering subdomains generally, *including non-mail-sending domains*. When a domain’s DMARC policy is set to `p=reject`, it is not necessary to specify SPF “null records” on every active domain in the zone, though doing so is not harmful.
+
+#### How can I receive DMARC reports?
+
+You can configure a target address for DMARC report delivery by specifying for `rua=` (aggregate) or `ruf=` (failure) [DMARC tags](https://tools.ietf.org/html/rfc7489#section-6.3). You should receive reports from [participating email providers](http://dmarc.io/sources/) within 48 hours.
+
+#### Where should DMARC reports be sent?
+
+Specify an email address where DMARC reports can be reviewed regularly. A DMARC record can indicate multiple addresses where reports should be sent; see [RFC 7489, section 6.2](https://tools.ietf.org/html/rfc7489#section-6.2).
+
+A DMARC record that follows this recommendation, as set on `_dmarc.example.gov`, looks like this:
+
+`"v=DMARC1; p=none; rua=mailto:reports@example.gov;"`
+
+This DMARC record has a policy of `none` and requests that DMARC aggregate reports be sent to reports@example.gov. These reports, as well as failure reports, should be utilized to assist in the process of getting to `p=reject`.
+
+***DHS DMARC reporting location***
+
+Federal agencies must add DHS NCCIC as an aggregate report recipient. The address that must be included is `reports@dmarc.cyber.dhs.gov`.
+
+***Sending DMARC reports to more than one location***
+
+You are encouraged to receive your own DMARC reports in addition to sending them to DHS.
+
+When crafting this portion of the DMARC record, take care that a) only one `rua=` is defined, b) each address has its own `mailto:`, and c) email addresses are separated by a comma. The `rua` portion of the DMARC policy record could look like the following:
+
+`rua=mailto:dmarc-reports@example.gov,mailto:reports@dmarc.cyber.dhs.gov`
+
+You should also note that while receivers must support the ability to send to at least two reporting addresses, a limit can be imposed *beyond* two. See [RFC 7489, section 6.2](https://tools.ietf.org/html/rfc7489#section-6.2), or an example at [appendix B.2.4](https://tools.ietf.org/html/rfc7489#appendix-B.2.4).
+
+***Sending DMARC reports to a different domain than your own***
+
+Sending DMARC reports to a domain *different than the one requesting reports* requires additional configuration at the intended recipient’s DNS. In order to mitigate a denial of service threat whereby someone could request DMARC reports be sent to arbitrary domains, an intended recipient of DMARC reports must signal its willingness to accept another domain’s reports with a DNS TXT record with the value `v=DMARC1` at a URI that follows this syntax:
+
+`<original-sender-domain>._report._dmarc.<mailto-domain>`
+
+For example, when mail is delivered that appears to come from `example.gov`, the recipient mail server queries for a TXT record at `_dmarc.example.gov`. It might find something like this:
+
+`_dmarc.example.gov. IN TXT "v=DMARC1; p=reject; rua=mailto:reports.example.net"`
+
+Here, the aggregate report for `example.gov` has been requested to be sent to `example.net`. Seeing that these are different domains, the recipient mail server will query for a TXT record at `example.gov._report._dmarc.example.net`. If it finds a TXT record starting with the value `v=DMARC1`, then example.net will be considered a legitimate recipient for example.gov’s DMARC reports.
+
+More details can be found at [SP 800-177, section 4.6.6](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-177.pdf "Special Publication 800-177"), and [RFC 7489, section 7.1](https://tools.ietf.org/html/rfc7489#section-7.1) (with [Appendix B.2.3](https://tools.ietf.org/html/rfc7489#appendix-B.2.3)).
+
+#### What should be done with DMARC report data?
+
+We recommend that you first determine the most critical services that you know send on your behalf (e.g., your primary MX, alerts and monitoring, payroll/HR systems, invoicing, etc.), and ensure they are properly authenticated. After that, you can work to investigate which of the emails that are failing DMARC have actually been authorized by your organization, and proceed to authenticate with SPF/DKIM and align with DMARC.
+
+Generally speaking, we encourage you to avoid deep analysis on those systems that are not authorized to send mail as your domain, but *use them as motivation* to authenticate valid mail and set a policy of reject for your domains.
+
+Commercial and free services exist (including at least one [FedRAMP Authorized DMARC service](https://marketplace.fedramp.gov/#/products?sort=impactLevel&productNameSearch=mail) that help derive intelligence from DMARC reports. Though their use is not required to receive or read DMARC reports, they can provide helpful analysis that enable a smoother deployment.
+
+#### Can email authentication hinder my organization’s ability to deliver email?
+
+Yes. You should thoughtfully deploy these technologies and plan your implementation carefully.
+
+In particular, deploying DKIM and DMARC without adequate planning can cause negative impacts:
+
+* [Mailing lists that use older listserv software](https://dmarc.org/wiki/FAQ#I_operate_a_mailing_list_and_I_want_to_interoperate_with_DMARC.2C_what_should_I_do.3F) are known to cause issues with DKIM-signed mail. This is because DKIM digitally signs mail; if mailing list software modifies email headers or the body of the email, the signature at the recipient will not match. Where possible, update the listserv software.
+  + Auto-forwarding is known to often break SPF if the mail receiving architecture is forwarding the emails without re-enveloping them. Using DKIM canonicalization settings of “simple/simple” [can similarly cause delivery issues](https://wordtothewise.com/2016/12/dkim-canonicalization-or-why-microsoft-breaks-your-mail/) if intermediate servers try to “fix up” the message, which breaks a byte for byte comparison of the sent and received message versions. An alternative could be to use the setting of “relaxed/relaxed”. Note: DKIM message canonicalization [defaults to “simple/simple.”](https://tools.ietf.org/html/rfc6376#section-3.5)
+  + The challenges around “indirect email flows”, where email is sent via intermediaries (mailing lists, account forwarding) is recognized as an issue, and the Internet Engineering Task Force is working on a new protocol called [ARC, Authenticated Received Chain](http://arc-spec.org/). While [still in draft](https://datatracker.ietf.org/doc/draft-ietf-dmarc-arc-protocol/), ARC is already being validated by some of the largest email providers in the world.
+  + Additional details, including workarounds, are detailed in [SP 800-177, section 4.6.7](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-177.pdf "Special Publication 800-177"), including workarounds.
+* A DMARC policy of `p=reject` tells recipients to drop mail that does not match the specified SPF and DKIM policies. While this has no impact on domains that don’t send mail, it will cause delivery failure when there is a policy mismatch; indeed, that is its purpose.
+
+#### Does the Directive require email authentication checks before mail delivery?
+
+BOD 18-01 requires email authentication be performed by *sending* domains. Evaluating inbound email against the sending domain’s SPF/DKIM/DMARC records are **strongly recommended**, but not explicitly required.
+
+#### Does the Directive require the use of DKIM?
+
+BOD 18-01 requires federal agencies to set a DMARC policy of `p=reject`, which can be achieved without the use of DKIM. However, doing so is ultimately a policy decision for your organization to decide upon.
+
+### Resources
+
+#### Read
+
+* [Trustworthy Email, NIST SP 800-177](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-177.pdf) gives recommendations and guidelines for enhancing trust in email. September 2016.
+* [Businesses Can Help Stop Phishing and Protect their Brands Using Email Authentication](https://www.ftc.gov/system/files/documents/reports/businesses-can-help-stop-phishing-protect-their-brands-using-email-authentication-ftc-staff/email_authentication_staff_perspective.pdf), reviews Federal Trade Commission research on email authentication. March 2017.
+* [OMB M-15-13, the HTTPS-Only Standard](https://https.cio.gov/) details HTTPS compliance guidance.
+* [RFC 7208](https://tools.ietf.org/html/rfc7208): Sender Policy Framework (SPF) for Authorizing Use of Domains in Email. April 2014.
+* [M3AAWG Best Practices for Managing SPF Records](https://www.m3aawg.org/sites/default/files/m3aawg_managing-spf_records-2017-08.pdf) is a guide from the Messaging, Malware and Mobile Anti-Abuse Working Group.
+* [RFC 7489](https://tools.ietf.org/html/rfc7489): Domain-based Message Authentication, Reporting, and Conformance (DMARC) March 2015.
+* [dmarc.org](https://dmarc.org/wiki/FAQ) maintains a thorough FAQ.
+
+#### Watch
+
+* DMARC: How It Works
+  + [Global Cyber Alliance](https://www.youtube.com/watch?v=PFcSmuvUFt4), 1m 39s
+  + [dmarcian.com](https://www.youtube.com/watch?v=XnZ4HH70UzE), 5m 26s
+
+#### Tools
+
+* [“DMARC Guide”](https://dmarcguide.globalcyberalliance.org/) from Global Cyber Alliance, is a one-off [SPF](https://dmarcguide.globalcyberalliance.org/#/spf), [DKIM](https://dmarcguide.globalcyberalliance.org/#/dkim), and [DMARC](https://dmarcguide.globalcyberalliance.org/#/dmarc) policy analyzer and record creator.
+* [`trustymail`](https://github.com/cisagov/trustymail) and [`pshtt`](https://github.com/cisagov/pshtt) are DHS open-source Python scanners to check for SPF/DMARC/STARTTLS usage and HTTPS best practices, respectively.
+* Commercial and free services exist (including at least one [FedRAMP Authorized DMARC service](https://marketplace.fedramp.gov/#/products?sort=impactLevel&productNameSearch=mail) that help derive intelligence from DMARC reports.
+* [`parsedmarc`](https://domainaware.github.io/parsedmarc/) is a Python package and CLI tool that can parse aggregate and forensic DMARC reports, and optionally send them to an Elasticsearch instance where they can be visualized using premade Kibana dashboards.
+
+#### Tutorials
+
+* [“Add a DMARC Record”](https://support.google.com/a/answer/2466563?hl=en) is a Google help page that offers a stepped approach to enabling DMARC thoughtfully.
+* [“Use DMARC to validate email in Office 365”](https://technet.microsoft.com/en-us/library/mt734386(v=exchg.150).aspx) provides Microsoft Office 365-related guidance for implementing DMARC on outbound and inbound mail delivery.
+* [“How to align with SPF and DMARC for your domain if you use a lot of 3rd parties to send email as you”](https://web.archive.org/web/20190120184651/https://blogs.msdn.microsoft.com/tzink/2015/03/13/how-to-align-with-spf-and-dmarc-for-your-domain-if-you-use-a-lot-of-3rd-parties-to-send-email-as-you/) is a vendor-agnostic approach to herding third-party mail-senders to get to strong DMARC enforcement.
+
+### Get Help
+
+* For technical questions, you may file an issue or email [ncats@hq.dhs.gov](mailto:ncats@hq.dhs.gov).
+
+### Tags
+
+**Topics**:
+[Cybersecurity Best Practices](/topics/cybersecurity-best-practices)
+
+Related Directives
+------------------
+
+Jun 10, 2026
+
+Binding Operational Directive
+
+### [BOD 26-04: Implementation Guidance for Prioritizing Security Updates Based on Risk](/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk)
+
+Jun 10, 2026
+
+Binding Operational Directive
+
+### [BOD 26-04: Prioritizing Security Updates Based on Risk](/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk)
+
+Jun 10, 2026
+
+Binding Operational Directive
+
+### [BOD 19-02: Vulnerability Remediation Requirements for Internet-Accessible Systems (Revoked)](/news-events/directives/bod-19-02-vulnerability-remediation-requirements-internet-accessible-systems-revoked)
+
+Jun 10, 2026
+
+Binding Operational Directive
+
+### [BOD 22-01: Reducing the Significant Risk of Known Exploited Vulnerabilities (Revoked)](/news-events/directives/bod-22-01-reducing-significant-risk-known-exploited-vulnerabilities-revoked)
+
+[Return to top](#top)
+
+* [Topics](/topics)
+* [Spotlight](/spotlight)
+* [Resources & Tools](/resources-tools)
+* [News & Events](/news-events)
+* [Careers](/careers)
+* [About](/about)
+
+[Cybersecurity & Infrastructure Security Agency](/ "Go to the Cybersecurity & Infrastructure Security Agency homepage")
+
+* [Facebook](https://www.facebook.com/CISA)
+* [X](https://x.com/CISAgov)
+* [LinkedIn](https://www.linkedin.com/company/cybersecurity-and-infrastructure-security-agency)
+* [YouTube](https://www.youtube.com/@cisagov)
+* [Instagram](https://www.instagram.com/cisagov)
+* [RSS](/subscribe-updates-cisa)
+
+CISA Central
+[1-844-Say-CISA](tel:1-844-Say-CISA)
+[contact@cisa.dhs.gov](mailto:contact@cisa.dhs.gov)
+
+DHS Seal
+
+CISA.gov
+
+An official website of the U.S. Department of Homeland Security
+
+* [About CISA](/about "About CISA")
+* [Budget and Performance](https://www.dhs.gov/performance-financial-reports "Budget and Performance")
+* [DHS.gov](https://www.dhs.gov "Department of Homeland Security")
+* [FOIA Requests](https://www.dhs.gov/foia "FOIA Requests")
+* [No FEAR Act](/no-fear-act "No FEAR Act Reporting")
+* [Office of Inspector General](https://www.oig.dhs.gov/ "Office of Inspector General")
+* [Privacy Policy](/privacy-policy "Privacy Policy")
+* [Subscribe](https://public.govdelivery.com/accounts/USDHSCISA/subscriber/new?topic_id=USDHSCISA_138 "Subscribe to Email Updates")
+* [The White House](https://www.whitehouse.gov/ "The White House")
+* [USA.gov](https://www.usa.gov/ "USA.gov")
+* [Website Feedback](/forms/feedback "Website Feedback")

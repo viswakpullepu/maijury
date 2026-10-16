@@ -1,0 +1,16 @@
+From: "Acme Supply Billing" <billing@acme-supplies-portal.net>
+To: victim@company.com
+Subject: Updated Banking Remittance Coordinates for Invoice #INV-88219
+Return-Path: <billing@acme-supplies-portal.net>
+Reply-To: <remittance@acme-supplies-portal.net>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-02-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=pass dkim=pass dmarc=none
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+Dear Accounts Payable,
+
+Please disregard our prior invoice remittance instructions. Due to our annual banking audit, all ACH/Wire payments must be remitted to Citibank Account #982144912, Routing #021000089.
+
+Payment is due within 48 hours to prevent delivery suspension.

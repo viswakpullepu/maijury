@@ -1,0 +1,193 @@
+[
+  {
+    "id": "CASE-01-BEC-CEO-FRAUD",
+    "name": "CEO Fraud / Business Email Compromise (BEC)",
+    "category": "BEC_SPOOFING",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      75,
+      95
+    ],
+    "description": "Executive display name spoofing with free-mail Reply-To diversion and high financial urgency.",
+    "raw_headers": "From: \"Satya Nadella <satya.nadella@microsoft.com>\" <exec-alert-team@gmail.com>\nReply-To: wire-desk-urgent@freemail-secure.com\nReturn-Path: <bounces@mass-marketing-server.net>\nAuthentication-Results: mx.microsoft.com; spf=fail (domain does not designate IP); dkim=none; dmarc=fail\nSubject: STRICTLY CONFIDENTIAL: Immediate Acquisition Wire Transfer Needed\nDate: Fri, 16 Oct 2026 09:30:00 +0000",
+    "body_text": "I am in an urgent confidential meeting. Please initiate an immediate wire transfer of $45,000 to the attached vendor account without delay. Do not call my office line.",
+    "attachments": []
+  },
+  {
+    "id": "CASE-02-LINK-MISMATCH-HARVEST",
+    "name": "M365 Credential Harvester with Link Text Mismatch",
+    "category": "CREDENTIAL_HARVESTING",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      80,
+      100
+    ],
+    "description": "Deceptive HTML anchor text displaying a legitimate Microsoft URL while href routes to an IP literal.",
+    "raw_headers": "From: \"Microsoft 365 Security\" <no-reply@security-msft-support.org>\nReply-To: no-reply@security-msft-support.org\nReturn-Path: <bounce@security-msft-support.org>\nAuthentication-Results: mx.company.com; spf=softfail; dkim=none; dmarc=none\nSubject: URGENT: Your Microsoft 365 Password Expires Today\nDate: Fri, 16 Oct 2026 10:00:00 +0000",
+    "body_text": "<html><body>\n<p>Your password will be deactivated within 24 hours. Please keep your current password by verifying below:</p>\n<p><a href=\"http://192.168.1.105/auth/login\">https://login.microsoftonline.com/common/oauth2</a></p>\n</body></html>",
+    "attachments": []
+  },
+  {
+    "id": "CASE-03-HOMOGLYPH-TYPOSQUAT",
+    "name": "PayPal Lookalike Domain (Homoglyph & Combosquatting)",
+    "category": "TYPOSQUATTING",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      70,
+      90
+    ],
+    "description": "Attacker registers 'paypa1-security-verification.com' with character substitution '1' for 'l'.",
+    "raw_headers": "From: \"PayPal Account Security\" <service@paypa1-security-verification.com>\nReply-To: service@paypa1-security-verification.com\nReturn-Path: <bounces@paypa1-security-verification.com>\nAuthentication-Results: mx.company.com; spf=none; dkim=none; dmarc=none\nSubject: Your PayPal account has been limited\nDate: Fri, 16 Oct 2026 11:15:00 +0000",
+    "body_text": "<html><body>\n<p>Unauthorized login detected from IP 45.33.12.98. Log in to restore your account:</p>\n<p><a href=\"https://paypa1-security-verification.com/restore\">https://paypa1-security-verification.com/restore</a></p>\n</body></html>",
+    "attachments": []
+  },
+  {
+    "id": "CASE-04-ATTACHMENT-DOUBLE-EXT",
+    "name": "Double Extension Malware Dropper",
+    "category": "MALICIOUS_ATTACHMENT",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      85,
+      100
+    ],
+    "description": "Attachment named 'Q3_Payroll_Adjustment.pdf.exe' with Windows PE 'MZ' magic bytes.",
+    "raw_headers": "From: \"HR Benefits Portal\" <benefits@hr-cloud-portal.com>\nSubject: Q3 Payroll and Bonus Adjustment Schedule\nAuthentication-Results: mx.company.com; spf=none; dkim=none; dmarc=none",
+    "body_text": "Please find attached your Q3 salary adjustment calculation. Review before end of day.",
+    "attachments": [
+      {
+        "filename": "Q3_Payroll_Adjustment.pdf.exe",
+        "declared_type": "application/pdf",
+        "content_hex": "4d5a90000300000004000000ffff0000"
+      }
+    ]
+  },
+  {
+    "id": "CASE-05-ATTACHMENT-RTLO-TRICK",
+    "name": "Unicode RTLO Deceptive Filename",
+    "category": "MALICIOUS_ATTACHMENT",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      85,
+      100
+    ],
+    "description": "Filename uses character U+202E to reverse file extension visually.",
+    "raw_headers": "From: \"Legal Contracts\" <legal@contracts-advisory.com>\nSubject: Final Agreement for Review\nAuthentication-Results: mx.company.com; spf=pass; dkim=none; dmarc=none",
+    "body_text": "Please sign the attached NDA document.",
+    "attachments": [
+      {
+        "filename": "Contract_Agreement_\u202efdp.exe",
+        "declared_type": "application/pdf",
+        "content_hex": "4d5a9000"
+      }
+    ]
+  },
+  {
+    "id": "CASE-06-ATTACHMENT-OFFICE-MACRO",
+    "name": "Macro-Enabled Document with Execution Strings",
+    "category": "MALICIOUS_ATTACHMENT",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      80,
+      100
+    ],
+    "description": "OOXML .docm file containing hidden VBA code with AutoOpen and PowerShell dropper.",
+    "raw_headers": "From: \"Supplier Billing\" <billing@logistics-fastpay.net>\nSubject: Overdue Invoice #88492\nAuthentication-Results: mx.company.com; spf=pass; dkim=none; dmarc=none",
+    "body_text": "Please enable editing and macros to view your itemized billing statement.",
+    "attachments": [
+      {
+        "filename": "Invoice_88492.docm",
+        "declared_type": "application/vnd.ms-word.document.macroEnabled.12",
+        "content_hex": "504b030476626150726f6a6563742e62696e4175746f4f70656e5368656c6c"
+      }
+    ]
+  },
+  {
+    "id": "CASE-07-ATTACHMENT-PDF-EXPLOIT",
+    "name": "PDF Document with Active /JavaScript and /OpenAction",
+    "category": "MALICIOUS_ATTACHMENT",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      75,
+      95
+    ],
+    "description": "PDF containing automatic script execution triggers without user interaction.",
+    "raw_headers": "From: \"Customer Support\" <support@scanned-documents-cloud.com>\nSubject: Scanned Doc from Xerox WorkCentre\nAuthentication-Results: mx.company.com; spf=neutral; dkim=none; dmarc=none",
+    "body_text": "Attached is your scanned document.",
+    "attachments": [
+      {
+        "filename": "Scanned_Document.pdf",
+        "declared_type": "application/pdf",
+        "content_hex": "255044462d312e370a2f4f70656e416374696f6e202f4a617661536372697074"
+      }
+    ]
+  },
+  {
+    "id": "CASE-08-ATTACHMENT-HTML-SMUGGLING",
+    "name": "HTML Smuggling & Credential Harvester",
+    "category": "MALICIOUS_ATTACHMENT",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      80,
+      100
+    ],
+    "description": "HTML attachment containing embedded login form and JavaScript Blob download smuggler.",
+    "raw_headers": "From: \"Voicemail Notification\" <voicemail@office-telecom-system.com>\nSubject: You have a new audio voicemail (0:48)\nAuthentication-Results: mx.company.com; spf=none; dkim=none; dmarc=none",
+    "body_text": "Please open the attached HTML file in your browser to listen to your secure voicemail.",
+    "attachments": [
+      {
+        "filename": "Audio_Voicemail.html",
+        "declared_type": "text/html",
+        "content_hex": "3c666f726d20616374696f6e3d22687474703a2f2f6576696c2e636f6d223e3c696e70757420747970653d2270617373776f7264223e"
+      }
+    ]
+  },
+  {
+    "id": "CASE-09-PASSWORD-PROTECTED-ARCHIVE",
+    "name": "Password-Protected ZIP with Password Disclosed in Body",
+    "category": "ARCHIVE_EVASION",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      75,
+      95
+    ],
+    "description": "Encrypted archive paired with email body text revealing password to bypass perimeter SEGs.",
+    "raw_headers": "From: \"Legal Audit\" <compliance@audit-regulatory-portal.org>\nSubject: CONFIDENTIAL: Regulatory Compliance Review\nAuthentication-Results: mx.company.com; spf=none; dkim=none; dmarc=none",
+    "body_text": "To protect confidentiality, the attached audit report is encrypted. The password is: SecurePass2026! to extract it.",
+    "attachments": [
+      {
+        "filename": "Audit_Report.zip",
+        "declared_type": "application/zip",
+        "is_encrypted": true,
+        "content_hex": "504b030414000100"
+      }
+    ]
+  },
+  {
+    "id": "CASE-10-BENIGN-SECURITY-ALERT",
+    "name": "Benign Lookalike: Legitimate GitHub Security Notice",
+    "category": "BENIGN_LOOKALIKE",
+    "expected_risk": "LOW",
+    "expected_score_range": [
+      0,
+      20
+    ],
+    "description": "Legitimate security alert with valid cryptographic SPF/DKIM/DMARC pass and verified official URLs.",
+    "raw_headers": "From: \"GitHub\" <noreply@github.com>\nReply-To: support@github.com\nReturn-Path: <noreply@github.com>\nAuthentication-Results: mx.company.com; spf=pass (github.com: domain designates IP); dkim=pass header.i=@github.com; dmarc=pass\nSubject: [GitHub] A new personal access token was generated\nDate: Fri, 16 Oct 2026 12:00:00 +0000",
+    "body_text": "<html><body>\n<p>Hi user,</p>\n<p>A new personal access token (classic) was recently generated on your account.</p>\n<p>If you did not generate this token, please visit your settings:\n   <a href=\"https://github.com/settings/tokens\">https://github.com/settings/tokens</a>\n</p>\n<p>GitHub Support Team</p>\n</body></html>",
+    "attachments": []
+  },
+  {
+    "id": "CASE-11-BENIGN-MARKETING-NEWSLETTER",
+    "name": "Benign Lookalike: Corporate Marketing Newsletter",
+    "category": "BENIGN_LOOKALIKE",
+    "expected_risk": "LOW",
+    "expected_score_range": [
+      0,
+      25
+    ],
+    "description": "Marketing digest containing promotional urgency ('Sale ends tonight') with fully aligned authentication and legitimate unsubscribe mechanisms.",
+    "raw_headers": "From: \"TechGear Weekly\" <news@techgear-retail.com>\nReply-To: support@techgear-retail.com\nReturn-Path: <bounces@techgear-retail.com>\nAuthentication-Results: mx.company.com; spf=pass; dkim=pass; dmarc=pass\nSubject: Final Call: 40% Off Developer Hardware Ends Tonight!\nDate: Fri, 16 Oct 2026 13:00:00 +0000",
+    "body_text": "<html><body>\n<p>Don't miss out! Our annual flash sale ends tonight at midnight.</p>\n<p><a href=\"https://techgear-retail.com/deals\">https://techgear-retail.com/deals</a></p>\n<p>To unsubscribe from these promotional emails, click <a href=\"https://techgear-retail.com/unsubscribe\">here</a>.</p>\n</body></html>",
+    "attachments": []
+  }
+]

@@ -1,0 +1,24 @@
+From: "FedEx Logistics" <tracking@fedex-freight-alert.com>
+To: victim@company.com
+Subject: Undelivered Parcel Notification: BillOfLading_8829.iso
+Return-Path: <tracking@fedex-freight-alert.com>
+Reply-To: <tracking@fedex-freight-alert.com>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-08-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=fail dkim=none dmarc=fail
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============BOUNDARY_PHISH_73_08=="
+
+--===============BOUNDARY_PHISH_73_08==
+Content-Type: text/html; charset=utf-8
+
+Your package could not be delivered due to an incorrect shipping address. Please mount and review the attached Bill of Lading.
+
+--===============BOUNDARY_PHISH_73_08==
+Content-Type: application/x-iso9660-image; name="BillOfLading_8829.iso"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="BillOfLading_8829.iso"
+
+Q0QwMDEBAAAuLi5QQVlMT0FELkJBVAAASU5TVEFMTEVSLkVYRQ==
+
+--===============BOUNDARY_PHISH_73_08==--

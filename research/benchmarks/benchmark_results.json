@@ -1,0 +1,90 @@
+[
+  {
+    "id": "CASE-01-BEC-CEO-FRAUD",
+    "name": "CEO Fraud / Business Email Compromise (BEC)",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "latency_ms": 5.634799977997318,
+    "passed": true
+  },
+  {
+    "id": "CASE-02-LINK-MISMATCH-HARVEST",
+    "name": "M365 Credential Harvester with Link Text Mismatch",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "latency_ms": 1.0190999892074615,
+    "passed": true
+  },
+  {
+    "id": "CASE-03-HOMOGLYPH-TYPOSQUAT",
+    "name": "PayPal Lookalike Domain (Homoglyph & Combosquatting)",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "latency_ms": 0.2528000040911138,
+    "passed": true
+  },
+  {
+    "id": "CASE-04-ATTACHMENT-DOUBLE-EXT",
+    "name": "Double Extension Malware Dropper",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "latency_ms": 0.36029997863806784,
+    "passed": true
+  },
+  {
+    "id": "CASE-05-ATTACHMENT-RTLO-TRICK",
+    "name": "Unicode RTLO Deceptive Filename",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "latency_ms": 0.10920001659542322,
+    "passed": true
+  },
+  {
+    "id": "CASE-06-ATTACHMENT-OFFICE-MACRO",
+    "name": "Macro-Enabled Document with Execution Strings",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "latency_ms": 0.09009998757392168,
+    "passed": true
+  },
+  {
+    "id": "CASE-07-ATTACHMENT-PDF-EXPLOIT",
+    "name": "PDF Document with Active /JavaScript and /OpenAction",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "latency_ms": 0.07770000956952572,
+    "passed": true
+  },
+  {
+    "id": "CASE-08-ATTACHMENT-HTML-SMUGGLING",
+    "name": "HTML Smuggling & Credential Harvester",
+    "score": 80.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "latency_ms": 0.16039999900385737,
+    "passed": true
+  },
+  {
+    "id": "CASE-09-PASSWORD-PROTECTED-ARCHIVE",
+    "name": "Password-Protected ZIP with Password Disclosed in Body",
+    "score": 70.0,
+    "verdict": "HIGH RISK / LIKELY PHISHING",
+    "latency_ms": 0.11449999874457717,
+    "passed": true
+  },
+  {
+    "id": "CASE-10-BENIGN-SECURITY-ALERT",
+    "name": "Benign Lookalike: Legitimate GitHub Security Notice",
+    "score": 0.0,
+    "verdict": "LEGITIMATE / LOW RISK",
+    "latency_ms": 0.4975999763701111,
+    "passed": true
+  },
+  {
+    "id": "CASE-11-BENIGN-MARKETING-NEWSLETTER",
+    "name": "Benign Lookalike: Corporate Marketing Newsletter",
+    "score": 0.0,
+    "verdict": "LEGITIMATE / LOW RISK",
+    "latency_ms": 1.6820999735500664,
+    "passed": true
+  }
+]

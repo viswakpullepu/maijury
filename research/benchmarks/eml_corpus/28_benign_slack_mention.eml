@@ -1,0 +1,12 @@
+From: "Slack" <notification@slack.com>
+To: victim@company.com
+Subject: New message from David in #incident-response
+Return-Path: <bounces@slack.com>
+Reply-To: <feedback@slack.com>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-28-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=pass dkim=pass dmarc=pass
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body><p>David mentioned you in <b>#incident-response</b>: "All systems green. Nightly database backup completed successfully."</p><p><a href="https://app.slack.com/client/T0123/C0456">Open in Slack</a></p></body></html>

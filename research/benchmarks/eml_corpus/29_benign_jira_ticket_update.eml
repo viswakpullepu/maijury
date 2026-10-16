@@ -1,0 +1,12 @@
+From: "Atlassian Jira" <jira@company-portal.atlassian.net>
+To: victim@company.com
+Subject: [JIRA] (SEC-419) Security Architecture Review Approved
+Return-Path: <jira-bounces@atlassian.net>
+Reply-To: <jira@company-portal.atlassian.net>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-29-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=pass dkim=pass dmarc=pass
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body><p>Ticket <b>SEC-419</b> status changed to <b>CLOSED (RESOLVED)</b> by Compliance Officer.</p><p><a href="https://company-portal.atlassian.net/browse/SEC-419">View Ticket</a></p></body></html>

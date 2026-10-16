@@ -1,0 +1,12 @@
+From: "AWS Notifications" <no-reply@sns.amazonaws.com>
+To: victim@company.com
+Subject: ALARM: "Production-Database-High-CPU" in US East (N. Virginia)
+Return-Path: <0100018f-bounce@sns.amazonaws.com>
+Reply-To: <no-reply@sns.amazonaws.com>
+Date: Fri, 16 Oct 2026 15:30:00 +0000
+Message-ID: <test-27-2026@mail-gateway.org>
+Authentication-Results: mx.company.com; spf=pass (amazon.com: domain of 0100018f-bounce@sns.amazonaws.com designates 54.240.0.1 as permitted sender) dkim=pass dmarc=pass (p=reject)
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body><p>You are receiving this email because your Amazon CloudWatch Alarm "Production-Database-High-CPU" has entered the ALARM state.</p><p><a href="https://console.aws.amazon.com/cloudwatch/home">View in AWS Console</a></p></body></html>
