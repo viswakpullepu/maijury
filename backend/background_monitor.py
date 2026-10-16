@@ -37,6 +37,7 @@ class BackgroundMonitorDaemon:
 
         self.poll_interval = poll_interval_seconds
         self.gmail = GmailClient()
+        self.gmail.authenticate()
         self.prosecutor = TeamProsecutor()
         self.defender = TeamDefender()
         self.arbiter = CourtroomArbiter()
