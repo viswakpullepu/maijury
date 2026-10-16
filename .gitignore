@@ -74,3 +74,5 @@ backend/security/.master.key
 backend/logs/*
 !backend/logs/.gitkeep
 
+
+auth_url.txt
