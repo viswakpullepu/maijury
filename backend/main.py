@@ -159,14 +159,14 @@ def _run_full_trial(raw_bytes: bytes) -> dict:
 @app.get("/")
 @app.get("/api/index.py")
 async def root(request: Request):
+    headers_dict = {k: v for k, v in request.headers.items()}
     return {
         "service": "MailJury Adversarial Email Security Courtroom",
         "status": "operational",
         "version": "2.1.0",
         "scope_path": request.scope.get("path"),
-        "x_matched_path": request.headers.get("x-matched-path"),
-        "x_forwarded_uri": request.headers.get("x-forwarded-uri"),
-        "x_now_route_matches": request.headers.get("x-now-route-matches"),
+        "raw_path": request.scope.get("raw_path", b"").decode("latin1", errors="replace"),
+        "headers": headers_dict,
         "docs_url": "/docs",
         "api_health": "/api/health",
         "mission_02_benchmark": "/api/mission-02/benchmark"
