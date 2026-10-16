@@ -189,18 +189,18 @@ class GmailClient:
 
     def fetch_unread_messages(self, max_results: int = 10) -> List[Dict[str, Any]]:
         """
-        Fetches unread messages from Gmail (or sandbox queue).
+        Fetches unread messages from Gmail (inspects both INBOX and SPAM folders).
         Excludes already-quarantined or certified messages to prevent redundant processing.
         """
         if self.is_live and self.service:
             try:
                 resp = self.service.users().messages().list(
-                    userId='me', q='is:unread -label:MAILJURY_QUARANTINED -label:MAILJURY_VERIFIED_SAFE', maxResults=max_results
+                    userId='me',
+                    q='(in:inbox OR in:spam) is:unread -label:MAILJURY_QUARANTINED -label:MAILJURY_VERIFIED_SAFE',
+                    includeSpamTrash=True,
+                    maxResults=max_results
                 ).execute()
                 return resp.get('messages', [])
-            except Exception as e:
-                return []
-
             except Exception as e:
                 return []
         else:
@@ -228,22 +228,23 @@ class GmailClient:
             for m in self.simulated_inbox:
                 if m["id"] == msg_id:
                     return m["raw_bytes"]
-        return None
+            return None
 
     def apply_remediation(self, msg_id: str, verdict: str, risk_score: float) -> Dict[str, Any]:
         """
         Executes automated background remediation:
-        - FAKE/MALICIOUS: Adds QUARANTINE label, removes INBOX, marks as read.
-        - LEGITIMATE: Adds VERIFIED_SAFE label.
-        - SUSPICIOUS: Adds SUSPICIOUS label, leaves in inbox with tag.
+        - FAKE/MALICIOUS: Adds QUARANTINE label, removes from INBOX and SPAM, marks as read.
+        - LEGITIMATE: Adds VERIFIED_SAFE label, marks as read.
+        - SUSPICIOUS: Adds SUSPICIOUS label.
         """
         action_taken = ""
 
         if "FAKE" in verdict or risk_score >= 70.0:
             target_label = self.LABEL_QUARANTINE
             add_labels = [target_label]
-            remove_labels = ["INBOX", "UNREAD"]
+            remove_labels = ["INBOX", "SPAM", "UNREAD"]
             action_taken = "REMOVED_FROM_INBOX_AND_QUARANTINED"
+
         elif "LEGITIMATE" in verdict or risk_score <= 25.0:
             target_label = self.LABEL_SAFE
             add_labels = [target_label]
