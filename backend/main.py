@@ -42,7 +42,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from fastapi import FastAPI, File, UploadFile, HTTPException, Query, Body, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from eml_parser import EMLParser
@@ -83,6 +84,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FRONTEND_DIST = os.path.join(ROOT_DIR, "frontend", "dist")
+ASSETS_DIR = os.path.join(FRONTEND_DIST, "assets")
+
+if os.path.isdir(ASSETS_DIR):
+    app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="frontend_assets")
 
 @app.middleware("http")
 async def vercel_routing_middleware(request: Request, call_next):
@@ -190,8 +198,11 @@ def _run_full_trial(raw_bytes: bytes) -> dict:
 # ─── REST ENDPOINTS ────────────────────────────────────────────────────────
 
 @app.get("/")
-@app.get("/api/index.py")
+@app.get("/index.html")
 async def root():
+    index_file = os.path.join(FRONTEND_DIST, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file, media_type="text/html")
     return {
         "service": "MailJury Adversarial Email Security Courtroom",
         "status": "operational",
@@ -200,6 +211,36 @@ async def root():
         "api_health": "/api/health",
         "mission_02_benchmark": "/api/mission-02/benchmark"
     }
+
+
+@app.get("/api")
+@app.get("/api/index.py")
+@app.get("/api/info")
+async def api_info():
+    return {
+        "service": "MailJury Adversarial Email Security Courtroom",
+        "status": "operational",
+        "version": "2.1.0",
+        "docs_url": "/docs",
+        "api_health": "/api/health",
+        "mission_02_benchmark": "/api/mission-02/benchmark"
+    }
+
+
+@app.get("/favicon.svg")
+async def favicon_route():
+    fpath = os.path.join(FRONTEND_DIST, "favicon.svg")
+    if os.path.exists(fpath):
+        return FileResponse(fpath, media_type="image/svg+xml")
+    raise HTTPException(status_code=404, detail="Favicon not found")
+
+
+@app.get("/icons.svg")
+async def icons_route():
+    fpath = os.path.join(FRONTEND_DIST, "icons.svg")
+    if os.path.exists(fpath):
+        return FileResponse(fpath, media_type="image/svg+xml")
+    raise HTTPException(status_code=404, detail="Icons not found")
 
 
 @app.get("/api/health")
@@ -715,6 +756,30 @@ async def save_threatlens_email(payload: Dict[str, Any] = Body(...)):
         "saved": True,
         "id": payload.get("id", f"TL-{int(time.time())}")
     }
+
+# ─── SINGLE PAGE APPLICATION (SPA) CLIENT ROUTE FALLBACK ──────────────────
+
+@app.get("/{full_path:path}")
+async def catch_all_spa_fallback(full_path: str):
+    """
+    Client-side routing fallback for React Single-Page Application (SPA).
+    - If path matches a physical static asset file inside frontend/dist, serves it.
+    - If path starts with api/, docs, or openapi.json, raises 404 (prevents masking missing API routes).
+    - All other routes fall back to index.html for client-side routing (e.g. /courtroom, /forensics).
+    """
+    if full_path.startswith(("api/", "api", "docs", "openapi.json")):
+        raise HTTPException(status_code=404, detail=f"API endpoint not found: /{full_path}")
+
+    # Prevent directory traversal attacks
+    safe_path = os.path.abspath(os.path.join(FRONTEND_DIST, full_path))
+    if safe_path.startswith(os.path.abspath(FRONTEND_DIST)) and os.path.isfile(safe_path):
+        return FileResponse(safe_path)
+
+    index_file = os.path.join(FRONTEND_DIST, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file, media_type="text/html")
+
+    raise HTTPException(status_code=404, detail="Page not found")
 
 
 if __name__ == "__main__":

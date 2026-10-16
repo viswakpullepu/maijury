@@ -19,6 +19,8 @@ class TestAutonomousDaemonWorkflow(unittest.TestCase):
 
     def setUp(self):
         self.daemon = BackgroundMonitorDaemon(poll_interval_seconds=1)
+        self.daemon.gmail.is_live = False
+        self.daemon.gmail.service = None
         self.daemon.gmail.sent_outbox.clear()
 
     def test_01_scam_email_triggers_oauth_alert_send(self):
