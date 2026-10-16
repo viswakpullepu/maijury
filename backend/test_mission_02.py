@@ -69,6 +69,67 @@ class TestMission02Deliverables(unittest.TestCase):
         self.assertGreaterEqual(trial["summary"]["risk_score"], 95.0)
         self.assertGreaterEqual(trial["summary"]["fatal_vetos"], 1)
 
+    def test_01b_pe_structure_and_mime_deception(self):
+        """Req 2: Verify in-memory PE structure forensic extraction and MIME type deception detection."""
+        # Craft a PE binary with valid DOS stub and NT headers (PE\0\0, AMD64, Console)
+        dos_header = bytearray(128)
+        dos_header[0:2] = b"MZ"
+        dos_header[0x3C:0x40] = (128).to_bytes(4, "little")  # e_lfanew = 128
+        
+        nt_headers = bytearray(128)
+        nt_headers[0:4] = b"PE\x00\x00"
+        nt_headers[4:6] = (0x8664).to_bytes(2, "little")     # Machine = AMD64 (x64 64-bit)
+        nt_headers[24:26] = (0x020b).to_bytes(2, "little")   # Magic = PE32+
+        nt_headers[92:94] = (3).to_bytes(2, "little")        # Subsystem = Windows CUI (Console)
+        
+        pe_payload = bytes(dos_header + nt_headers)
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Quarterly_Financial_Report.pdf",
+            payload=pe_payload,
+            declared_ct="application/pdf"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertEqual(report["risk_score"], 100.0)
+        self.assertIn("Renamed Executable Payload", report["classification"])
+        self.assertIn("application/x-dosexec", report["detected_type"])
+        evidence_str = " ".join(report["evidence"])
+        self.assertIn("AMD64", evidence_str)
+        self.assertIn("MIME Type Deception", evidence_str)
+
+    def test_01c_polyglot_pdf_pe_detection(self):
+        """Req 2: Detect weaponized PE/PDF polyglot dropper."""
+        pdf_prefix = b"%PDF-1.5\r\n1 0 obj\r\n<< /Length 100 >>\r\nstream\r\n"
+        
+        dos_part = bytearray(64)
+        dos_part[0:2] = b"MZ"
+        dos_part[0x3C:0x40] = (64).to_bytes(4, "little")  # pe_offset = 64
+        pe_part = b"PE\x00\x00" + b"\x00" * 32
+        
+        polyglot = pdf_prefix + bytes(dos_part + pe_part) + b"\r\nendstream\r\nendobj\r\n%%EOF"
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Encrypted_Scanned_Doc.pdf",
+            payload=polyglot,
+            declared_ct="application/pdf"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertEqual(report["risk_score"], 100.0)
+        self.assertIn("Polyglot", report["classification"])
+        self.assertIn("application/x-dosexec", report["detected_type"])
+
+    def test_01d_invalid_pdf_header_spoofing(self):
+        """Req 2: Detect non-PDF binary masquerading as PDF without valid %PDF- magic signature."""
+        junk_payload = b"RANDOM_NON_PDF_BINARY_DATA" * 20
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Fake_Invoice.pdf",
+            payload=junk_payload,
+            declared_ct="application/pdf"
+        )
+        self.assertEqual(report["risk_level"], "SUSPICIOUS")
+        self.assertFalse(report["is_safe"])
+        self.assertIn("Invalid or Corrupted PDF Header", report["classification"])
+
     def test_02_macro_enabled_office_docm(self):
         """Req 3: Static detection rules for macro-enabled Office documents."""
         bio = io.BytesIO()

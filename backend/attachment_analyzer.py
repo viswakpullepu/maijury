@@ -24,14 +24,24 @@ class AttachmentAnalyzer:
     MAGIC_SIGNATURES: List[Tuple[bytes, str, str]] = [
         # (magic_bytes, mime_type, description)
         (b"MZ", "application/x-dosexec", "Windows Portable Executable (EXE/DLL/SCR)"),
+        (b"ZM", "application/x-dosexec", "DOS Executable (ZM Alternate Header)"),
         (b"\x7fELF", "application/x-executable", "Linux ELF Executable Binary"),
         (b"\xfe\xed\xfa\xce", "application/x-mach-binary", "macOS Mach-O Binary (32-bit)"),
         (b"\xfe\xed\xfa\xcf", "application/x-mach-binary", "macOS Mach-O Binary (64-bit)"),
         (b"\xce\xfa\xed\xfe", "application/x-mach-binary", "macOS Mach-O Reverse Binary"),
         (b"\xcf\xfa\xed\xfe", "application/x-mach-binary", "macOS Mach-O Reverse Binary (64-bit)"),
+        (b"\xca\xfe\xba\xbe", "application/x-mach-binary", "macOS Mach-O Universal / Java Bytecode"),
+        (b"\xbe\xba\xfe\xca", "application/x-mach-binary", "macOS Mach-O Universal (Little-Endian)"),
+        (b"\x4c\x00\x00\x00\x01\x14\x02\x00", "application/x-ms-shortcut", "Windows Shell Shortcut (.lnk)"),
+        (b"ITSF", "application/vnd.ms-htmlhelp", "Compiled HTML Help (.chm)"),
         (b"%PDF", "application/pdf", "Adobe Portable Document Format (PDF)"),
         (b"PK\x03\x04", "application/zip", "ZIP Archive or OpenXML Package"),
         (b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1", "application/x-ole-storage", "Microsoft OLE Compound File (Legacy Office)"),
+        (b"Rar!\x1a\x07", "application/x-rar-compressed", "RAR Compressed Archive"),
+        (b"7z\xbc\xaf\x27\x1c", "application/x-7z-compressed", "7-Zip Compressed Archive"),
+        (b"\x1f\x8b", "application/gzip", "GZIP Compressed Archive"),
+        (b"BZh", "application/x-bzip2", "BZIP2 Compressed Archive"),
+        (b"MSCF", "application/vnd.ms-cab-compressed", "Microsoft Cabinet File (.cab)"),
         (b"\x89PNG\r\n\x1a\n", "image/png", "PNG Image File"),
         (b"\xff\xd8\xff", "image/jpeg", "JPEG Image File"),
         (b"GIF87a", "image/gif", "GIF Image File (87a)"),
@@ -46,10 +56,297 @@ class AttachmentAnalyzer:
         "application/x-executable",
         "application/x-mach-binary",
         "application/x-sh",
+        "application/x-ms-shortcut",
+        "application/vnd.ms-htmlhelp",
+        "application/x-msdownload",
+        "application/x-msdos-program",
+        "application/x-bat",
     }
 
     IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg", ".ico"}
     BENIGN_DOC_EXTENSIONS = {".pdf", ".docx", ".xlsx", ".pptx", ".txt", ".csv"}
+    OFFICE_EXTENSIONS = {
+        ".docx", ".docm", ".dotm", ".dotx", ".docb",
+        ".xlsx", ".xlsm", ".xltm", ".xltx", ".xlam",
+        ".pptx", ".pptm", ".potm", ".potx", ".ppsx",
+        ".doc", ".dot", ".xls", ".xlt", ".xla", ".ppt", ".pot", ".pps",
+        ".rtf"
+    }
+
+    STATIC_RULES: List[Dict[str, Any]] = [
+        {
+            "rule_id": "RULE_MACRO_DECEPTIVE_EXTENSION",
+            "name": "Deceptive Macro Injection in Non-Macro OOXML Container",
+            "category": "MACRO_DETECTION",
+            "severity": "MALICIOUS",
+            "base_score": 98.0,
+            "mitre_attack": "T1036.008",
+            "description": "Detects VBA macro parts (vbaProject.bin/macrosheets) concealed inside standard non-macro Office extensions (.docx/.xlsx/.pptx), violating OOXML specifications."
+        },
+        {
+            "rule_id": "RULE_MACRO_WEAPONIZED_EXECUTION",
+            "name": "Weaponized Macro with Auto-Execution and Shell/OS Primitives",
+            "category": "MACRO_DETECTION",
+            "severity": "MALICIOUS",
+            "base_score": 98.0,
+            "mitre_attack": "T1059.005",
+            "description": "Identifies auto-executing macros (AutoOpen, Document_Open, Workbook_Open) paired with system execution primitives (Shell, WScript.Shell, PowerShell, cmd.exe, URLDownloadToFile)."
+        },
+        {
+            "rule_id": "RULE_MACRO_LOW_LEVEL_API_INJECTION",
+            "name": "Macro Low-Level Native Memory & Process Injection API Abuse",
+            "category": "MACRO_DETECTION",
+            "severity": "MALICIOUS",
+            "base_score": 99.0,
+            "mitre_attack": "T1055",
+            "description": "Detects macro code declaring or calling low-level Win32 memory manipulation APIs (VirtualAlloc, RtlMoveMemory, CreateThread, WriteProcessMemory, QueueUserAPC)."
+        },
+        {
+            "rule_id": "RULE_MACRO_EXCEL4_XLM",
+            "name": "Excel 4.0 (XLM) Macro Sheet / Formula Injection",
+            "category": "MACRO_DETECTION",
+            "severity": "MALICIOUS",
+            "base_score": 96.0,
+            "mitre_attack": "T1137",
+            "description": "Detects legacy Excel 4.0 / XLM macro sheets (xl/macrosheets/, macrosheet.xml) or execution formulas (EXEC, CALL, REGISTER, URLDownloadToFileA) used to evade VBA scanners."
+        },
+        {
+            "rule_id": "RULE_MACRO_OBFUSCATION_EVASION",
+            "name": "Anti-Static Analysis Obfuscation in Macro Stream",
+            "category": "MACRO_DETECTION",
+            "severity": "MALICIOUS",
+            "base_score": 92.0,
+            "mitre_attack": "T1027",
+            "description": "Detects high-density character concatenation (Chr$, ChrW), string reversal (StrReverse), multi-nested token replacement, or XOR decoding loops in macro code."
+        },
+        {
+            "rule_id": "RULE_MACRO_GENERAL_CONTAINER",
+            "name": "Macro-Enabled Office Document Container (Organizational Policy)",
+            "category": "MACRO_DETECTION",
+            "severity": "SUSPICIOUS",
+            "base_score": 55.0,
+            "mitre_attack": "T1059.005",
+            "description": "Flags documents containing embedded VBA macros without overt malicious execution signatures as suspicious under zero-trust operational baselines."
+        },
+        {
+            "rule_id": "RULE_MACRO_LEGACY_OLE_WEAPONIZED",
+            "name": "Legacy OLE Compound Document with Weaponized Macros",
+            "category": "MACRO_DETECTION",
+            "severity": "MALICIOUS",
+            "base_score": 95.0,
+            "mitre_attack": "T1137.001",
+            "description": "Identifies legacy OLE Binary Compound Files (.doc, .xls, .ppt) containing auto-launching VBA macro streams invoking operating system commands."
+        },
+        {
+            "rule_id": "RULE_MACRO_LEGACY_OLE_CONTAINER",
+            "name": "Legacy OLE Compound Document with Embedded Macro Streams",
+            "category": "MACRO_DETECTION",
+            "severity": "SUSPICIOUS",
+            "base_score": 50.0,
+            "mitre_attack": "T1059.005",
+            "description": "Flags legacy OLE binary documents containing macro streams as suspicious for administrative policy review."
+        },
+        {
+            "rule_id": "RULE_STRUCT_REMOTE_TEMPLATE_INJECTION",
+            "name": "Remote Template Injection via OpenXML External Relationship",
+            "category": "SUSPICIOUS_DOCUMENT_STRUCTURE",
+            "severity": "MALICIOUS",
+            "base_score": 96.0,
+            "mitre_attack": "T1221",
+            "description": "Detects document relationships (_rels/*.rels) specifying TargetMode='External' and attachedTemplate to fetch external weaponized templates (CVE-2017-0199 vector)."
+        },
+        {
+            "rule_id": "RULE_STRUCT_PROTOCOL_HANDLER_INJECTION",
+            "name": "Malicious URI Protocol Handler Exploit Structure (Follina MSDT / MHTML)",
+            "category": "SUSPICIOUS_DOCUMENT_STRUCTURE",
+            "severity": "MALICIOUS",
+            "base_score": 98.0,
+            "mitre_attack": "T1221",
+            "description": "Detects document relationships or hyperlinks abusing operating system protocol handlers (ms-msdt:, search-ms:, mhtml:) to trigger remote code execution (CVE-2022-30190)."
+        },
+        {
+            "rule_id": "RULE_STRUCT_EMBEDDED_EXECUTABLE_PACKAGE",
+            "name": "Embedded Executable Binary or OLE Package Dropper",
+            "category": "SUSPICIOUS_DOCUMENT_STRUCTURE",
+            "severity": "MALICIOUS",
+            "base_score": 98.0,
+            "mitre_attack": "T1027.005",
+            "description": "Identifies embedded executable files (.exe, .scr, .vbs, .bat, .ps1, .lnk, .iso) or OLE Package droppers within document storage structures (word/embeddings/)."
+        },
+        {
+            "rule_id": "RULE_STRUCT_EQUATION_EDITOR_EXPLOIT",
+            "name": "Microsoft Equation Editor Exploit Structure (CVE-2017-11882 / CVE-2018-0802)",
+            "category": "SUSPICIOUS_DOCUMENT_STRUCTURE",
+            "severity": "MALICIOUS",
+            "base_score": 100.0,
+            "mitre_attack": "T1203",
+            "description": "Identifies Microsoft Equation Editor CLSID {0002CE02-0000-0000-C000-000000000046} or Equation.3 objects weaponized with stack buffer overflow shellcode."
+        },
+        {
+            "rule_id": "RULE_STRUCT_DDE_COMMAND_EXECUTION",
+            "name": "Dynamic Data Exchange (DDE / DDEAUTO) Field Command Execution",
+            "category": "SUSPICIOUS_DOCUMENT_STRUCTURE",
+            "severity": "MALICIOUS",
+            "base_score": 95.0,
+            "mitre_attack": "T1559.002",
+            "description": "Detects Dynamic Data Exchange (DDE/DDEAUTO) field codes embedded in document XML to spawn system processes without macro requirements."
+        },
+        {
+            "rule_id": "RULE_STRUCT_MALICIOUS_RTF_OBJECT",
+            "name": "Weaponized RTF Document with Embedded Exploit / Malformed Structure",
+            "category": "SUSPICIOUS_DOCUMENT_STRUCTURE",
+            "severity": "MALICIOUS",
+            "base_score": 96.0,
+            "mitre_attack": "T1203",
+            "description": "Identifies Rich Text Format (RTF) documents containing embedded OLE objects (Equation Editor, droppers) or malformed \\bin length headers (CVE-2010-3333)."
+        },
+        {
+            "rule_id": "RULE_STRUCT_ENCRYPTED_OFFICE_STORAGE",
+            "name": "Password-Protected / Encrypted Compound Document Storage Evasion",
+            "category": "SUSPICIOUS_DOCUMENT_STRUCTURE",
+            "severity": "SUSPICIOUS",
+            "base_score": 60.0,
+            "mitre_attack": "T1027",
+            "description": "Detects OLE compound documents containing EncryptedPackage or EncryptionInfo streams masquerading as plain unencrypted documents to blind gateway scanners."
+        },
+        {
+            "rule_id": "RULE_STRUCT_ACTIVEX_CONTROL_CONTAINER",
+            "name": "ActiveX Binary Control Container Structure",
+            "category": "SUSPICIOUS_DOCUMENT_STRUCTURE",
+            "severity": "MALICIOUS",
+            "base_score": 90.0,
+            "mitre_attack": "T1221",
+            "description": "Identifies ActiveX binary control parts (word/activeX/) paired with external relationships or remote payload references (CVE-2021-40444 vector)."
+        },
+        {
+            "rule_id": "RULE_STRUCT_PDF_ACTIVE_OBJECT",
+            "name": "PDF Weaponized Active Execution Dictionaries (/Launch, /JS, /OpenAction)",
+            "category": "SUSPICIOUS_DOCUMENT_STRUCTURE",
+            "severity": "MALICIOUS",
+            "base_score": 95.0,
+            "mitre_attack": "T1059",
+            "description": "Detects dangerous interactive PDF dictionary keys (/Launch, /JavaScript, /JS, /OpenAction, /EmbeddedFiles) that execute code on view."
+        },
+        {
+            "rule_id": "RULE_CLEAN_PLAIN_DOCX",
+            "name": "Certified Genuine Plain OpenXML Document (Macro-Free)",
+            "category": "BENIGN_CERTIFICATION",
+            "severity": "SAFE",
+            "base_score": 0.0,
+            "mitre_attack": "N/A",
+            "description": "Certified clean OpenXML document package with zero macros, zero external template references, zero embedded binaries, and zero DDE fields."
+        },
+        {
+            "rule_id": "RULE_CLEAN_VENDOR_PDF_INVOICE",
+            "name": "Certified Genuine Vendor PDF Invoice / Document",
+            "category": "BENIGN_CERTIFICATION",
+            "severity": "SAFE",
+            "base_score": 0.0,
+            "mitre_attack": "N/A",
+            "description": "Certified clean ISO 32000-1 PDF document with zero active scripting or launch triggers."
+        },
+        {
+            "rule_id": "RULE_CLEAN_IMAGE_ARCHIVE",
+            "name": "Certified Benign Image Container Archive",
+            "category": "BENIGN_CERTIFICATION",
+            "severity": "SAFE",
+            "base_score": 0.0,
+            "mitre_attack": "N/A",
+            "description": "Certified benign ZIP container containing exclusively non-executable raster graphic media."
+        }
+    ]
+
+    @classmethod
+    def get_rule_catalog(cls) -> List[Dict[str, Any]]:
+        """Returns the full catalog of active static detection rules."""
+        return cls.STATIC_RULES
+
+    @classmethod
+    def inspect_pe_header(cls, payload: bytes) -> Optional[Dict[str, Any]]:
+        """
+        Safely inspects PE/MZ headers in memory without execution.
+        Verifies DOS header and locates NT headers (PE\\0\\0).
+        """
+        if len(payload) < 64:
+            return None
+        if not (payload.startswith(b"MZ") or payload.startswith(b"ZM")):
+            return None
+
+        # Read e_lfanew at 0x3C (offset to PE header)
+        pe_offset = int.from_bytes(payload[0x3C:0x40], "little")
+        if pe_offset <= 0 or pe_offset + 24 > len(payload):
+            return {
+                "is_valid_pe": False,
+                "format": "DOS Executable / MZ Stub",
+                "pe_offset": pe_offset
+            }
+
+        pe_sig = payload[pe_offset:pe_offset+4]
+        if pe_sig != b"PE\x00\x00":
+            return {
+                "is_valid_pe": False,
+                "format": "MZ Header (Non-PE or Corrupted PE Signature)",
+                "pe_offset": pe_offset
+            }
+
+        # Machine architecture
+        machine = int.from_bytes(payload[pe_offset+4:pe_offset+6], "little")
+        arch_map = {
+            0x014c: "Intel 386 (x86 32-bit)",
+            0x8664: "AMD64 (x64 64-bit)",
+            0x0200: "Intel Itanium (IA-64)",
+            0xaa64: "ARM64 (AArch64)",
+            0x01c0: "ARM Little Endian",
+        }
+        arch = arch_map.get(machine, f"Architecture 0x{machine:04x}")
+
+        # Subsystem from Optional Header (if present)
+        subsystem_str = "Unknown"
+        if pe_offset + 94 <= len(payload):
+            subsystem_val = int.from_bytes(payload[pe_offset+92:pe_offset+94], "little")
+            subsystem_map = {
+                1: "Native / Driver",
+                2: "Windows GUI (Windowed Application)",
+                3: "Windows CUI (Command-Line Console)",
+                7: "POSIX CUI",
+                9: "Windows CE GUI",
+                10: "EFI Application",
+            }
+            subsystem_str = subsystem_map.get(subsystem_val, f"Subsystem ({subsystem_val})")
+
+        return {
+            "is_valid_pe": True,
+            "format": f"Windows PE Binary ({arch})",
+            "arch": arch,
+            "pe_offset": pe_offset,
+            "subsystem": subsystem_str
+        }
+
+    @classmethod
+    def detect_embedded_pe(cls, payload: bytes) -> Optional[Dict[str, Any]]:
+        """
+        Detects embedded MZ/PE headers anywhere within non-executable containers (e.g. Polyglot PDF).
+        """
+        if len(payload) < 128:
+            return None
+        if payload.startswith(b"MZ") or payload.startswith(b"ZM"):
+            return None
+
+        pos = 0
+        while True:
+            idx = payload.find(b"MZ", pos)
+            if idx == -1:
+                break
+            if idx + 64 <= len(payload):
+                pe_offset = int.from_bytes(payload[idx+0x3C:idx+0x40], "little")
+                if 0 < pe_offset < 1024 and idx + pe_offset + 4 <= len(payload):
+                    if payload[idx+pe_offset:idx+pe_offset+4] == b"PE\x00\x00":
+                        return {
+                            "offset": idx,
+                            "pe_offset": pe_offset
+                        }
+            pos = idx + 2
+        return None
 
     @classmethod
     def detect_magic_type(cls, payload: bytes) -> Tuple[str, str, str]:
@@ -134,26 +431,57 @@ class AttachmentAnalyzer:
         evidence.append(f"Magic Signature: [{magic_hex}] ('{magic_ascii}') -> {detected_desc}")
 
         # ── 1. RENAMED EXECUTABLE MASQUERADE (MZ / PE HEADER CHECK) ──
-        is_pe = payload[:2] == b"MZ"
+        is_pe = payload[:2] in (b"MZ", b"ZM")
         is_elf = payload[:4] == b"\x7fELF"
-        is_macho = detected_mime == "application/x-mach-binary"
+        is_macho = detected_mime == "application/x-mach-binary" or payload[:4] in (
+            b"\xfe\xed\xfa\xce", b"\xfe\xed\xfa\xcf", b"\xce\xfa\xed\xfe", b"\xcf\xfa\xed\xfe", b"\xca\xfe\xba\xbe", b"\xbe\xba\xfe\xca"
+        )
+        is_lnk = payload[:8] == b"\x4c\x00\x00\x00\x01\x14\x02\x00"
+        is_chm = payload[:4] == b"ITSF"
+        is_sh = payload[:2] == b"#!" and detected_mime == "application/x-sh"
 
-        if is_pe or is_elf or is_macho:
-            exe_type = "Windows Portable Executable (MZ)" if is_pe else ("Linux ELF" if is_elf else "macOS Mach-O")
-            if ext in cls.BENIGN_DOC_EXTENSIONS or ext in cls.IMAGE_EXTENSIONS or ext not in [".exe", ".dll", ".sys", ".scr"]:
+        is_any_executable = is_pe or is_elf or is_macho or is_lnk or is_chm or is_sh
+
+        if is_any_executable:
+            pe_info = cls.inspect_pe_header(payload) if is_pe else None
+            if is_pe:
+                if pe_info and pe_info.get("is_valid_pe"):
+                    exe_type = f"Windows Portable Executable (MZ - {pe_info['arch']})"
+                else:
+                    exe_type = "Windows Portable Executable (MZ)"
+            elif is_elf:
+                exe_type = "Linux ELF"
+            elif is_macho:
+                exe_type = "macOS Mach-O"
+            elif is_lnk:
+                exe_type = "Windows Shell Shortcut (.lnk)"
+            elif is_chm:
+                exe_type = "Compiled HTML Help (.chm)"
+            else:
+                exe_type = "Unix Shell Script"
+
+            declared_lower = declared_ct.lower() if declared_ct else ""
+            is_declared_benign = any(d in declared_lower for d in ["pdf", "word", "document", "sheet", "presentation", "text", "image", "jpeg", "png"])
+            is_ext_benign = ext in cls.BENIGN_DOC_EXTENSIONS or ext in cls.IMAGE_EXTENSIONS or ext not in [".exe", ".dll", ".sys", ".scr", ".elf", ".dylib", ".so", ".sh", ".lnk", ".chm"]
+
+            if is_ext_benign or is_declared_benign:
                 risk_score = 100.0
                 risk_level = "MALICIOUS"
                 is_safe = False
-                classification = f"Renamed Executable Payload ({exe_type} Masquerading as {ext.upper()})"
+                classification = f"Renamed Executable Payload ({exe_type} Masquerading as {ext.upper() if ext else 'Document'})"
                 evidence.append(
                     f"CRITICAL MISMATCH: Filename '{fn}' declares extension '{ext}', but file header is {exe_type} (Magic bytes: {magic_hex[:5]})."
                 )
-                if declared_ct and not any(x in declared_ct.lower() for x in ["octet-stream", "x-dosexec", "x-msdownload"]):
+                if pe_info and pe_info.get("is_valid_pe"):
+                    evidence.append(
+                        f"PE Structure Forensic: Valid NT Headers verified at offset 0x{pe_info['pe_offset']:X} | Architecture: {pe_info['arch']} | Subsystem: {pe_info['subsystem']}."
+                    )
+                if declared_ct and not any(x in declared_lower for x in ["octet-stream", "x-dosexec", "x-msdownload", "x-executable"]):
                     evidence.append(
                         f"MIME Type Deception: Declared Content-Type '{declared_ct}' contradicts detected '{detected_mime}'."
                     )
                 reasons.append(
-                    f"The attachment is a compiled executable binary masquerading as a {ext.upper()} document. "
+                    f"The attachment is a compiled executable binary masquerading as a {ext.upper() if ext else 'document'} file. "
                     f"This is an unambiguous malicious delivery technique (MITRE ATT&CK T1036.008 File Type Mismatch Masquerade) "
                     f"designed to trick users into executing payload code when opened."
                 )
@@ -203,8 +531,8 @@ class AttachmentAnalyzer:
                 evidence, reasons, is_safe
             )
 
-        # ── 3. STATIC OFFICE DOCUMENT INSPECTION (OOXML & OLE) ──
-        if ext in [".docx", ".docm", ".xlsx", ".xlsm", ".pptx", ".pptm", ".doc", ".xls", ".ppt"] or detected_mime in ["application/zip", "application/x-ole-storage"]:
+        # ── 3. STATIC OFFICE DOCUMENT INSPECTION (OOXML & OLE & RTF) ──
+        if ext in cls.OFFICE_EXTENSIONS or detected_mime in ["application/zip", "application/x-ole-storage", "application/rtf"] or payload.startswith((b"PK\x03\x04", b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1", b"{\\rtf")):
             office_res = cls._inspect_office_document(fn, ext, payload, declared_ct)
             if office_res:
                 return office_res
@@ -403,6 +731,42 @@ class AttachmentAnalyzer:
 
         evidence: List[str] = [f"Magic Signature: [{magic_hex}] -> {detected_desc}"]
         reasons: List[str] = []
+
+        # 1. Verify mandatory PDF magic header (%PDF-)
+        has_pdf_header = b"%PDF-" in payload[:1024]
+        if not has_pdf_header:
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, detected_mime,
+                magic_hex, magic_ascii, "SUSPICIOUS", 60.0,
+                "Invalid or Corrupted PDF Header (MIME/Extension Mismatch)",
+                evidence + [
+                    "CRITICAL HEADER ANOMALY: Missing mandatory '%PDF-' signature in file header.",
+                    f"Detected magic signature [{magic_hex}] corresponds to '{detected_desc}'."
+                ],
+                reasons + [
+                    "Attachment declares a .pdf extension or application/pdf MIME type, but does not contain a valid "
+                    "ISO 32000-1 PDF header (%PDF-). This indicates file extension spoofing or binary corruption."
+                ],
+                False
+            )
+
+        # 2. Check for embedded PE polyglot (PE executable hidden within PDF container)
+        embedded_pe = cls.detect_embedded_pe(payload)
+        if embedded_pe:
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/x-dosexec",
+                magic_hex, magic_ascii, "MALICIOUS", 100.0,
+                "Weaponized PE/PDF Polyglot Dropper",
+                evidence + [
+                    f"Polyglot Threat: Embedded Windows PE (MZ) binary detected at offset {embedded_pe['offset']}.",
+                    f"Hidden PE Header at offset 0x{embedded_pe['pe_offset']:X} inside document stream."
+                ],
+                reasons + [
+                    "Attachment is a weaponized polyglot carrier. It presents a PDF header to document viewers "
+                    "while embedding a Windows PE executable payload (MITRE ATT&CK T1027 Obfuscated Files)."
+                ],
+                False
+            )
 
         # Scan for dangerous PDF dictionary keys
         pdf_checks = {
@@ -698,7 +1062,9 @@ class AttachmentAnalyzer:
         classification: str,
         evidence: List[str],
         reasons: List[str],
-        is_safe: bool
+        is_safe: bool,
+        triggered_rules: Optional[List[Dict[str, Any]]] = None,
+        mitre_techniques: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         return {
             "filename": filename,
@@ -713,7 +1079,9 @@ class AttachmentAnalyzer:
             "risk_score": round(risk_score, 1),
             "classification": classification,
             "evidence": evidence,
-            "reasons": " ".join(reasons),
+            "reasons": " ".join(reasons) if isinstance(reasons, list) else str(reasons),
             "is_safe": is_safe,
-            "zero_execution_guarantee": "Analyzed entirely in-memory via static byte inspection. No file was opened, mounted, rendered, or executed."
+            "zero_execution_guarantee": "Analyzed entirely in-memory via static byte inspection. No file was opened, mounted, rendered, or executed.",
+            "triggered_rules": triggered_rules or [],
+            "mitre_techniques": mitre_techniques or []
         }
