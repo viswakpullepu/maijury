@@ -34,8 +34,27 @@ class GmailClient:
     LABEL_SUSPICIOUS = "MAILJURY_SUSPICIOUS"
 
     def __init__(self, credentials_path: Optional[str] = None, token_path: Optional[str] = None):
-        self.credentials_path = credentials_path or os.getenv("GMAIL_CREDENTIALS_PATH", "credentials.json")
-        self.token_path = token_path or os.getenv("GMAIL_TOKEN_PATH", "token.json")
+        # Resolve credentials path from explicit arg, env var, or candidate locations
+        backend_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(backend_dir)
+        candidates_cred = [
+            credentials_path,
+            os.getenv("GMAIL_CREDENTIALS_PATH"),
+            "credentials.json",
+            os.path.join(backend_dir, "credentials.json"),
+            os.path.join(root_dir, "credentials.json")
+        ]
+        self.credentials_path = next((p for p in candidates_cred if p and os.path.exists(p)), "credentials.json")
+
+        candidates_token = [
+            token_path,
+            os.getenv("GMAIL_TOKEN_PATH"),
+            "token.json",
+            os.path.join(backend_dir, "token.json"),
+            os.path.join(root_dir, "token.json")
+        ]
+        self.token_path = next((p for p in candidates_token if p and os.path.exists(p)), "token.json")
+
         self.service = None
         self.is_live = False
         self.simulated_inbox: List[Dict[str, Any]] = []
