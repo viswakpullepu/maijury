@@ -579,7 +579,463 @@ class AttachmentAnalyzer:
 
     @classmethod
     def _inspect_office_document(cls, fn: str, ext: str, payload: bytes, declared_ct: str) -> Optional[Dict[str, Any]]:
-        """Safely inspects OOXML (ZIP-based) and OLE Compound Document structures."""
+        """Safely dispatches to specialized in-memory inspectors for OOXML, OLE, and RTF structures."""
+        # Case A: Modern OpenXML (ZIP Container)
+        if payload.startswith(b"PK\x03\x04"):
+            res = cls._inspect_ooxml_document(fn, ext, payload, declared_ct)
+            if res:
+                return res
+
+        # Case B: Legacy OLE Compound Document (D0 CF 11 E0)
+        if payload.startswith(b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"):
+            res = cls._inspect_ole_document(fn, ext, payload, declared_ct)
+            if res:
+                return res
+
+        # Case C: Rich Text Format Document ({\rtf)
+        if payload.startswith(b"{\\rtf") or ext == ".rtf":
+            res = cls._inspect_rtf_document(fn, ext, payload, declared_ct)
+            if res:
+                return res
+
+        return None
+
+    @classmethod
+    def _inspect_ooxml_document(cls, fn: str, ext: str, payload: bytes, declared_ct: str) -> Optional[Dict[str, Any]]:
+        """Safely inspects modern OpenXML (ZIP-based) Office document structures in memory."""
+        size_bytes = len(payload)
+        sha256 = hashlib.sha256(payload).hexdigest() if payload else ""
+        detected_mime, detected_desc, magic_hex = cls.detect_magic_type(payload)
+        magic_ascii = "".join(chr(b) if 32 <= b <= 126 else "." for b in payload[:16])
+
+        try:
+            bio = io.BytesIO(payload)
+            with zipfile.ZipFile(bio, "r") as zf:
+                namelist = zf.namelist()
+                is_ooxml = (
+                    "[Content_Types].xml" in namelist
+                    or any(n.startswith(("word/", "xl/", "ppt/")) for n in namelist)
+                    or ext in [".docx", ".docm", ".dotm", ".dotx", ".xlsx", ".xlsm", ".xltm", ".xltx", ".xlam", ".pptx", ".pptm", ".potm", ".potx"]
+                )
+                if not is_ooxml:
+                    return None
+
+                evidence: List[str] = [
+                    f"Magic Signature: [{magic_hex}] -> {detected_desc}",
+                    f"OOXML Container Catalog: {len(namelist)} internal parts indexed"
+                ]
+                reasons: List[str] = []
+                triggered_rules: List[Dict[str, Any]] = []
+                mitre_techniques: List[str] = []
+
+                # ── RULE-STRUCT-02: Protocol Handler Injection (CVE-2022-30190 Follina / MHTML / Search-MS) ──
+                for n in namelist:
+                    if n.endswith(".rels"):
+                        try:
+                            rels_content = zf.read(n).decode("utf-8", errors="ignore")
+                            for proto in ["ms-msdt:", "search-ms:", "mhtml:", "dav:"]:
+                                if proto in rels_content.lower():
+                                    match = re.search(r'Target="([^"]*' + re.escape(proto) + r'[^"]*)"', rels_content, re.I)
+                                    target_proto = match.group(1) if match else proto
+                                    rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_PROTOCOL_HANDLER_INJECTION"), None)
+                                    if rule:
+                                        triggered_rules.append(rule)
+                                        mitre_techniques.append(rule["mitre_attack"])
+                                    return cls._build_result(
+                                        fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-office.protocol-exploit",
+                                        magic_hex, magic_ascii, "MALICIOUS", 98.0,
+                                        f"Malicious Protocol Handler Exploit Structure ({ext.upper() if ext else 'DOC'})",
+                                        evidence + [
+                                            f"Protocol Handler Exploit Reference in '{n}': Target='{target_proto}'",
+                                            "Abuses OS URI scheme handler (CVE-2022-30190 Follina vector) to invoke ms-msdt / mhtml commands"
+                                        ],
+                                        reasons + [
+                                            "Document structure weaponizes an OS protocol handler (ms-msdt / search-ms / mhtml) "
+                                            "within relationship definitions to bypass macro security settings and achieve remote command execution."
+                                        ],
+                                        False,
+                                        triggered_rules,
+                                        mitre_techniques
+                                    )
+                        except Exception:
+                            pass
+
+                # ── RULE-STRUCT-01: Remote Template Injection (CVE-2017-0199) ──
+                has_external_template = False
+                template_target = ""
+                rel_with_template = ""
+                for n in namelist:
+                    if n.endswith(".rels"):
+                        try:
+                            rels_data = zf.read(n).decode("utf-8", errors="ignore")
+                            if 'TargetMode="External"' in rels_data and ("attachedTemplate" in rels_data or "template" in rels_data.lower()):
+                                has_external_template = True
+                                rel_with_template = n
+                                match = re.search(r'Target="([^"]+)"', rels_data)
+                                template_target = match.group(1) if match else "External SMB/HTTP Target"
+                                break
+                            elif 'TargetMode="External"' in rels_data and any(rels_data.lower().startswith(p) for p in ("http://", "https://", "\\\\", "file://", "ftp://")):
+                                has_external_template = True
+                                rel_with_template = n
+                                match = re.search(r'Target="([^"]+)"', rels_data)
+                                template_target = match.group(1) if match else "External Target"
+                                break
+                        except Exception:
+                            pass
+
+                if has_external_template:
+                    rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_REMOTE_TEMPLATE_INJECTION"), None)
+                    if rule:
+                        triggered_rules.append(rule)
+                        mitre_techniques.append(rule["mitre_attack"])
+                    return cls._build_result(
+                        fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-word.template-injection",
+                        magic_hex, magic_ascii, "MALICIOUS", 96.0,
+                        "Remote Template Injection Exploit Container",
+                        evidence + [
+                            f"External Template Reference in '{rel_with_template}': Target='{template_target}'",
+                            "TargetMode='External' attachedTemplate injection vector"
+                        ],
+                        reasons + [
+                            "Document weaponizes Office Template Injection (CVE-2017-0199 vector). "
+                            "Upon opening, the application will attempt to reach out to an external server to download a malicious template."
+                        ],
+                        False,
+                        triggered_rules,
+                        mitre_techniques
+                    )
+
+                # ── RULE-STRUCT-04: Equation Editor Exploit Structure (CVE-2017-11882 / CVE-2018-0802) ──
+                equation_editor_parts = []
+                for n in namelist:
+                    if "embeddings/" in n or n.startswith("embeddings/"):
+                        try:
+                            emb_bytes = zf.read(n)
+                            if (
+                                b"\x02\xce\x02\x00" in emb_bytes
+                                or b"Equation.3" in emb_bytes
+                                or b"0002CE02-0000-0000-C000-000000000046" in emb_bytes
+                                or b"0002ce02" in emb_bytes.lower()
+                            ):
+                                equation_editor_parts.append(n)
+                        except Exception:
+                            pass
+
+                if equation_editor_parts:
+                    rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_EQUATION_EDITOR_EXPLOIT"), None)
+                    if rule:
+                        triggered_rules.append(rule)
+                        mitre_techniques.append(rule["mitre_attack"])
+                    return cls._build_result(
+                        fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-office.ole-exploit",
+                        magic_hex, magic_ascii, "MALICIOUS", 100.0,
+                        "Equation Editor Exploit Structure (CVE-2017-11882 / CVE-2018-0802)",
+                        evidence + [
+                            f"Equation Editor Exploit Object (CLSID 0002CE02 / Equation.3) identified in: {', '.join(equation_editor_parts)}",
+                            "Exploits Microsoft Equation Editor (EQNEDT32.EXE) stack buffer overflow vulnerability"
+                        ],
+                        reasons + [
+                            "Document embeds weaponized OLE objects targeting Microsoft Equation Editor (CVE-2017-11882 / CVE-2018-0802). "
+                            "This exploit executes arbitrary code upon document opening without prompting the user with macro warnings."
+                        ],
+                        False,
+                        triggered_rules,
+                        mitre_techniques
+                    )
+
+                # ── RULE-STRUCT-03: Embedded Executable Objects / OLE Package Droppers ──
+                embedded_binaries = [n for n in namelist if re.search(r'embeddings/.*?\.(exe|bin|scr|vbs|bat|ps1|lnk|iso|cmd|wsf|cpl|msi|dll)$', n, re.I)]
+                embedded_packages = []
+                for n in namelist:
+                    if "embeddings/" in n and n not in embedded_binaries:
+                        try:
+                            emb_bytes = zf.read(n)
+                            if b"Package" in emb_bytes and (b"MZ" in emb_bytes or any(kw in emb_bytes.lower() for kw in [b".exe", b".scr", b".bat", b".vbs", b".ps1"])):
+                                embedded_packages.append(n)
+                        except Exception:
+                            pass
+
+                if embedded_binaries or embedded_packages:
+                    all_droppers = embedded_binaries + embedded_packages
+                    rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_EMBEDDED_EXECUTABLE_PACKAGE"), None)
+                    if rule:
+                        triggered_rules.append(rule)
+                        mitre_techniques.append(rule["mitre_attack"])
+                    return cls._build_result(
+                        fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-office.embedded-payload",
+                        magic_hex, magic_ascii, "MALICIOUS", 98.0,
+                        f"Embedded Executable Payload in Document Structure ({ext.upper() if ext else 'DOC'})",
+                        evidence + [
+                            f"Embedded executable binary / OLE dropper discovered: {', '.join(all_droppers)}",
+                            "Document structure bundles executable binaries intended for local extraction and execution"
+                        ],
+                        reasons + [
+                            "Document contains embedded executable code or OLE Package droppers (MITRE ATT&CK T1027.005). "
+                            "This structure is characteristic of dropper documents that deliver second-stage malware directly from container storage."
+                        ],
+                        False,
+                        triggered_rules,
+                        mitre_techniques
+                    )
+
+                # ── RULE-STRUCT-05: Dynamic Data Exchange (DDE / DDEAUTO) ──
+                xml_parts = [n for n in namelist if n.endswith(".xml") and ("document.xml" in n or "sheet" in n or "workbook" in n)]
+                dde_hits = []
+                for xp in xml_parts:
+                    try:
+                        xp_content = zf.read(xp).decode("utf-8", errors="ignore")
+                        if "DDEAUTO" in xp_content or (re.search(r'\bDDE\b', xp_content) and any(cmd in xp_content.lower() for cmd in ["cmd", "powershell", "cscript", "wscript", "mshta", "regsvr32", "certutil"])):
+                            cmd_matches = re.findall(r'(?:DDEAUTO|DDE)[^\"]*\"([^\"]+)\"', xp_content)
+                            dde_hits.append(f"{xp}: {cmd_matches[0] if cmd_matches else 'DDE execution directive'}")
+                    except Exception:
+                        pass
+
+                if dde_hits:
+                    rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_DDE_COMMAND_EXECUTION"), None)
+                    if rule:
+                        triggered_rules.append(rule)
+                        mitre_techniques.append(rule["mitre_attack"])
+                    return cls._build_result(
+                        fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-office.dde-exploit",
+                        magic_hex, magic_ascii, "MALICIOUS", 95.0,
+                        f"DDE Dynamic Data Exchange Command Execution ({ext.upper() if ext else 'DOC'})",
+                        evidence + [
+                            f"DDE / DDEAUTO execution field codes detected: {', '.join(dde_hits)}",
+                            "Abuses Dynamic Data Exchange IPC mechanism to spawn processes without macros"
+                        ],
+                        reasons + [
+                            "Document weaponizes Dynamic Data Exchange (DDE) field codes (MITRE ATT&CK T1559.002) "
+                            "to execute arbitrary system commands when document fields update, bypassing macro protection policies."
+                        ],
+                        False,
+                        triggered_rules,
+                        mitre_techniques
+                    )
+
+                # ── RULE-MACRO-04: Excel 4.0 (XLM) Macro Sheet Detection ──
+                xlm_parts = [n for n in namelist if "macrosheets/" in n or "macrosheet.xml" in n or "xl/macrosheet" in n]
+                xlm_formulas = []
+                for n in namelist:
+                    if n.endswith(".xml") and ("sheet" in n or "macro" in n):
+                        try:
+                            sheet_data = zf.read(n).decode("utf-8", errors="ignore")
+                            for kw in ["EXEC(", "CALL(", "REGISTER(", "URLDownloadToFileA", "HALT()", "ALERT("]:
+                                if kw.lower() in sheet_data.lower():
+                                    xlm_formulas.append(kw)
+                        except Exception:
+                            pass
+
+                if xlm_parts or (len(xlm_formulas) >= 2):
+                    rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_MACRO_EXCEL4_XLM"), None)
+                    if rule:
+                        triggered_rules.append(rule)
+                        mitre_techniques.append(rule["mitre_attack"])
+                    return cls._build_result(
+                        fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-excel.xlm-macro",
+                        magic_hex, magic_ascii, "MALICIOUS", 96.0,
+                        f"Weaponized Excel 4.0 (XLM) Macro Document ({ext.upper() if ext else 'XLS'})",
+                        evidence + [
+                            f"Excel 4.0 (XLM) legacy macro sheet container detected: {', '.join(xlm_parts) if xlm_parts else 'XML Formula Stream'}",
+                            f"XLM Execution Functions: {', '.join(set(xlm_formulas)) if xlm_formulas else 'EXEC/CALL/REGISTER primitives'}"
+                        ],
+                        reasons + [
+                            "Document weaponizes legacy Excel 4.0 (XLM) macro sheets (MITRE ATT&CK T1137). "
+                            "This attack vector evades traditional VBA macro inspection by storing executable formulas inside hidden spreadsheet cells."
+                        ],
+                        False,
+                        triggered_rules,
+                        mitre_techniques
+                    )
+
+                # ── RULE-MACRO-01 to RULE-MACRO-06: VBA Macro Inspection ──
+                vba_parts = [n for n in namelist if "vbaProject.bin" in n or "vbaData.xml" in n or "macros/" in n.lower()]
+                if vba_parts:
+                    # Deceptive docx carrying macro
+                    is_deceptive_docx = ext in [".docx", ".xlsx", ".pptx", ".dotx", ".xltx", ".potx"]
+
+                    # Inspect VBA code keywords safely in memory
+                    vba_bytes = b"".join(zf.read(p) for p in vba_parts if p in namelist)
+                    vba_lower = vba_bytes.lower()
+
+                    auto_triggers = [
+                        kw for kw in [
+                            b"AutoOpen", b"Auto_Open", b"Document_Open", b"DocumentOpen",
+                            b"Workbook_Open", b"AutoExec", b"AutoExit", b"Document_Close",
+                            b"DocumentClose", b"Workbook_BeforeClose", b"UserForm_Initialize",
+                            b"UserForm_Activate", b"InkPicture_Painted", b"Frame_Layout",
+                            b"App_WorkbookOpen", b"Workbook_Activate", b"Worksheet_Calculate"
+                        ] if kw.lower() in vba_lower
+                    ]
+
+                    exec_keywords = [
+                        kw for kw in [
+                            b"Shell", b"WScript.Shell", b"ShellExecute", b"powershell",
+                            b"pwsh", b"cmd.exe", b"URLDownloadToFile", b"URLDownloadToCacheFile",
+                            b"XMLHTTP", b"WinHttp", b"CreateObject", b"WinExec",
+                            b"CreateProcess", b"MSXML2.XMLHTTP", b"Microsoft.XMLHTTP",
+                            b"ADODB.Stream", b"cscript", b"wscript", b"mshta",
+                            b"rundll32", b"regsvr32", b"certutil", b"bitsadmin"
+                        ] if kw.lower() in vba_lower
+                    ]
+
+                    memory_apis = [
+                        kw for kw in [
+                            b"VirtualAlloc", b"VirtualAllocEx", b"RtlMoveMemory", b"CreateThread",
+                            b"WriteProcessMemory", b"QueueUserAPC", b"NtTestAlert", b"CallWindowProc",
+                            b"SetWindowLong", b"CallByName", b"HeapCreate", b"GetProcAddress", b"LoadLibrary"
+                        ] if kw.lower() in vba_lower
+                    ]
+
+                    has_obfuscation = (
+                        (vba_bytes.count(b"Chr(") + vba_bytes.count(b"Chr$(") + vba_bytes.count(b"ChrW(")) >= 5
+                        or b"strreverse" in vba_lower
+                        or vba_lower.count(b"replace(") >= 4
+                    )
+
+                    trigger_names = [t.decode('utf-8', errors='ignore') for t in auto_triggers]
+                    exec_names = [e.decode('utf-8', errors='ignore') for e in exec_keywords]
+                    mem_names = [m.decode('utf-8', errors='ignore') for m in memory_apis]
+
+                    if is_deceptive_docx:
+                        rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_MACRO_DECEPTIVE_EXTENSION"), None)
+                        if rule:
+                            triggered_rules.append(rule)
+                            mitre_techniques.append(rule["mitre_attack"])
+                        return cls._build_result(
+                            fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-office.vbamacro",
+                            magic_hex, magic_ascii, "MALICIOUS", 98.0,
+                            f"Deceptive Macro Injection in Non-Macro {ext.upper() if ext else 'DOC'}",
+                            evidence + [
+                                f"Embedded VBA Project Parts: {', '.join(vba_parts)}",
+                                f"Automated Launch Triggers: {', '.join(trigger_names) if trigger_names else 'None'}",
+                                f"System Execution APIs: {', '.join(exec_names) if exec_names else 'None'}"
+                            ],
+                            reasons + [
+                                f"CRITICAL SPECIFICATION VIOLATION: File extension '{ext}' strictly disallows embedded macros according to OOXML standards. "
+                                "Attacker injected a VBA macro project into a non-macro document to bypass email security filters and deceive the recipient."
+                            ],
+                            False,
+                            triggered_rules,
+                            mitre_techniques
+                        )
+
+                    if mem_names:
+                        rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_MACRO_LOW_LEVEL_API_INJECTION"), None)
+                        if rule:
+                            triggered_rules.append(rule)
+                            mitre_techniques.append(rule["mitre_attack"])
+                        return cls._build_result(
+                            fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-office.vbamacro",
+                            magic_hex, magic_ascii, "MALICIOUS", 99.0,
+                            f"Macro with Low-Level Native Memory API Execution ({ext.upper() if ext else 'DOC'})",
+                            evidence + [
+                                f"Embedded VBA Project Parts: {', '.join(vba_parts)}",
+                                f"Low-Level Win32 Memory & Process APIs: {', '.join(mem_names)}",
+                                f"Automated Launch Triggers: {', '.join(trigger_names) if trigger_names else 'Manual / Event-Driven'}"
+                            ],
+                            reasons + [
+                                "Document macro imports or calls low-level Win32 memory management APIs (VirtualAlloc, RtlMoveMemory, CreateThread). "
+                                "This pattern is an unequivocal hallmark of in-memory shellcode injection (Process Injection MITRE ATT&CK T1055)."
+                            ],
+                            False,
+                            triggered_rules,
+                            mitre_techniques
+                        )
+
+                    if trigger_names and exec_names:
+                        rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_MACRO_WEAPONIZED_EXECUTION"), None)
+                        if rule:
+                            triggered_rules.append(rule)
+                            mitre_techniques.append(rule["mitre_attack"])
+                        return cls._build_result(
+                            fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-office.vbamacro",
+                            magic_hex, magic_ascii, "MALICIOUS", 98.0,
+                            f"Weaponized Macro Office Document ({ext.upper() if ext else 'DOC'})",
+                            evidence + [
+                                f"Embedded VBA Project Parts: {', '.join(vba_parts)}",
+                                f"Automated Launch Triggers: {', '.join(trigger_names)}",
+                                f"System Execution APIs: {', '.join(exec_names)}"
+                            ],
+                            reasons + [
+                                "Document contains automated Visual Basic for Applications (VBA) code designed to execute "
+                                "system commands or download payloads immediately upon being opened by the user."
+                            ],
+                            False,
+                            triggered_rules,
+                            mitre_techniques
+                        )
+
+                    if has_obfuscation:
+                        rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_MACRO_OBFUSCATION_EVASION"), None)
+                        if rule:
+                            triggered_rules.append(rule)
+                            mitre_techniques.append(rule["mitre_attack"])
+                        return cls._build_result(
+                            fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-office.vbamacro",
+                            magic_hex, magic_ascii, "MALICIOUS", 92.0,
+                            f"Obfuscated Macro Code Structure ({ext.upper() if ext else 'DOC'})",
+                            evidence + [
+                                f"Embedded VBA Project Parts: {', '.join(vba_parts)}",
+                                "Anti-analysis obfuscation detected: dense Chr$/ChrW string assembly or StrReverse routines"
+                            ],
+                            reasons + [
+                                "Macro code utilizes heavy string obfuscation and character construction routines (MITRE ATT&CK T1027) "
+                                "designed to conceal command strings and payload URLs from automated static inspection."
+                            ],
+                            False,
+                            triggered_rules,
+                            mitre_techniques
+                        )
+
+                    # Benign macro container without triggers or dangerous APIs
+                    rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_MACRO_GENERAL_CONTAINER"), None)
+                    if rule:
+                        triggered_rules.append(rule)
+                        mitre_techniques.append(rule["mitre_attack"])
+                    return cls._build_result(
+                        fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-office.vbamacro",
+                        magic_hex, magic_ascii, "SUSPICIOUS", 55.0,
+                        f"Macro-Enabled Office Document ({ext.upper() if ext else 'DOC'})",
+                        evidence + [f"VBA Project Parts Present: {', '.join(vba_parts)}"],
+                        reasons + ["Contains embedded macros. While not visibly weaponized with shell calls, macro execution represents an inherent organizational risk."],
+                        False,
+                        triggered_rules,
+                        mitre_techniques
+                    )
+
+                # ── RULE-CLEAN-01: Genuine Plain DOCX/XLSX/PPTX (Macro-Free) ──
+                if ext in [".docx", ".xlsx", ".pptx"] or "[Content_Types].xml" in namelist:
+                    rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_CLEAN_PLAIN_DOCX"), None)
+                    if rule:
+                        triggered_rules.append(rule)
+                    return cls._build_result(
+                        fn, ext, size_bytes, sha256, declared_ct, "application/vnd.openxmlformats-officedocument",
+                        magic_hex, magic_ascii, "SAFE", 0.0,
+                        f"Genuine Plain {ext.upper().strip('.') if ext else 'DOCX'} Document (Macro-Free)",
+                        evidence + [
+                            "Validated OOXML specification package",
+                            "Zero VBA macro streams (vbaProject.bin absent)",
+                            "Zero external template relationships",
+                            "Zero embedded executable objects",
+                            "Zero DDE command directives"
+                        ],
+                        reasons + [
+                            f"Attachment is a certified clean {ext.upper().strip('.') if ext else 'DOCX'} document conforming strictly to OpenXML standards. "
+                            "It carries zero executable logic, zero macros, and zero external fetch triggers."
+                        ],
+                        True,
+                        triggered_rules,
+                        []
+                    )
+
+        except zipfile.BadZipFile:
+            return None
+
+        return None
+
+    @classmethod
+    def _inspect_ole_document(cls, fn: str, ext: str, payload: bytes, declared_ct: str) -> Dict[str, Any]:
+        """Safely inspects legacy OLE Compound Document structures in memory."""
         size_bytes = len(payload)
         sha256 = hashlib.sha256(payload).hexdigest() if payload else ""
         detected_mime, detected_desc, magic_hex = cls.detect_magic_type(payload)
@@ -587,139 +1043,252 @@ class AttachmentAnalyzer:
 
         evidence: List[str] = [f"Magic Signature: [{magic_hex}] -> {detected_desc}"]
         reasons: List[str] = []
+        triggered_rules: List[Dict[str, Any]] = []
+        mitre_techniques: List[str] = []
+        payload_lower = payload.lower()
 
-        # Case A: Modern OpenXML (ZIP Container)
-        if payload.startswith(b"PK\x03\x04"):
-            try:
-                bio = io.BytesIO(payload)
-                with zipfile.ZipFile(bio, "r") as zf:
-                    namelist = zf.namelist()
-                    evidence.append(f"OOXML Container Catalog: {len(namelist)} internal parts indexed")
+        # 1. Check for Encrypted / Password-Protected Office Storage
+        if b"encryptedpackage" in payload_lower or b"encryptioninfo" in payload_lower:
+            rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_ENCRYPTED_OFFICE_STORAGE"), None)
+            if rule:
+                triggered_rules.append(rule)
+                mitre_techniques.append(rule["mitre_attack"])
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/x-ole-storage",
+                magic_hex, magic_ascii, "SUSPICIOUS", 60.0,
+                "Password-Protected / Encrypted Office Document Structure",
+                evidence + [
+                    "Detected EncryptedPackage or EncryptionInfo stream in OLE compound structure",
+                    "Document contents are encrypted, preventing static gateway inspection"
+                ],
+                reasons + [
+                    "Document uses password protection or binary encryption to blind perimeter static inspection. "
+                    "Classified as SUSPICIOUS under zero-trust inspection baselines."
+                ],
+                False,
+                triggered_rules,
+                mitre_techniques
+            )
 
-                    # 1. Macro presence check
-                    vba_parts = [n for n in namelist if "vbaProject.bin" in n or "vbaData.xml" in n]
-                    
-                    # 2. Template injection check
-                    has_external_template = False
-                    template_target = ""
-                    for n in namelist:
-                        if n.endswith(".rels") and "settings.xml.rels" in n:
-                            try:
-                                rels_data = zf.read(n).decode("utf-8", errors="ignore")
-                                if 'TargetMode="External"' in rels_data and "attachedTemplate" in rels_data:
-                                    has_external_template = True
-                                    match = re.search(r'Target="([^"]+)"', rels_data)
-                                    template_target = match.group(1) if match else "External SMB/HTTP Target"
-                            except Exception:
-                                pass
+        # 2. Check for Equation Editor Exploit Structure (CVE-2017-11882 / CVE-2018-0802)
+        if (
+            b"\x02\xce\x02\x00" in payload
+            or b"equation.3" in payload_lower
+            or b"0002ce02-0000-0000-c000-000000000046" in payload_lower
+            or b"0002ce02" in payload_lower
+        ):
+            rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_EQUATION_EDITOR_EXPLOIT"), None)
+            if rule:
+                triggered_rules.append(rule)
+                mitre_techniques.append(rule["mitre_attack"])
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/x-ole-storage",
+                magic_hex, magic_ascii, "MALICIOUS", 100.0,
+                "Equation Editor Exploit Structure (CVE-2017-11882 / CVE-2018-0802)",
+                evidence + [
+                    "Identified Microsoft Equation Editor CLSID (0002CE02-0000-0000-C000-000000000046) in OLE stream",
+                    "Exploits EQNEDT32.EXE stack buffer overflow vulnerability to execute shellcode"
+                ],
+                reasons + [
+                    "Legacy OLE document contains an embedded Equation Editor exploit object (CVE-2017-11882 / CVE-2018-0802). "
+                    "This exploit executes arbitrary code upon document opening without prompting the user with macro warnings."
+                ],
+                False,
+                triggered_rules,
+                mitre_techniques
+            )
 
-                    # 3. Embedded executable objects check
-                    embedded_binaries = [n for n in namelist if re.search(r'embeddings/.*?\.(exe|bin|scr|vbs|bat|ps1)$', n, re.I)]
+        # 3. Check for OLE Package / Ole10Native Droppers
+        has_ole_package = b"package" in payload_lower or b"\x01ole10native" in payload_lower
+        has_embedded_exe = any(kw in payload.upper() for kw in [b".EXE", b".BAT", b".VBS", b".SCR", b".PS1"]) or b"MZ" in payload
+        if has_ole_package and has_embedded_exe:
+            rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_EMBEDDED_EXECUTABLE_PACKAGE"), None)
+            if rule:
+                triggered_rules.append(rule)
+                mitre_techniques.append(rule["mitre_attack"])
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/x-ole-storage",
+                magic_hex, magic_ascii, "MALICIOUS", 98.0,
+                f"Embedded Executable Payload in Document Structure ({ext.upper() if ext else 'DOC'})",
+                evidence + [
+                    "OLE Package / Ole10Native stream detected with embedded executable binary markers",
+                    "Bundles an embedded executable file or script designed to drop locally upon user click"
+                ],
+                reasons + [
+                    "Document packages an embedded executable payload inside an OLE container (MITRE ATT&CK T1027.005). "
+                    "This dropper mechanism bypasses perimeter extension filtering by wrapping raw executables inside an OLE envelope."
+                ],
+                False,
+                triggered_rules,
+                mitre_techniques
+            )
 
-                    # Adjudication for OOXML
-                    if has_external_template:
-                        return cls._build_result(
-                            fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-word.template-injection",
-                            magic_hex, magic_ascii, "MALICIOUS", 96.0,
-                            "Remote Template Injection Exploit Container",
-                            evidence + [
-                                f"External Template Reference in '{n}': Target='{template_target}'",
-                                "TargetMode='External' attachedTemplate injection vector"
-                            ],
-                            reasons + [
-                                "Document weaponizes Office Template Injection (CVE-2017-0199 vector). "
-                                "Upon opening, the application will attempt to reach out to an external server to download a malicious template."
-                            ],
-                            False
-                        )
+        # 4. Check for VBA Macro Streams & Primitives
+        has_ole_vba = any(kw in payload_lower for kw in [b"_vba_project", b"vba", b"autoopen", b"document_open", b"workbook_open", b"dir"])
+        has_ole_triggers = any(kw in payload_lower for kw in [b"autoopen", b"auto_open", b"document_open", b"documentopen", b"workbook_open", b"autoexec", b"document_close"])
+        has_ole_exec = any(kw in payload_lower for kw in [b"wscript.shell", b"powershell", b"shellexecute", b"cmd.exe", b"urldownloadtofile", b"createobject", b"winexec", b"createprocess"])
+        has_ole_mem = any(kw in payload_lower for kw in [b"virtualalloc", b"rtlmovememory", b"createthread", b"writeprocessmemory"])
 
-                    if vba_parts:
-                        # Deceptive docx carrying macro
-                        is_deceptive_docx = ext in [".docx", ".xlsx", ".pptx"]
-                        
-                        # Inspect VBA code keywords safely in memory
-                        vba_bytes = b"".join(zf.read(p) for p in vba_parts if p in namelist)
-                        auto_triggers = [kw for kw in [b"AutoOpen", b"Document_Open", b"Workbook_Open", b"AutoExec", b"Auto_Open"] if kw.lower() in vba_bytes.lower()]
-                        exec_keywords = [kw for kw in [b"Shell", b"WScript.Shell", b"ShellExecute", b"powershell", b"cmd.exe", b"URLDownloadToFile", b"XMLHTTP", b"WinHttp", b"CreateObject"] if kw.lower() in vba_bytes.lower()]
+        if has_ole_mem:
+            rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_MACRO_LOW_LEVEL_API_INJECTION"), None)
+            if rule:
+                triggered_rules.append(rule)
+                mitre_techniques.append(rule["mitre_attack"])
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/x-ole-storage",
+                magic_hex, magic_ascii, "MALICIOUS", 99.0,
+                f"Macro with Low-Level Native Memory API Execution ({ext.upper() if ext else 'DOC'})",
+                evidence + ["Legacy OLE document declares or invokes low-level Win32 memory management APIs (VirtualAlloc/CreateThread)"],
+                reasons + ["Legacy Office document contains macro routines for in-memory shellcode injection and process tampering."],
+                False,
+                triggered_rules,
+                mitre_techniques
+            )
 
-                        trigger_names = [t.decode('utf-8', errors='ignore') for t in auto_triggers]
-                        exec_names = [e.decode('utf-8', errors='ignore') for e in exec_keywords]
+        if has_ole_vba and (has_ole_exec or has_ole_triggers):
+            rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_MACRO_LEGACY_OLE_WEAPONIZED"), None)
+            if rule:
+                triggered_rules.append(rule)
+                mitre_techniques.append(rule["mitre_attack"])
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/x-ole-storage",
+                magic_hex, magic_ascii, "MALICIOUS", 95.0,
+                f"Legacy Weaponized Office Document ({ext.upper() if ext else 'DOC'})",
+                evidence + ["Legacy OLE Compound File structure with embedded VBA macros and shell execution keywords"],
+                reasons + ["Legacy Office document carries embedded VBA macro code configured to invoke system shell commands."],
+                False,
+                triggered_rules,
+                mitre_techniques
+            )
+        elif has_ole_vba:
+            rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_MACRO_LEGACY_OLE_CONTAINER"), None)
+            if rule:
+                triggered_rules.append(rule)
+                mitre_techniques.append(rule["mitre_attack"])
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/x-ole-storage",
+                magic_hex, magic_ascii, "SUSPICIOUS", 50.0,
+                f"Legacy Macro-Enabled Office Document ({ext.upper() if ext else 'DOC'})",
+                evidence + ["Legacy OLE structure containing VBA macro streams"],
+                reasons + ["Legacy Office document containing macro streams without overt shell invocation."],
+                False,
+                triggered_rules,
+                mitre_techniques
+            )
 
-                        if is_deceptive_docx or (trigger_names and exec_names):
-                            class_name = f"Weaponized Macro Office Document ({ext.upper()})" if not is_deceptive_docx else f"Deceptive Macro Injection in Non-Macro {ext.upper()}"
-                            return cls._build_result(
-                                fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-office.vbamacro",
-                                magic_hex, magic_ascii, "MALICIOUS", 98.0,
-                                class_name,
-                                evidence + [
-                                    f"Embedded VBA Project Parts: {', '.join(vba_parts)}",
-                                    f"Automated Launch Triggers: {', '.join(trigger_names) if trigger_names else 'None'}",
-                                    f"System Execution APIs: {', '.join(exec_names) if exec_names else 'None'}"
-                                ],
-                                reasons + [
-                                    "Document contains automated Visual Basic for Applications (VBA) code designed to execute "
-                                    "system commands or download payloads immediately upon being opened by the user."
-                                ],
-                                False
-                            )
-                        else:
-                            return cls._build_result(
-                                fn, ext, size_bytes, sha256, declared_ct, "application/vnd.ms-office.vbamacro",
-                                magic_hex, magic_ascii, "SUSPICIOUS", 55.0,
-                                f"Macro-Enabled Office Document ({ext.upper()})",
-                                evidence + [f"VBA Project Parts Present: {', '.join(vba_parts)}"],
-                                reasons + ["Contains embedded macros. While not visibly weaponized with shell calls, macro execution represents an inherent organizational risk."],
-                                False
-                            )
+        # Legacy OLE without macros (e.g. plain old format)
+        return cls._build_result(
+            fn, ext, size_bytes, sha256, declared_ct, "application/x-ole-storage",
+            magic_hex, magic_ascii, "SAFE", 10.0,
+            f"Legacy Clean Office Document ({ext.upper() if ext else 'DOC'})",
+            evidence + ["Legacy OLE Compound File verified clean: zero macros, zero exploit objects, zero OLE droppers"],
+            reasons + ["Legacy binary document containing only static content without active execution primitives."],
+            True,
+            [],
+            []
+        )
 
-                    # No macros, no template injection -> CERTIFIED CLEAN DOCX
-                    if ext in [".docx", ".xlsx", ".pptx"] or "[Content_Types].xml" in namelist:
-                        return cls._build_result(
-                            fn, ext, size_bytes, sha256, declared_ct, "application/vnd.openxmlformats-officedocument",
-                            magic_hex, magic_ascii, "SAFE", 0.0,
-                            f"Genuine Plain {ext.upper().strip('.')} Document (Macro-Free)",
-                            evidence + [
-                                "Validated OOXML specification package",
-                                "Zero VBA macro streams (vbaProject.bin absent)",
-                                "Zero external template relationships",
-                                "Zero embedded executable objects"
-                            ],
-                            reasons + [
-                                f"Attachment is a certified clean {ext.upper().strip('.')} document conforming strictly to OpenXML standards. "
-                                "It carries zero executable logic, zero macros, and zero external fetch triggers."
-                            ],
-                            True
-                        )
+    @classmethod
+    def _inspect_rtf_document(cls, fn: str, ext: str, payload: bytes, declared_ct: str) -> Dict[str, Any]:
+        """Safely inspects Rich Text Format (RTF) documents for embedded exploit objects in memory."""
+        size_bytes = len(payload)
+        sha256 = hashlib.sha256(payload).hexdigest() if payload else ""
+        detected_mime, detected_desc, magic_hex = cls.detect_magic_type(payload)
+        magic_ascii = "".join(chr(b) if 32 <= b <= 126 else "." for b in payload[:16])
 
-            except zipfile.BadZipFile:
-                evidence.append("Malformed or corrupted OOXML ZIP container structure")
+        evidence: List[str] = [f"Magic Signature: [{magic_hex}] -> {detected_desc}"]
+        reasons: List[str] = []
+        triggered_rules: List[Dict[str, Any]] = []
+        mitre_techniques: List[str] = []
+        payload_lower = payload.lower()
 
-        # Case B: Legacy OLE Compound Document (D0 CF 11 E0)
-        if payload.startswith(b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"):
-            payload_lower = payload.lower()
-            has_ole_vba = any(kw in payload_lower for kw in [b"_vba_project", b"vba", b"autoopen", b"document_open", b"workbook_open"])
-            has_ole_exec = any(kw in payload_lower for kw in [b"wscript.shell", b"powershell", b"shellexecute", b"cmd.exe"])
+        # 1. Equation Editor CLSID in RTF (CVE-2017-11882 / CVE-2018-0802)
+        if b"0002ce02" in payload_lower or b"equation.3" in payload_lower:
+            rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_EQUATION_EDITOR_EXPLOIT"), None)
+            if rule:
+                triggered_rules.append(rule)
+                mitre_techniques.append(rule["mitre_attack"])
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/rtf",
+                magic_hex, magic_ascii, "MALICIOUS", 100.0,
+                "Equation Editor Exploit Structure (CVE-2017-11882 / CVE-2018-0802)",
+                evidence + [
+                    "Identified Equation Editor CLSID 0002CE02 inside RTF embedded object stream",
+                    "Exploits EQNEDT32.EXE stack overflow vulnerability (CVE-2017-11882 / CVE-2018-0802)"
+                ],
+                reasons + [
+                    "RTF document weaponizes Microsoft Equation Editor vulnerability (CVE-2017-11882 / CVE-2018-0802). "
+                    "When rendered in Microsoft Word, it automatically executes embedded shellcode without user interaction."
+                ],
+                False,
+                triggered_rules,
+                mitre_techniques
+            )
 
-            if has_ole_vba and has_ole_exec:
-                return cls._build_result(
-                    fn, ext, size_bytes, sha256, declared_ct, "application/x-ole-storage",
-                    magic_hex, magic_ascii, "MALICIOUS", 95.0,
-                    f"Legacy Weaponized Office Document ({ext.upper()})",
-                    evidence + ["Legacy OLE Compound File structure with embedded VBA macros and shell execution keywords"],
-                    reasons + ["Legacy Office document carries embedded VBA macro code configured to invoke system shell commands."],
-                    False
-                )
-            elif has_ole_vba:
-                return cls._build_result(
-                    fn, ext, size_bytes, sha256, declared_ct, "application/x-ole-storage",
-                    magic_hex, magic_ascii, "SUSPICIOUS", 50.0,
-                    f"Legacy Macro-Enabled Office Document ({ext.upper()})",
-                    evidence + ["Legacy OLE structure containing VBA macro streams"],
-                    reasons + ["Legacy Office document containing macro streams without overt shell invocation."],
-                    False
-                )
+        # 2. Malformed \bin tag length (CVE-2010-3333 heap buffer overflow)
+        if re.search(rb'\\bin(?:\s*-\d+|\s*\d{8,})', payload):
+            rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_MALICIOUS_RTF_OBJECT"), None)
+            if rule:
+                triggered_rules.append(rule)
+                mitre_techniques.append(rule["mitre_attack"])
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/rtf",
+                magic_hex, magic_ascii, "MALICIOUS", 98.0,
+                "Weaponized RTF Document with Malformed \\bin Length (CVE-2010-3333)",
+                evidence + ["Anomalous negative or oversized \\bin keyword length detected in RTF control stream"],
+                reasons + ["RTF file triggers heap corruption vulnerabilities in Word document parsers via malformed binary data tags."],
+                False,
+                triggered_rules,
+                mitre_techniques
+            )
 
-        return None
+        # 3. Embedded Executable / Dropper in RTF Object
+        has_rtf_object = any(kw in payload_lower for kw in [b"\\object", b"\\objdata", b"\\objemb", b"\\objocx"])
+        has_rtf_payload = b"4d5a" in payload_lower or b"ole10native" in payload_lower or b"package" in payload_lower
+        if has_rtf_object and has_rtf_payload:
+            rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_MALICIOUS_RTF_OBJECT"), None)
+            if rule:
+                triggered_rules.append(rule)
+                mitre_techniques.append(rule["mitre_attack"])
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/rtf",
+                magic_hex, magic_ascii, "MALICIOUS", 96.0,
+                "Weaponized RTF Document with Embedded Exploit Object",
+                evidence + ["Embedded OLE object stream in RTF contains binary executable markers or Ole10Native package"],
+                reasons + ["RTF document contains embedded executable content intended to execute via OLE object activation."],
+                False,
+                triggered_rules,
+                mitre_techniques
+            )
+
+        # 4. Remote template in RTF
+        if re.search(rb'\{\\\*\\template\s+(?:https?|ftp|\\\\)', payload_lower):
+            rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_REMOTE_TEMPLATE_INJECTION"), None)
+            if rule:
+                triggered_rules.append(rule)
+                mitre_techniques.append(rule["mitre_attack"])
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/rtf",
+                magic_hex, magic_ascii, "MALICIOUS", 96.0,
+                "Remote Template Injection Exploit Container",
+                evidence + ["External template URL directive found in RTF control group (\\*\\template)"],
+                reasons + ["RTF document forces remote template fetch from external C2 server."],
+                False,
+                triggered_rules,
+                mitre_techniques
+            )
+
+        # Plain safe RTF
+        return cls._build_result(
+            fn, ext, size_bytes, sha256, declared_ct, "application/rtf",
+            magic_hex, magic_ascii, "SAFE", 0.0,
+            "Genuine Plain RTF Document (Clean)",
+            evidence + ["Rich Text Format document verified: 0 exploit objects, 0 malformed \\bin tags, 0 remote templates"],
+            reasons + ["Safe text document formatted in RTF with no embedded executable or exploit constructs."],
+            True,
+            [],
+            []
+        )
 
     @classmethod
     def _inspect_pdf_document(cls, fn: str, ext: str, payload: bytes, declared_ct: str) -> Dict[str, Any]:
