@@ -1,6 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', Consolas, Courier New, monospace;
+
   --color-court-bg: #0a0b0f;
   --color-panel-bg: #111318;
   --color-panel-border: #1e2130;
@@ -11,6 +15,31 @@
   --color-purple-accent: #a855f7;
   --color-text-primary: #f1f5f9;
   --color-text-muted: #64748b;
+
+  --color-threat-critical: #ef4444;
+  --color-threat-high: #f97316;
+  --color-threat-medium: #eab308;
+  --color-threat-low: #3b82f6;
+  --color-threat-safe: #10b981;
+
+  --color-cyber-950: #030712;
+  --color-cyber-900: #090d16;
+  --color-cyber-850: #0e1524;
+  --color-cyber-800: #151f33;
+  --color-cyber-700: #1e293b;
+  --color-cyber-600: #334155;
+  --color-cyber-500: #64748b;
+  --color-cyber-emerald: #10b981;
+  --color-cyber-cyan: #06b6d4;
+  --color-cyber-crimson: #f43f5e;
+  --color-cyber-amber: #f59e0b;
+  --color-cyber-purple: #8b5cf6;
+  --color-cyber-blue: #3b82f6;
+}
+
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', Consolas, Courier New, monospace;
 }
 
 * {
@@ -18,19 +47,83 @@
 }
 
 body {
-  background-color: var(--color-court-bg);
-  color: var(--color-text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
+  background-color: #f8fafc;
+  color: #0f172a;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #111318; }
-::-webkit-scrollbar-thumb { background: #1e2130; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #2d3556; }
+.font-mono {
+  font-family: var(--font-mono);
+}
 
-/* Drop zone */
+/* 3D Actual Earth Globe Canvas Container */
+#globe-canvas-container {
+  cursor: grab;
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+}
+
+#globe-canvas-container:active {
+  cursor: grabbing;
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Pulsing radar animation */
+@keyframes radar-pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.radar-ping {
+  animation: radar-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* Threat Score Circular Meter */
+.threat-gauge-circle {
+  transition: stroke-dashoffset 0.8s ease-in-out;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* Dropzone Active Hover */
+.dropzone-active {
+  border-color: #6366f1 !important;
+  background-color: #eef2ff !important;
+}
+
+/* Courtroom Styles */
 .drop-zone {
   border: 2px dashed #1e2130;
   transition: border-color 0.2s ease, background-color 0.2s ease;
@@ -40,7 +133,6 @@ body {
   background-color: rgba(59, 130, 246, 0.04);
 }
 
-/* Verdict pulse */
 @keyframes verdict-pulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
   50% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
@@ -53,7 +145,6 @@ body {
 }
 .verdict-safe { animation: safe-pulse 2s infinite; }
 
-/* Gavel strike animation */
 @keyframes gavel {
   0% { transform: rotate(-30deg); }
   50% { transform: rotate(10deg); }
@@ -61,7 +152,6 @@ body {
 }
 .gavel-anim { animation: gavel 0.4s ease-in-out; }
 
-/* Typing indicator */
 @keyframes typing-dot {
   0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
   40% { opacity: 1; transform: scale(1); }
@@ -70,7 +160,6 @@ body {
 .typing-dot:nth-child(2) { animation: typing-dot 1.2s 0.2s infinite; }
 .typing-dot:nth-child(3) { animation: typing-dot 1.2s 0.4s infinite; }
 
-/* Scan line */
 @keyframes scan {
   0% { top: 0%; }
   100% { top: 100%; }
@@ -81,4 +170,34 @@ body {
   height: 2px;
   background: linear-gradient(90deg, transparent, #3b82f6, transparent);
   animation: scan 1.5s linear infinite;
+}
+
+/* Print Styles for PDF Export */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .no-print, header, nav, #globe-canvas-container, button, .ioc-filter-btn {
+    display: none !important;
+  }
+
+  #forensic-report-modal {
+    position: static !important;
+    display: block !important;
+    background: #ffffff !important;
+    padding: 0 !important;
+  }
+
+  #printable-report {
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  @page {
+    margin: 1.5cm;
+    size: A4 portrait;
+  }
 }

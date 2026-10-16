@@ -1,0 +1,43 @@
+
+/* ============================================================
+   ThreatLens AI — Minimalist In-Mailbox Colored Score Numbers
+   ============================================================ */
+
+.threatlens-number-badge {
+  display: inline-block !important;
+  margin-left: 5px !important;
+  margin-right: 4px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  line-height: 1 !important;
+  vertical-align: baseline !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  transition: opacity 0.15s ease !important;
+  flex-shrink: 0 !important;
+}
+
+.threatlens-number-badge:hover {
+  opacity: 0.75 !important;
+}
+
+/* Critical (>80): Bold Crimson Red */
+.tl-num-critical {
+  color: #dc2626 !important;
+}
+
+/* Mild (50-80): Bold Amber / Orange */
+.tl-num-mild {
+  color: #d97706 !important;
+}
+
+/* Safe (<50): Bold Emerald Green */
+.tl-num-safe {
+  color: #16a34a !important;
+}

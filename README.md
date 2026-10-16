@@ -95,6 +95,15 @@ Across comprehensive evaluations against both the **Mission 02 Test Suite** and 
   - **Scam Confirmed**: Intercepts and quarantines the hostile email, then automatically sends an alert warning email via **Google OAuth** (`https://www.googleapis.com/auth/gmail.send`) to the user/recipient.
   - **Legitimate Verified**: **Strictly sends no email**, preventing alert fatigue and eliminating false alarms.
 
+### 5. Actionable Recommendations Engine ([`actionable_recommendations.py`](backend/actionable_recommendations.py))
+- **Perimeter & Mailbox Quarantine**: Automates immediate gateway drops, removes emails from the Inbox/Spam views, applies `MAILJURY_QUARANTINED` labeling, and exports IOCs for EDR/SIEM perimeter containment.
+- **Out-of-Band Sender Verification Challenge**: Enforces formal out-of-band verification via corporate directories, Slack/Teams, or known phone channels, with strict warnings against replying directly or calling numbers contained within the message.
+- **Zero-Execution Safe Viewer Matrix**: Recommends isolated inspection environments per payload class:
+  - *PE Executables*: Offline static disassemblers / sandboxes (`CAPE`, `Ghidra`, `radare2`).
+  - *Macro Carriers / RTF*: Isolated cloud sandboxes / pixel sanitizers (`Dangerzone`, Google Docs preview with macros disabled).
+  - *PDF Documents*: Hardened Chromium PDF.js (JavaScript execution disabled) and `pdfid`/`pdftotext`.
+  - *Encrypted Archives*: Disposable isolated network-less containers (`docker run --network none`) or Qubes disposable VMs.
+
 ---
 
 ## 🚀 Quickstart Guide

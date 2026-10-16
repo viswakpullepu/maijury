@@ -27,7 +27,7 @@ except ImportError:
 
 class IndictmentCount:
     def __init__(self, count_id, category, charge_name, severity,
-                 statute, exhibit, risk_points, explanation):
+                 statute, exhibit, risk_points, explanation, pillar=None):
         self.count_id = count_id
         self.category = category
         self.charge_name = charge_name
@@ -36,11 +36,30 @@ class IndictmentCount:
         self.exhibit = exhibit
         self.risk_points = risk_points
         self.explanation = explanation
+        self.pillar = pillar or self._infer_pillar(category, exhibit)
+
+    @staticmethod
+    def _infer_pillar(category: str, exhibit: str = "") -> str:
+        if category in ("HEADER_AUTH",):
+            return "sender"
+        elif category in ("IDENTITY_SPOOF",):
+            ex_low = str(exhibit).lower()
+            if "target url" in ex_low or "url" in ex_low:
+                return "urls"
+            return "sender"
+        elif category in ("BODY_CLOAKING", "BEC_FRAUD", "PSYCH_URGENCY"):
+            return "body"
+        elif category in ("URL_DECEPTION",):
+            return "urls"
+        elif category in ("ATTACHMENT_PAYLOAD",):
+            return "attachments"
+        return "body"
 
     def to_dict(self):
         return {
             "count_id": self.count_id,
             "category": self.category,
+            "pillar": self.pillar,
             "charge_name": self.charge_name,
             "severity": self.severity,
             "statute": self.statute,
@@ -48,6 +67,7 @@ class IndictmentCount:
             "risk_points": self.risk_points,
             "explanation": self.explanation
         }
+
 
 
 class TeamProsecutor:
@@ -208,15 +228,25 @@ class TeamProsecutor:
         freemails = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com",
                      "aol.com", "proton.me", "mail.com"]
         display_lower = from_display.lower()
-        if any(vk in display_lower for vk in vip_keywords) and from_domain in freemails:
-            counts.append(IndictmentCount(
-                self._next_count_id(), "IDENTITY_SPOOF",
-                "VIP Display Name Masquerade via Freemail", "FATAL_VETO",
-                "MITRE ATT&CK T1566.002 / T1534",
-                f"Display: '{from_display}' from freemail <{from_email}>",
-                90.0,
-                "Executive/administrative authority claim from a public free mailbox = targeted spearphishing."
-            ))
+        if any(vk in display_lower for vk in vip_keywords):
+            if from_domain in freemails:
+                counts.append(IndictmentCount(
+                    self._next_count_id(), "IDENTITY_SPOOF",
+                    "VIP Display Name Masquerade via Freemail", "FATAL_VETO",
+                    "MITRE ATT&CK T1566.002 / T1534",
+                    f"Display: '{from_display}' from freemail <{from_email}>",
+                    90.0,
+                    "Executive/administrative authority claim from a public free mailbox = targeted spearphishing."
+                ))
+            elif any(from_domain.endswith(tld) for tld in self.SUSPICIOUS_TLDS):
+                counts.append(IndictmentCount(
+                    self._next_count_id(), "IDENTITY_SPOOF",
+                    "VIP / IT Helpdesk Masquerade via Suspicious TLD", "SEVERE",
+                    "MITRE ATT&CK T1566.002 / T1534",
+                    f"Display: '{from_display}' from suspicious TLD domain <{from_email}>",
+                    65.0,
+                    "Administrative authority claim (IT Helpdesk / Executive) from an external untrusted or high-risk domain."
+                ))
 
         # ── Reply-To Domain Divergence ──
         if reply_to and from_email and reply_to != from_email:
@@ -345,7 +375,8 @@ class TeamProsecutor:
         urgency_regex = (r'(?:immediate(?:ly)?\s+action\s+required|account\s+will\s+be\s+suspended'
                          r'|wire\s+transfer\s+immediately|send\s+funds\s+within\s+\d+\s+hours'
                          r'|overdue\s+invoice\s+urgent|final\s+notice\s+before\s+legal'
-                         r'|arrest\s+warrant|gift\s+card|payment\s+is\s+due\s+within)')
+                         r'|arrest\s+warrant|gift\s+card|payment\s+is\s+due\s+within'
+                         r'|password\s+will\s+expire|verify\s+(?:your\s+)?account|password\s+expir)')
         urgency_match = re.search(urgency_regex, full_text, re.I)
         if urgency_match:
             counts.append(IndictmentCount(
@@ -638,6 +669,7 @@ class TeamProsecutor:
     # ─── HELPERS ─────────────────────────────────────────────────────────────
 
     def _check_brand_squatting(self, domain_str: str, context: str, counts: List[IndictmentCount]):
+        target_pillar = "urls" if "url" in context.lower() else "sender"
         for brand in self.TOP_BRANDS:
             domain_base = domain_str.split('.')[0]
             if brand in domain_str and domain_str not in [f"{brand}.com", f"www.{brand}.com"] \
@@ -647,7 +679,8 @@ class TeamProsecutor:
                     f"Brand Infringement / Typosquatting ({brand.title()})", "SEVERE",
                     "ICANN UDRP / MITRE ATT&CK T1583.001",
                     f"{context} '{domain_str}' contains brand token '{brand}'",
-                    50.0, f"Domain incorporates trademark '{brand}' without authorization."
+                    50.0, f"Domain incorporates trademark '{brand}' without authorization.",
+                    pillar=target_pillar
                 ))
             elif Levenshtein and len(brand) > 4:
                 dist = Levenshtein.distance(domain_base, brand)
@@ -657,7 +690,8 @@ class TeamProsecutor:
                         f"Levenshtein Typosquatting Variant ({brand.title()})", "SEVERE",
                         "Levenshtein Distance Metric ≤ 2",
                         f"Host '{domain_str}' has edit distance {dist} from '{brand}'",
-                        55.0, "Minor character substitution engineered to fool inattentive readers."
+                        55.0, "Minor character substitution engineered to fool inattentive readers.",
+                        pillar=target_pillar
                     ))
 
     def _generate_opening(self, counts, fatal_veto, score):

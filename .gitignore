@@ -44,6 +44,13 @@ credentials.json
 token.json
 vault_tokens.enc
 *.enc
+src/data/sessions/
+src/data/emails_db.json
+frontend/src/data/sessions/
+frontend/src/data/emails_db.json
+oauth_config.json
+src/data/oauth_config.json
+frontend/src/data/oauth_config.json
 
 # Spool Processing
 backend/incoming/processed/*

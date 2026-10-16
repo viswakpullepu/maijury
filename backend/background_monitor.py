@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 AUTONOMOUS BACKGROUND EMAIL MONITOR DAEMON
 Continuously monitors inbox in the background, pulls raw messages,
@@ -171,27 +172,35 @@ class BackgroundMonitorDaemon:
                 for a in attachments_analysis
             ]) or "  • No attachments detected"
 
-            alert_body = f"""⚠️ MAILJURY AUTONOMOUS CYBER COURTROOM: SCAM DETECTED & QUARANTINED ⚠️
+            rec = adjudication.get("actionable_recommendations", {})
+            quar_info = rec.get("quarantine", {}).get("title", "Quarantined and removed from primary inbox.")
+            sender_verif = rec.get("verify_sender", {}).get("protocol_checklist", [
+                "Verify purported sender via official out-of-band corporate directory or corporate chat.",
+                "STRICT PROHIBITION: Never reply or call numbers listed in the email."
+            ])
+            safe_view = rec.get("safe_viewer", {}).get("title", "Inspect using isolated safe viewer / sandbox only.")
+
+            alert_body = f"""[!] MAILJURY AUTONOMOUS CYBER COURTROOM: SCAM DETECTED & QUARANTINED [!]
 
 The MailJury Autonomous Daemon has intercepted and quarantined a hostile email.
 
 ================================================================================
 INCIDENT FORENSICS SUMMARY:
 ================================================================================
-• Subject: {parsed['envelope'].get('subject', '(No Subject)')}
-• Sender: {parsed['envelope'].get('from_raw', 'Unknown')}
-• Return-Path: {parsed['envelope'].get('return_path', 'None')}
-• Date: {parsed['envelope'].get('date', 'Unknown')}
-• Message-ID: {parsed['envelope'].get('message_id', 'Unknown')}
-• Verdict: {adjudication['verdict']}
-• Final Risk Score: {adjudication['final_risk_score']} / 100.0
-• Action Taken: {adjudication['disposition']} (Quarantined & Removed from Inbox)
-• BSA §65B Certificate: {adjudication['legal_metadata']['adjudication_certificate_token']}
+* Subject: {parsed['envelope'].get('subject', '(No Subject)')}
+* Sender: {parsed['envelope'].get('from_raw', 'Unknown')}
+* Return-Path: {parsed['envelope'].get('return_path', 'None')}
+* Date: {parsed['envelope'].get('date', 'Unknown')}
+* Message-ID: {parsed['envelope'].get('message_id', 'Unknown')}
+* Verdict: {adjudication['verdict']}
+* Final Risk Score: {adjudication['final_risk_score']} / 100.0
+* Action Taken: {adjudication['disposition']} (Quarantined & Removed from Inbox)
+* BSA Section 65B Certificate: {adjudication['legal_metadata']['adjudication_certificate_token']}
 
 ================================================================================
 PROSECUTION CHARGES SUSTAINED:
 ================================================================================
-{charges_summary or '  • Multiple suspicious indicators detected'}
+{charges_summary or '  * Multiple suspicious indicators detected'}
 
 ================================================================================
 ATTACHMENT FORENSICS:
@@ -199,12 +208,23 @@ ATTACHMENT FORENSICS:
 {att_summary}
 
 ================================================================================
-SAFETY INSTRUCTIONS:
+ACTIONABLE RECOMMENDATIONS:
 ================================================================================
-1. DO NOT open, download, or inspect any attachments from this message.
-2. DO NOT click any links or reply to the sender.
-3. This message has been automatically quarantined from your primary inbox.
-4. Cryptographically signed under Indian Evidence Act (BSA) §65B.
+1. [QUARANTINE]: {quar_info}
+   - Mailbox Action: Message isolated with MAILJURY_QUARANTINED label; purged from inbox.
+   - Gateway Action: Sender MTA IP and hash logged for perimeter blocklist.
+
+2. [VERIFY SENDER THROUGH OFFICIAL CHANNEL]:
+   - {sender_verif[0] if sender_verif else 'Verify sender via official out-of-band corporate directory.'}
+   - {sender_verif[1] if len(sender_verif) > 1 else 'Do NOT reply to this email or call numbers in the signature.'}
+
+3. [INSPECT FILE USING APPROPRIATE SAFE VIEWER]:
+   - {safe_view}
+   - Zero-Execution Standard: Files must never be opened natively on host workstations.
+   - Authorized analysts must use isolated sandboxes (Dangerzone / Chromium PDF.js / CAPE / Ghidra).
+
+4. [LEGAL ADMISSIBILITY]:
+   - Cryptographically signed electronic record under Indian Evidence Act (BSA) Section 65B.
 """
             alert_details = self.gmail.send_email(
                 to=target_recipient,

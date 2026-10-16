@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { CheckCircle, XCircle, AlertTriangle, Gavel, Fingerprint, Clock, Lock } from 'lucide-react'
+import {
+  CheckCircle, XCircle, AlertTriangle, Gavel, Fingerprint, Clock, Lock,
+  Mail, FileText, Link2, Paperclip, Layers, Scale, ShieldAlert, Ban,
+  PhoneCall, Eye, CheckSquare, ChevronDown, ChevronUp
+} from 'lucide-react'
 import type { FullTrialResult } from '../api'
 
 interface VerdictCardProps {
   result: FullTrialResult
+  onOpenFeedback?: () => void
 }
 
 const VERDICT_CONFIG = {
@@ -47,7 +52,8 @@ const DISPOSITION_LABELS: Record<string, { label: string; description: string }>
   DELIVER_INBOX: { label: '✅ DELIVER TO INBOX', description: 'Message is certified safe for delivery.' },
 }
 
-export const VerdictCard: React.FC<VerdictCardProps> = ({ result }) => {
+export const VerdictCard: React.FC<VerdictCardProps> = ({ result, onOpenFeedback }) => {
+  const [showChecklist, setShowChecklist] = useState(false)
   const { summary, envelope } = result
   const color = summary.color as 'RED' | 'GREEN' | 'YELLOW'
   const config = VERDICT_CONFIG[color] || VERDICT_CONFIG.YELLOW
@@ -55,6 +61,8 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ result }) => {
   const disposition = DISPOSITION_LABELS[summary.disposition] || {
     label: summary.disposition, description: ''
   }
+  const breakdown = summary.risk_breakdown || result.verdict.risk_breakdown
+  const recs = result.actionable_recommendations || summary.actionable_recommendations || result.verdict?.actionable_recommendations
 
   return (
     <motion.div
@@ -129,6 +137,235 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ result }) => {
           </div>
         ))}
       </div>
+ 
+      {/* 4-Pillar Risk Contribution Breakdown */}
+      {breakdown && (
+        <div className="bg-[#0a0c10] border border-[#1e2130] rounded-xl p-3.5 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#f1f5f9]">
+              <Layers className="w-3.5 h-3.5 text-[#3b82f6]" />
+              <span>Risk Contribution by Vector</span>
+            </div>
+            {breakdown.highest_contributor !== 'none' && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-950/80 border border-red-900 text-red-300 font-mono">
+                Primary: {breakdown.highest_contributor_name.split(' ')[0]}
+              </span>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            {[
+              { key: 'sender', icon: Mail, label: 'Sender & Auth' },
+              { key: 'body', icon: FileText, label: 'Email Body' },
+              { key: 'urls', icon: Link2, label: 'Links & URLs' },
+              { key: 'attachments', icon: Paperclip, label: 'Attachments' },
+            ].map(({ key, icon: PillarIcon, label }) => {
+              const p = breakdown.pillars[key as keyof typeof breakdown.pillars]
+              if (!p) return null
+              const isFatal = p.severity === 'FATAL_VETO'
+              const isSevere = p.severity === 'SEVERE'
+              const isSuspicious = p.severity === 'SUSPICIOUS'
+
+              const badgeColor = isFatal
+                ? 'text-red-400 bg-red-950/80 border-red-800'
+                : isSevere
+                ? 'text-orange-400 bg-orange-950/80 border-orange-800'
+                : isSuspicious
+                ? 'text-yellow-400 bg-yellow-950/80 border-yellow-800'
+                : 'text-green-400 bg-green-950/80 border-green-800'
+
+              const barColor = isFatal
+                ? 'bg-gradient-to-r from-red-600 to-rose-500'
+                : isSevere
+                ? 'bg-gradient-to-r from-orange-600 to-red-500'
+                : isSuspicious
+                ? 'bg-gradient-to-r from-amber-600 to-yellow-500'
+                : 'bg-emerald-500'
+
+              return (
+                <div key={key} className="space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <PillarIcon className="w-3.5 h-3.5 text-[#64748b] shrink-0" />
+                      <span className="text-[#94a3b8] truncate font-medium text-[11px]">{label}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono ${badgeColor}`}>
+                        {p.severity === 'FATAL_VETO' ? 'FATAL' : p.severity}
+                      </span>
+                      <span className="font-mono text-[11px] font-bold text-[#f1f5f9]">
+                        +{p.contribution_score} <span className="text-[#64748b] font-normal">({p.contribution_percentage}%)</span>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="h-1.5 bg-[#07090d] rounded-full overflow-hidden border border-[#171b26]">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${p.contribution_percentage}%` }}
+                      transition={{ duration: 0.6, ease: 'easeOut' }}
+                      className={`h-full rounded-full ${barColor}`}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <div className="text-[10px] text-[#64748b] font-mono border-t border-[#1e2130] pt-2 truncate" title={breakdown.attribution_formula}>
+            {breakdown.attribution_formula}
+          </div>
+        </div>
+      )}
+
+      {/* Actionable Recommendations (Requirement 3: Quarantine, Official Sender Verification, Safe Viewer) */}
+      {recs && (
+        <div className="bg-[#0a0c10] border border-[#1e2a4a] rounded-xl p-3.5 space-y-3 shadow-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <ShieldAlert className="w-4 h-4 text-amber-400" />
+              <span className="text-xs font-bold text-[#f1f5f9] tracking-wide uppercase">
+                Actionable Defense Directives
+              </span>
+            </div>
+            <span
+              className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ${
+                recs.primary_action === 'QUARANTINE_AND_ISOLATE'
+                  ? 'bg-red-950/90 text-red-300 border-red-800'
+                  : recs.primary_action === 'VERIFY_SENDER_AND_HOLD'
+                  ? 'bg-amber-950/90 text-amber-300 border-amber-800'
+                  : 'bg-green-950/90 text-green-300 border-green-800'
+              }`}
+            >
+              {recs.primary_action.replace(/_/g, ' ')}
+            </span>
+          </div>
+
+          <div className="text-xs text-[#cbd5e1] font-medium leading-relaxed bg-[#10141f] p-2.5 rounded-lg border border-[#1e2436]">
+            {recs.summary_headline}
+          </div>
+
+          {/* 3 Core Recommendation Pillars */}
+          <div className="grid grid-cols-1 gap-2 text-xs">
+            {/* Pillar 1: Quarantine */}
+            <div className="bg-[#0d1017] border border-[#1f293d] rounded-lg p-2.5 space-y-1">
+              <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 font-semibold text-red-400">
+                  <Ban className="w-3.5 h-3.5 shrink-0" />
+                  <span>1. Quarantine & Mailbox Isolation</span>
+                </div>
+                <span className="text-[10px] font-mono text-[#94a3b8] px-1.5 py-0.2 rounded bg-black/40">
+                  {recs.quarantine.status}
+                </span>
+              </div>
+              <p className="text-[11px] text-[#94a3b8] leading-tight">
+                {recs.quarantine.action || recs.quarantine.instructions}
+              </p>
+              {recs.quarantine.mailbox_actions && recs.quarantine.mailbox_actions.length > 0 && (
+                <div className="text-[10px] text-[#64748b] font-mono">
+                  • {recs.quarantine.mailbox_actions[0]}
+                </div>
+              )}
+            </div>
+
+            {/* Pillar 2: Verify Sender */}
+            <div className="bg-[#0d1017] border border-[#1f293d] rounded-lg p-2.5 space-y-1">
+              <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 font-semibold text-amber-400">
+                  <PhoneCall className="w-3.5 h-3.5 shrink-0" />
+                  <span>2. Out-of-Band Sender Verification</span>
+                </div>
+                <span className="text-[10px] font-mono text-amber-300 px-1.5 py-0.2 rounded bg-amber-950/40 border border-amber-900/60">
+                  {recs.verify_sender.verification_required ? 'REQUIRED' : 'ADVISORY'}
+                </span>
+              </div>
+              <p className="text-[11px] text-[#94a3b8] leading-tight">
+                Channel: <strong className="text-white">{recs.verify_sender.recommended_channel}</strong>
+              </p>
+              <p className="text-[10px] text-amber-400/90 leading-tight">
+                Strict: Never reply directly or call contact numbers inside this email.
+              </p>
+            </div>
+
+            {/* Pillar 3: Safe Viewer */}
+            <div className="bg-[#0d1017] border border-[#1f293d] rounded-lg p-2.5 space-y-1">
+              <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 font-semibold text-blue-400">
+                  <Eye className="w-3.5 h-3.5 shrink-0" />
+                  <span>3. Safe Viewer File Inspection</span>
+                </div>
+                <span className="text-[10px] font-mono text-blue-300 px-1.5 py-0.2 rounded bg-blue-950/40 border border-blue-900/60">
+                  {recs.safe_viewer.has_attachments ? `${recs.safe_viewer.attachment_viewers.length} File(s)` : 'Body Text'}
+                </span>
+              </div>
+              <p className="text-[11px] text-[#94a3b8] leading-tight">
+                {recs.safe_viewer.overview}
+              </p>
+              {recs.safe_viewer.attachment_viewers && recs.safe_viewer.attachment_viewers.length > 0 && (
+                <div className="text-[10px] text-blue-300/90 font-mono bg-blue-950/30 p-1.5 rounded border border-blue-900/40 truncate">
+                  Viewer: {recs.safe_viewer.attachment_viewers[0].guidance.recommended_viewer}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Expandable Prioritized Action Checklist */}
+          {recs.prioritized_checklist && recs.prioritized_checklist.length > 0 && (
+            <div className="pt-1">
+              <button
+                type="button"
+                onClick={() => setShowChecklist(!showChecklist)}
+                className="w-full flex items-center justify-between p-2 rounded-lg bg-[#0d1017] hover:bg-[#121722] border border-[#1f293d] text-[11px] font-semibold text-[#93c5fd] transition-colors"
+              >
+                <div className="flex items-center gap-1.5">
+                  <CheckSquare className="w-3.5 h-3.5 text-[#3b82f6]" />
+                  <span>Prioritized Action Checklist ({recs.prioritized_checklist.length} Steps)</span>
+                </div>
+                {showChecklist ? (
+                  <ChevronUp className="w-3.5 h-3.5 text-[#64748b]" />
+                ) : (
+                  <ChevronDown className="w-3.5 h-3.5 text-[#64748b]" />
+                )}
+              </button>
+
+              {showChecklist && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="mt-2 space-y-1.5 pl-1"
+                >
+                  {recs.prioritized_checklist.map(item => {
+                    const isImmediate = item.priority === 'IMMEDIATE'
+                    const isHigh = item.priority === 'HIGH'
+                    const prioColor = isImmediate
+                      ? 'bg-red-950 text-red-300 border-red-800'
+                      : isHigh
+                      ? 'bg-orange-950 text-orange-300 border-orange-800'
+                      : 'bg-blue-950 text-blue-300 border-blue-800'
+
+                    return (
+                      <div
+                        key={item.step}
+                        className="bg-[#080a0f] border border-[#1a1f2e] rounded-lg p-2 text-[11px] space-y-1"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-white flex items-center gap-1.5">
+                            <span className="font-mono text-[#64748b]">#{item.step}</span>
+                            <span>{item.action}</span>
+                          </span>
+                          <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${prioColor}`}>
+                            {item.priority}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-[#94a3b8] leading-tight">{item.detail}</p>
+                      </div>
+                    )
+                  })}
+                </motion.div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Justification */}
       <div className="bg-[#0a0c10] border border-[#1e2130] rounded-lg p-3">
@@ -154,6 +391,18 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ result }) => {
           <span>Trial completed in {summary.pipeline_ms}ms</span>
         </div>
       </div>
+
+      {/* Dispute Classification / User Feedback Action Button */}
+      {onOpenFeedback && (
+        <button
+          onClick={onOpenFeedback}
+          type="button"
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold bg-[#141824] hover:bg-[#1a2030] border border-[#2d3752] hover:border-[#3b82f6] text-[#93c5fd] hover:text-white transition-all shadow-md cursor-pointer group"
+        >
+          <Scale className="w-4 h-4 text-[#3b82f6] group-hover:scale-110 transition-transform" />
+          <span>⚖️ Dispute Classification / Report Feedback</span>
+        </button>
+      )}
     </motion.div>
   )
 }

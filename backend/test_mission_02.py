@@ -604,6 +604,55 @@ class TestMission02Deliverables(unittest.TestCase):
         self.assertIsInstance(report["evidence"], list)
         self.assertGreater(len(report["evidence"]), 0)
 
+    def test_12_actionable_recommendations_quarantine(self):
+        """Req 3 (Actionable Recs): Verify quarantine guidance on malicious payloads vs safe deliveries."""
+        mz_payload = b"MZ\x90\x00\x03\x00\x00\x00\x04\x00\x00\x00\xff\xff\x00\x00" + b"X" * 64
+        raw_eml = (
+            b"From: invoice@spoofed-billing.com\r\n"
+            b"To: finance@victim.com\r\n"
+            b"Subject: Overdue Bill\r\n"
+            b"MIME-Version: 1.0\r\n"
+            b"Content-Type: multipart/mixed; boundary=\"BND\"\r\n\r\n"
+            b"--BND\r\nContent-Type: text/plain\r\n\r\nPay now.\r\n"
+            b"--BND\r\nContent-Type: application/pdf; name=\"invoice.pdf\"\r\n\r\n"
+            + mz_payload + b"\r\n--BND--"
+        )
+        trial = _run_full_trial(raw_eml)
+        recs = trial.get("actionable_recommendations", {})
+        self.assertEqual(recs.get("primary_action"), "QUARANTINE_AND_ISOLATE")
+        self.assertEqual(recs.get("quarantine", {}).get("action"), "GATEWAY_DROP_AND_QUARANTINE")
+        self.assertEqual(recs.get("quarantine", {}).get("soc_priority"), "P1_CRITICAL")
+        self.assertTrue(any("MAILJURY_QUARANTINED" in act for act in recs.get("quarantine", {}).get("mailbox_actions", [])))
+
+    def test_13_actionable_recommendations_sender_verification(self):
+        """Req 3 (Actionable Recs): Verify out-of-band official channel sender verification instructions."""
+        raw_eml = (
+            b"From: \"Executive Payroll\" <payroll@free-mail-sender.net>\r\n"
+            b"To: employee@victim.com\r\n"
+            b"Reply-To: phisher-drop@external-thief.com\r\n"
+            b"Subject: URGENT: Wire Transfer Immediately for Payroll Reconciliation\r\n"
+            b"Authentication-Results: mx.victim.com; spf=fail dkim=fail dmarc=fail\r\n"
+            b"MIME-Version: 1.0\r\n"
+            b"Content-Type: text/plain; charset=utf-8\r\n\r\n"
+            b"Please transfer funds immediately. Call 1-800-FAKE.\r\n"
+        )
+        trial = _run_full_trial(raw_eml)
+        verif = trial.get("actionable_recommendations", {}).get("verify_sender", {})
+        self.assertTrue(verif.get("verification_required"))
+        self.assertIn("Verified Out-of-Band Channel", verif.get("title", ""))
+        checklist = verif.get("protocol_checklist", [])
+        self.assertTrue(any("DO NOT reply" in step for step in checklist))
+        self.assertTrue(any("DO NOT call phone numbers printed in the message body" in step for step in checklist))
+
+    def test_14_actionable_recommendations_safe_viewer(self):
+        """Req 3 (Actionable Recs): Inspect files using appropriate safe viewers (Ghidra, Dangerzone, PDF.js)."""
+        mz_payload = b"MZ\x90\x00\x03\x00\x00\x00\x04\x00\x00\x00\xff\xff\x00\x00" + b"X" * 64
+        rep = AttachmentAnalyzer.inspect_attachment("Invoice_Masked.pdf", mz_payload, "application/pdf")
+        safe_guide = rep.get("safe_viewer_guidance", {})
+        self.assertIn("Static Disassembly", safe_guide.get("recommended_viewer", ""))
+        self.assertTrue(any("DO NOT double-click" in act for act in safe_guide.get("prohibited_actions", [])))
+        self.assertTrue(any("Ghidra" in tool or "CAPE" in tool or "radare2" in tool for tool in safe_guide.get("safe_inspection_tools", [])))
+
 
 def run_mission_02_benchmark():
     """Runs all 14 Mission 02 test cases and outputs structured performance telemetry."""

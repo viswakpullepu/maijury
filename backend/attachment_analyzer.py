@@ -17,6 +17,14 @@ import zipfile
 import hashlib
 from typing import Dict, List, Any, Optional, Tuple
 
+try:
+    from actionable_recommendations import ActionableRecommendationEngine
+except ImportError:
+    try:
+        from backend.actionable_recommendations import ActionableRecommendationEngine
+    except ImportError:
+        ActionableRecommendationEngine = None
+
 
 class AttachmentAnalyzer:
     """Safe, in-memory static forensic inspector for email attachments."""
@@ -253,6 +261,96 @@ class AttachmentAnalyzer:
             "base_score": 0.0,
             "mitre_attack": "N/A",
             "description": "Certified benign ZIP container containing exclusively non-executable raster graphic media."
+        },
+        {
+            "rule_id": "RULE_RENAMED_EXECUTABLE_PAYLOAD",
+            "name": "Deceptive Executable Header Masquerade (MZ/PE/ELF in Document Container)",
+            "category": "FILE_SIGNATURE_EVASION",
+            "severity": "MALICIOUS",
+            "base_score": 100.0,
+            "mitre_attack": "T1036.008",
+            "description": "Detects compiled executable binary headers (MZ, ELF, Mach-O) disguised with non-executable extensions (.pdf, .docx, images) to trick users into running payload code."
+        },
+        {
+            "rule_id": "RULE_POLYGLOT_PDF_PE",
+            "name": "Polyglot PDF Carrier Concealing Windows PE Binary",
+            "category": "PAYLOAD_EMBEDDING",
+            "severity": "MALICIOUS",
+            "base_score": 100.0,
+            "mitre_attack": "T1027",
+            "description": "Identifies polyglot files presenting a valid PDF header while embedding a secondary Windows Portable Executable (PE) payload at internal offsets."
+        },
+        {
+            "rule_id": "RULE_RTLO_UNICODE_DECEPTION",
+            "name": "Right-to-Left Override (U+202E) Extension Reversal",
+            "category": "DECEPTIVE_NAMING",
+            "severity": "MALICIOUS",
+            "base_score": 98.0,
+            "mitre_attack": "T1036.002",
+            "description": "Detects the Unicode Right-to-Left Override character (U+202E) in filenames, which reverses displayed extension text on operating system shells."
+        },
+        {
+            "rule_id": "RULE_DOUBLE_EXTENSION_DECEPTION",
+            "name": "Deceptive Double File Extension Masquerade",
+            "category": "DECEPTIVE_NAMING",
+            "severity": "MALICIOUS",
+            "base_score": 98.0,
+            "mitre_attack": "T1036.007",
+            "description": "Detects double extensions (.pdf.exe, .docx.scr) designed to exploit default desktop settings that conceal known extensions."
+        },
+        {
+            "rule_id": "RULE_ZIP_SLIP_PATH_TRAVERSAL",
+            "name": "Archive Directory Traversal Path Escape (Zip Slip)",
+            "category": "ARCHIVE_EVASION",
+            "severity": "MALICIOUS",
+            "base_score": 98.0,
+            "mitre_attack": "T1027",
+            "description": "Detects directory traversal sequences ('../' or '..\\') in internal archive member paths to escape target extraction directories."
+        },
+        {
+            "rule_id": "RULE_PASSWORD_PROTECTED_ARCHIVE_IN_BODY_KEY",
+            "name": "Password-Protected Archive with In-Body Password Extraction",
+            "category": "ARCHIVE_EVASION",
+            "severity": "MALICIOUS",
+            "base_score": 100.0,
+            "mitre_attack": "T1027",
+            "description": "Identifies encrypted ZIP archives where the encryption key is explicitly provided in the email body to blind gateway scanners while enabling victim extraction."
+        },
+        {
+            "rule_id": "RULE_PASSWORD_PROTECTED_EXECUTABLE_BUNDLE",
+            "name": "Encrypted Archive Concealing Declared Executable Payloads",
+            "category": "ARCHIVE_EVASION",
+            "severity": "MALICIOUS",
+            "base_score": 90.0,
+            "mitre_attack": "T1027.009",
+            "description": "Detects encrypted archives whose central directory headers declare executable members (.exe, .dll, .bat), hiding malicious payloads from perimeter inspection."
+        },
+        {
+            "rule_id": "RULE_CORRUPTED_CONTAINER_HEADER",
+            "name": "Missing or Corrupted Specification Container Header",
+            "category": "HEADER_ANOMALY",
+            "severity": "SUSPICIOUS",
+            "base_score": 60.0,
+            "mitre_attack": "T1036.008",
+            "description": "Detects attachments declaring specific document MIME types but lacking mandatory signature headers (e.g. missing %PDF-), indicating extension spoofing or truncated payload."
+        },
+        {
+            "rule_id": "RULE_CLEAN_DATA_ARCHIVE",
+            "name": "Certified Benign Data Archive",
+            "category": "BENIGN_CERTIFICATION",
+            "severity": "SAFE",
+            "base_score": 5.0,
+            "mitre_attack": "N/A",
+            "description": "Certified benign archive containing non-executable documents and data assets with zero encryption evasion flags."
+        },
+        {
+            "rule_id": "RULE_CLEAN_RASTER_IMAGE",
+            "name": "Certified Clean Graphic Image",
+            "category": "BENIGN_CERTIFICATION",
+            "severity": "SAFE",
+            "base_score": 0.0,
+            "mitre_attack": "N/A",
+            "description": "Standard digital image containing raster pixel data without embedded executable headers or script streams."
         }
     ]
 
@@ -484,6 +582,27 @@ class AttachmentAnalyzer:
                     f"The attachment is a compiled executable binary masquerading as a {ext.upper() if ext else 'document'} file. "
                     f"This is an unambiguous malicious delivery technique (MITRE ATT&CK T1036.008 File Type Mismatch Masquerade) "
                     f"designed to trick users into executing payload code when opened."
+                )
+                return cls._build_result(
+                    fn, ext, size_bytes, sha256, declared_ct, detected_mime,
+                    magic_hex, magic_ascii, risk_level, risk_score, classification,
+                    evidence, reasons, is_safe
+                )
+            else:
+                risk_score = 98.0
+                risk_level = "MALICIOUS"
+                is_safe = False
+                classification = f"Direct Executable Binary Attachment ({exe_type})"
+                evidence.append(
+                    f"Direct Executable Attachment: Filename '{fn}' carries raw {exe_type} payload (Magic bytes: {magic_hex[:5]})."
+                )
+                if pe_info and pe_info.get("is_valid_pe"):
+                    evidence.append(
+                        f"PE Structure Forensic: Valid NT Headers verified at offset 0x{pe_info['pe_offset']:X} | Architecture: {pe_info['arch']} | Subsystem: {pe_info['subsystem']}."
+                    )
+                reasons.append(
+                    f"Direct transmission of executable binaries ({exe_type}) violates gateway policy and presents an unmitigated "
+                    f"remote code execution risk (MITRE ATT&CK T1204.002)."
                 )
                 return cls._build_result(
                     fn, ext, size_bytes, sha256, declared_ct, detected_mime,
@@ -1353,7 +1472,7 @@ class AttachmentAnalyzer:
 
         for token, (score, level, desc) in pdf_checks.items():
             token_bytes = token.encode("ascii")
-            if re.search(rb'\b' + re.escape(token_bytes) + rb'\b', payload):
+            if re.search(re.escape(token_bytes) + rb'\b', payload):
                 found_threats.append((token, score, desc))
                 if score > max_threat_score:
                     max_threat_score = score
@@ -1367,6 +1486,10 @@ class AttachmentAnalyzer:
             final_score = 98.0 if has_auto_exploit else max_threat_score
             final_level = "MALICIOUS" if is_malicious or has_auto_exploit else "SUSPICIOUS"
 
+            rule = next((r for r in cls.STATIC_RULES if r["rule_id"] == "RULE_STRUCT_PDF_ACTIVE_OBJECT"), None)
+            triggered_rules = [rule] if rule else []
+            mitre_techniques = [rule["mitre_attack"]] if rule and "mitre_attack" in rule else []
+
             return cls._build_result(
                 fn, ext, size_bytes, sha256, declared_ct, "application/pdf",
                 magic_hex, magic_ascii, final_level, final_score,
@@ -1376,7 +1499,9 @@ class AttachmentAnalyzer:
                     "PDF file violates static document safety by embedding active executable constructs "
                     f"({', '.join(threat_tokens)}) that execute scripts or trigger external commands upon opening."
                 ],
-                False
+                False,
+                triggered_rules,
+                mitre_techniques
             )
 
         # Zero threat tokens found -> Genuine Vendor PDF Invoice / Document
@@ -1616,6 +1741,544 @@ class AttachmentAnalyzer:
             )
 
     @classmethod
+    def _format_size_bytes(cls, size_bytes: int) -> str:
+        """Returns human-readable formatted file size."""
+        if size_bytes < 1024:
+            return f"{size_bytes} B"
+        elif size_bytes < 1024 * 1024:
+            return f"{size_bytes / 1024:.1f} KB"
+        else:
+            return f"{size_bytes / (1024 * 1024):.2f} MB"
+
+    @classmethod
+    def _build_detected_file_type(
+        cls,
+        filename: str,
+        extension: str,
+        size_bytes: int,
+        declared_type: str,
+        detected_type: str,
+        magic_hex: str,
+        magic_ascii: str,
+        classification: str,
+    ) -> Dict[str, Any]:
+        """Synthesizes deep, accurate file format and signature characteristics."""
+        ext_clean = extension.lower().strip()
+        decl_clean = declared_type.lower().strip() if declared_type else ""
+
+        format_name = "Unknown Binary Data"
+        category = "DATA"
+
+        if detected_type in cls.EXECUTABLE_MIMES or "dosexec" in detected_type or "executable" in detected_type or magic_ascii.startswith("MZ"):
+            category = "EXECUTABLE"
+            if "MZ" in magic_ascii or "PE" in classification or "dosexec" in detected_type:
+                format_name = "Windows Portable Executable (MZ / PE)"
+            elif "ELF" in magic_ascii or "executable" in detected_type:
+                format_name = "Linux Executable and Linkable Format (ELF)"
+            elif "mach" in detected_type:
+                format_name = "macOS Universal Mach-O Binary"
+            elif "shortcut" in detected_type or ext_clean == ".lnk":
+                format_name = "Windows Shell Shortcut (.lnk)"
+            elif "htmlhelp" in detected_type or ext_clean == ".chm":
+                format_name = "Compiled HTML Help (.chm)"
+            elif detected_type == "application/x-sh":
+                format_name = "Unix Shell Script"
+            else:
+                format_name = "Compiled Executable Binary"
+        elif detected_type == "application/pdf" or ext_clean == ".pdf":
+            category = "DOCUMENT"
+            format_name = "Adobe Portable Document Format (PDF)"
+        elif "officedocument.wordprocessingml" in detected_type or ext_clean in [".docx", ".docm"]:
+            category = "DOCUMENT"
+            format_name = "Microsoft Word OpenXML Document (.docx/.docm)"
+        elif "officedocument.spreadsheetml" in detected_type or ext_clean in [".xlsx", ".xlsm"]:
+            category = "DOCUMENT"
+            format_name = "Microsoft Excel OpenXML Spreadsheet (.xlsx/.xlsm)"
+        elif "officedocument.presentationml" in detected_type or ext_clean in [".pptx", ".pptm"]:
+            category = "DOCUMENT"
+            format_name = "Microsoft PowerPoint OpenXML Presentation (.pptx/.pptm)"
+        elif detected_type == "application/x-ole-storage" or ext_clean in [".doc", ".xls", ".ppt"]:
+            category = "DOCUMENT"
+            format_name = "Microsoft OLE Compound File (Legacy Office)"
+        elif detected_type == "application/rtf" or ext_clean == ".rtf":
+            category = "DOCUMENT"
+            format_name = "Rich Text Format Document (RTF)"
+        elif detected_type in ["application/zip", "application/x-zip-compressed"] or ext_clean == ".zip":
+            category = "ARCHIVE"
+            format_name = "PKWARE ZIP Archive Container"
+        elif "rar" in detected_type or ext_clean == ".rar":
+            category = "ARCHIVE"
+            format_name = "RAR Compressed Archive"
+        elif "7z" in detected_type or ext_clean == ".7z":
+            category = "ARCHIVE"
+            format_name = "7-Zip Compressed Archive"
+        elif detected_type.startswith("image/"):
+            category = "IMAGE"
+            if "png" in detected_type or ext_clean == ".png":
+                format_name = "Portable Network Graphics (PNG)"
+            elif "jpeg" in detected_type or ext_clean in [".jpg", ".jpeg"]:
+                format_name = "JPEG Raster Graphic"
+            elif "gif" in detected_type or ext_clean == ".gif":
+                format_name = "Graphics Interchange Format (GIF)"
+            elif "svg" in detected_type or ext_clean == ".svg":
+                format_name = "Scalable Vector Graphics (SVG)"
+            else:
+                format_name = "Digital Image Container"
+        elif detected_type in ["application/x-sh", "text/javascript", "application/javascript", "text/x-python"] or ext_clean in [".sh", ".js", ".py", ".bat", ".cmd", ".ps1", ".vbs"]:
+            category = "SCRIPT"
+            format_name = "Script / Shell Automation Source"
+
+        # Detect deceptive MIME / extension mismatches
+        is_mime_mismatch = False
+        if decl_clean and decl_clean not in ["application/octet-stream", "binary/octet-stream"]:
+            if category == "EXECUTABLE" and any(b in decl_clean for b in ["pdf", "image", "word", "document", "sheet", "text"]):
+                is_mime_mismatch = True
+            elif "pdf" in decl_clean and detected_type != "application/pdf":
+                is_mime_mismatch = True
+
+        is_ext_mismatch = False
+        if ext_clean in [".pdf", ".docx", ".xlsx", ".pptx", ".jpg", ".png", ".txt", ".csv"]:
+            if category == "EXECUTABLE":
+                is_ext_mismatch = True
+
+        description = (
+            f"{format_name} verified via header magic signature [{magic_hex[:11]}]. "
+            f"Container categorized under {category} operational profile."
+        )
+
+        return {
+            "mime_type": detected_type,
+            "declared_mime": declared_type or "application/octet-stream",
+            "declared_extension": extension or "(none)",
+            "magic_hex": magic_hex,
+            "magic_ascii": magic_ascii,
+            "format_name": format_name,
+            "category": category,
+            "mime_mismatch": is_mime_mismatch,
+            "extension_mismatch": is_ext_mismatch,
+            "size_bytes": size_bytes,
+            "size_formatted": cls._format_size_bytes(size_bytes),
+            "description": description
+        }
+
+    @classmethod
+    def _build_suspicious_features(
+        cls,
+        filename: str,
+        extension: str,
+        detected_type: str,
+        magic_hex: str,
+        magic_ascii: str,
+        risk_level: str,
+        classification: str,
+        evidence: List[str],
+        reasons: List[str],
+        triggered_rules: Optional[List[Dict[str, Any]]],
+        mitre_techniques: Optional[List[str]]
+    ) -> List[Dict[str, Any]]:
+        """Extracts structured list of concrete suspicious characteristics and attack indicators."""
+        if risk_level == "SAFE":
+            return []
+
+        features: List[Dict[str, Any]] = []
+        seen_ids = set()
+
+        # 1. From formal triggered rules
+        for rule in (triggered_rules or []):
+            if not isinstance(rule, dict) or "rule_id" in seen_ids:
+                continue
+            r_id = rule.get("rule_id", "")
+            seen_ids.add(r_id)
+
+            feat_sev = rule.get("severity", "HIGH")
+            if feat_sev == "SAFE":
+                continue
+
+            snippet = ""
+            for ev in evidence:
+                if any(k in ev.lower() for k in rule.get("name", "").lower().split()[:2]):
+                    snippet = ev
+                    break
+            if not snippet and evidence:
+                snippet = evidence[0]
+
+            features.append({
+                "id": f"FEAT_{r_id}",
+                "name": rule.get("name", "Heuristic Anomaly"),
+                "severity": "CRITICAL" if rule.get("base_score", 0) >= 90 else ("HIGH" if rule.get("base_score", 0) >= 70 else "MEDIUM"),
+                "category": rule.get("category", "EXPLOIT_STRUCTURE"),
+                "description": rule.get("description", ""),
+                "evidence": snippet,
+                "mitre_attack": rule.get("mitre_attack", "N/A"),
+                "risk_contribution": float(rule.get("base_score", 75.0))
+            })
+
+        # 2. Renamed Executable Masquerade
+        if ("Renamed Executable Payload" in classification or "application/x-dosexec" in detected_type) and "FEAT_RULE_RENAMED_EXECUTABLE_PAYLOAD" not in seen_ids and "FEAT_RENAMED_EXECUTABLE_MASQUERADE" not in seen_ids:
+            seen_ids.add("FEAT_RENAMED_EXECUTABLE_MASQUERADE")
+            pe_ev = next((ev for ev in evidence if "MISMATCH" in ev or "PE Structure" in ev or "MZ" in ev), f"Header: [{magic_hex}] ('{magic_ascii}')")
+            features.append({
+                "id": "FEAT_RENAMED_EXECUTABLE_MASQUERADE",
+                "name": "Deceptive Executable Header Masquerade (MZ / PE)",
+                "severity": "CRITICAL",
+                "category": "FILE_SIGNATURE_EVASION",
+                "description": f"Binary stream initiates with Windows executable magic header [{magic_hex[:5]}] ('{magic_ascii[:2]}') while masquerading under deceptive extension '{extension}'.",
+                "evidence": pe_ev,
+                "mitre_attack": "T1036.008 (Masquerading: File Type Mismatch)",
+                "risk_contribution": 100.0
+            })
+
+        # 3. Polyglot Carrier
+        if "Polyglot" in classification and "FEAT_POLYGLOT_PE_DROPPER" not in seen_ids:
+            seen_ids.add("FEAT_POLYGLOT_PE_DROPPER")
+            poly_ev = next((ev for ev in evidence if "Polyglot" in ev or "Embedded Windows PE" in ev), "Embedded PE binary detected inside PDF stream")
+            features.append({
+                "id": "FEAT_POLYGLOT_PE_DROPPER",
+                "name": "Polyglot Document Carrier Concealing Embedded PE Binary",
+                "severity": "CRITICAL",
+                "category": "PAYLOAD_EMBEDDING",
+                "description": "Attachment disguises a Windows executable inside a PDF container stream to bypass perimeter gateway filters.",
+                "evidence": poly_ev,
+                "mitre_attack": "T1027 (Obfuscated Files or Information)",
+                "risk_contribution": 100.0
+            })
+
+        # 4. RTLO Unicode Spoofing
+        if ("RTLO" in classification or "\u202e" in filename) and "FEAT_RTLO_UNICODE_SPOOF" not in seen_ids:
+            seen_ids.add("FEAT_RTLO_UNICODE_SPOOF")
+            features.append({
+                "id": "FEAT_RTLO_UNICODE_SPOOF",
+                "name": "Right-to-Left Override (U+202E) Extension Reversal",
+                "severity": "CRITICAL",
+                "category": "DECEPTIVE_NAMING",
+                "description": "Filename utilizes the Unicode Right-to-Left Override character to invert file extension rendering in Windows Explorer.",
+                "evidence": f"Filename codepoints contain U+202E: {repr(filename)}",
+                "mitre_attack": "T1036.002 (Right-to-Left Override)",
+                "risk_contribution": 98.0
+            })
+
+        # 5. Double Extension
+        if "Double Extension" in classification and "FEAT_DOUBLE_EXT_MASQUERADE" not in seen_ids:
+            seen_ids.add("FEAT_DOUBLE_EXT_MASQUERADE")
+            features.append({
+                "id": "FEAT_DOUBLE_EXT_MASQUERADE",
+                "name": "Deceptive Double Extension Pattern",
+                "severity": "HIGH",
+                "category": "DECEPTIVE_NAMING",
+                "description": "Filename nests an executable extension after a benign document extension (e.g. .pdf.exe) to exploit hidden extension settings.",
+                "evidence": next((ev for ev in evidence if "double extension" in ev.lower()), f"Filename: '{filename}'"),
+                "mitre_attack": "T1036.007 (Double File Extension)",
+                "risk_contribution": 98.0
+            })
+
+        # 6. PDF Interactive Exploit Dictionaries
+        pdf_tokens = ["/Launch", "/JavaScript", "/JS", "/OpenAction", "/AA", "/EmbeddedFiles"]
+        for pt in pdf_tokens:
+            pt_id = f"FEAT_PDF_{pt.replace('/', '').upper()}"
+            if pt_id not in seen_ids:
+                matching_ev = [ev for ev in evidence if pt in ev]
+                if matching_ev:
+                    seen_ids.add(pt_id)
+                    features.append({
+                        "id": pt_id,
+                        "name": f"PDF Active Dictionary Directive ({pt})",
+                        "severity": "CRITICAL" if pt in ["/Launch", "/JavaScript", "/JS"] else "HIGH",
+                        "category": "PDF_EXPLOIT_STRUCTURE",
+                        "description": f"Dangerous PDF interactive dictionary key '{pt}' discovered in document body.",
+                        "evidence": matching_ev[0],
+                        "mitre_attack": "T1204.002 (User Execution: Malicious File)" if pt == "/Launch" else "T1059.007 (JavaScript)",
+                        "risk_contribution": 95.0 if pt == "/Launch" else 85.0
+                    })
+
+        # 7. Zip Slip Path Traversal
+        if ("Zip Slip" in classification or "Path Traversal" in classification) and "FEAT_ZIP_SLIP_PATH_TRAVERSAL" not in seen_ids:
+            seen_ids.add("FEAT_ZIP_SLIP_PATH_TRAVERSAL")
+            slip_ev = next((ev for ev in evidence if "traversal" in ev.lower()), "Detected directory traversal sequence in internal member path")
+            features.append({
+                "id": "FEAT_ZIP_SLIP_PATH_TRAVERSAL",
+                "name": "Archive Directory Traversal Path Escape (Zip Slip)",
+                "severity": "CRITICAL",
+                "category": "ARCHIVE_EVASION",
+                "description": "Archive member filenames contain directory traversal sequences ('../' or '..\\') to write outside target destination.",
+                "evidence": slip_ev,
+                "mitre_attack": "T1027 (Obfuscated Files or Information)",
+                "risk_contribution": 98.0
+            })
+
+        # 8. Password-Protected ZIP with In-Body Password Extraction
+        if ("Password-Protected ZIP" in classification and "In-Body" in classification) and "FEAT_ZIP_ENCRYPTED_INBODY_PASSWORD" not in seen_ids:
+            seen_ids.add("FEAT_ZIP_ENCRYPTED_INBODY_PASSWORD")
+            pw_ev = next((ev for ev in evidence if "Candidate Password" in ev or "SecretPass" in ev), "PKWARE encryption flag set; key present in email body")
+            features.append({
+                "id": "FEAT_ZIP_ENCRYPTED_INBODY_PASSWORD",
+                "name": "Password-Protected Archive with In-Body Key Evasion",
+                "severity": "CRITICAL",
+                "category": "ARCHIVE_EVASION",
+                "description": "Archive uses encryption to prevent automated gateway scanning while providing the unlock key in the email body.",
+                "evidence": pw_ev,
+                "mitre_attack": "T1027 (Obfuscated/Encrypted Archive)",
+                "risk_contribution": 100.0
+            })
+
+        # 9. Password-Protected ZIP listing executable entries
+        if "Listing Suspicious Executable Entries" in classification and "FEAT_ZIP_ENCRYPTED_EXECUTABLES" not in seen_ids:
+            seen_ids.add("FEAT_ZIP_ENCRYPTED_EXECUTABLES")
+            enc_ev = next((ev for ev in evidence if "declare executable payload" in ev.lower()), "Archive declares executable members")
+            features.append({
+                "id": "FEAT_ZIP_ENCRYPTED_EXECUTABLES",
+                "name": "Encrypted Archive Concealing Declared Executable Payloads",
+                "severity": "CRITICAL",
+                "category": "ARCHIVE_EVASION",
+                "description": "Encrypted container bundles executable binaries (.exe/.bat/.scr) to bypass gateway virus definitions.",
+                "evidence": enc_ev,
+                "mitre_attack": "T1027.009 (Embedded Payloads)",
+                "risk_contribution": 90.0
+            })
+
+        # 10. Standalone Executable in ZIP
+        if "ZIP Archive Containing Executable Payload" in classification and "FEAT_ZIP_UNCOMPRESSED_EXECUTABLE" not in seen_ids:
+            seen_ids.add("FEAT_ZIP_UNCOMPRESSED_EXECUTABLE")
+            zip_exe_ev = next((ev for ev in evidence if "Executable member" in ev), "Executable payload found in unencrypted archive")
+            features.append({
+                "id": "FEAT_ZIP_UNCOMPRESSED_EXECUTABLE",
+                "name": "Archive Bundling Standalone Executable Binary",
+                "severity": "CRITICAL",
+                "category": "PAYLOAD_EMBEDDING",
+                "description": "Archive carries raw uncompressed executable payload intended for victim execution.",
+                "evidence": zip_exe_ev,
+                "mitre_attack": "T1027 (Obfuscated Files)",
+                "risk_contribution": 95.0
+            })
+
+        # 11. Corrupt PDF Header
+        if "Invalid or Corrupted PDF Header" in classification and "FEAT_CORRUPT_PDF_HEADER" not in seen_ids:
+            seen_ids.add("FEAT_CORRUPT_PDF_HEADER")
+            features.append({
+                "id": "FEAT_CORRUPT_PDF_HEADER",
+                "name": "Missing Mandatory PDF Specification Header (%PDF-)",
+                "severity": "HIGH",
+                "category": "HEADER_ANOMALY",
+                "description": "Attachment declares .pdf extension or application/pdf MIME type, but lacks the mandatory %PDF- signature.",
+                "evidence": f"Header bytes: [{magic_hex}] ('{magic_ascii}')",
+                "mitre_attack": "T1036.008 (Masquerading: File Type Mismatch)",
+                "risk_contribution": 60.0
+            })
+
+        # 12. Generic Suspicious Fallback if features is still empty but risk_level != SAFE
+        if not features and (evidence or reasons):
+            features.append({
+                "id": "FEAT_STATIC_HEURISTIC_FLAG",
+                "name": classification,
+                "severity": "HIGH" if risk_level == "MALICIOUS" else "MEDIUM",
+                "category": "STRUCTURE_ANOMALY",
+                "description": " ".join(reasons) if isinstance(reasons, list) else str(reasons),
+                "evidence": evidence[0] if evidence else f"Magic: [{magic_hex}]",
+                "mitre_attack": mitre_techniques[0] if mitre_techniques else "T1027",
+                "risk_contribution": 70.0 if risk_level == "MALICIOUS" else 45.0
+            })
+
+        return features
+
+    @classmethod
+    def _build_benign_features(
+        cls,
+        risk_level: str,
+        classification: str,
+        evidence: List[str]
+    ) -> List[str]:
+        """Provides verified static forensic benign certifications for clean documents."""
+        if risk_level != "SAFE":
+            return []
+
+        benign: List[str] = []
+        if "Vendor PDF Invoice" in classification or "Clean Document" in classification:
+            benign.extend([
+                "Verified ISO 32000-1 PDF compliance header (%PDF-)",
+                "Zero /Launch OS command execution dictionaries",
+                "Zero /JavaScript or /JS client execution scripts",
+                "Zero /OpenAction automatic execution triggers",
+                "Zero /EmbeddedFiles dropper containers"
+            ])
+        elif "Plain DOCX" in classification or "Macro-Free" in classification:
+            benign.extend([
+                "Verified OOXML document package structure without VBA streams",
+                "Zero vbaProject.bin or macro code modules present",
+                "Zero external relationship references or template injection targets",
+                "Zero embedded binary packages (word/embeddings/)",
+                "Zero DDE / DDEAUTO command execution field codes"
+            ])
+        elif "Benign ZIP" in classification or "Image" in classification:
+            benign.extend([
+                "Unencrypted container with valid central directory record",
+                "Exclusively non-executable graphic or data member files",
+                "Zero PKWARE encryption evasion flags",
+                "Zero relative path traversal characters"
+            ])
+        else:
+            benign.extend([
+                "Static binary headers conform to declared MIME specifications",
+                "Zero executable entry points or process injection markers identified",
+                "Safe for standard operating system viewer handling"
+            ])
+
+        return benign
+
+    @classmethod
+    def _build_recommended_action(
+        cls,
+        filename: str,
+        sha256: str,
+        risk_level: str,
+        classification: str,
+        suspicious_features: List[Dict[str, Any]],
+        rec_data: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Generates clear, actionable operational guidance and tactical containment playbooks."""
+        feat_names = [f["name"] for f in suspicious_features]
+        sha_short = sha256[:16] if sha256 else "UNKNOWN"
+
+        if risk_level == "MALICIOUS":
+            primary = "BLOCK_AND_QUARANTINE"
+            label = "🚫 Block & Quarantine Immediately"
+            urgency = "IMMEDIATE_ACTION_REQUIRED"
+
+            if "Renamed Executable" in classification or any("Renamed" in fn for fn in feat_names):
+                summary = f"Quarantine attachment '{filename}' at mail gateway. Block SHA-256 ({sha_short}...) across endpoint EDR sensors. Do NOT double-click or execute."
+                end_user = "CRITICAL ALERT: This file is a compiled computer program disguised as a document. Do NOT attempt to open, save, or double-click this attachment. Contact IT Security immediately."
+            elif "Macro" in classification or any("Macro" in fn for fn in feat_names):
+                summary = f"Quarantine weaponized document '{filename}'. Malicious macro / auto-execution code detected. Do NOT open in Word or enable macros."
+                end_user = "CRITICAL ALERT: This document contains weaponized macros that attempt to run unauthorized programs on your computer. Do NOT click 'Enable Content' or 'Enable Editing'."
+            elif "Template Injection" in classification or any("Template" in fn for fn in feat_names):
+                summary = f"Quarantine document '{filename}'. Malicious remote template injection detected. Blacklist external template C2 URL at perimeter firewall."
+                end_user = "SECURITY WARNING: This document attempts to download malicious templates from the internet. It has been quarantined."
+            elif "PDF" in classification or any("PDF" in fn for fn in feat_names):
+                summary = f"Quarantine PDF file '{filename}'. Active command execution or script tokens discovered. Do NOT open in desktop PDF viewers."
+                end_user = "SECURITY ALERT: This PDF file contains hidden script commands that could compromise your computer. Do not attempt to open it."
+            elif "Password-Protected ZIP" in classification or any("Password-Protected" in fn for fn in feat_names):
+                summary = f"Quarantine encrypted archive '{filename}'. Sender supplied password in email body to evade automated virus filters."
+                end_user = "SECURITY ALERT: The sender has encrypted this attachment to hide malicious contents from email scanners. Do not extract or enter passwords."
+            else:
+                summary = f"Quarantine attachment '{filename}'. Critical malicious evasion pattern identified. Block SHA-256 hash across organization."
+                end_user = "CRITICAL ALERT: This attachment has been classified as malicious by MailJury static forensics. Do not download or interact with it."
+
+            soc_playbook = [
+                f"1. Gateway: Intercept and quarantine email carrying attachment '{filename}' at mail gateway (M365/Google Workspace/SEG).",
+                f"2. EDR Blocklist: Ingest SHA-256 hash '{sha256}' into EDR threat intelligence watchlists (CrowdStrike, Microsoft Defender, SentinelOne).",
+                f"3. SIEM Correlation: Query mail logs for any sibling messages with attachment hash '{sha_short}...' delivered in the last 14 days.",
+                "4. Host Isolation: If telemetry indicates any user opened or extracted the payload, isolate affected workstation from corporate network immediately.",
+                "5. Egress Filtering: Block any associated C2 domains or external template targets at perimeter firewall and corporate DNS resolvers."
+            ]
+
+            remediation = [
+                {"task": "Mail Gateway Quarantine", "status": "REQUIRED", "action": "Enforce immediate drop/quarantine rule at mail gateway."},
+                {"task": f"EDR SHA-256 Fleet Block ({sha_short}...)", "status": "REQUIRED", "action": "Publish attachment hash to endpoint defense sensors."},
+                {"task": "SIEM Inbound Message Search", "status": "REQUIRED", "action": "Audit tenant inboxes for identical attachment hash."},
+                {"task": "Host Isolation Protocol", "status": "CONDITIONAL", "action": "Isolate host if execution telemetry indicates execution attempt."},
+                {"task": "Sender Domain Block", "status": "REQUIRED", "action": "Add originating domain to gateway blacklist."}
+            ]
+
+        elif risk_level == "SUSPICIOUS":
+            primary = "HOLD_FOR_ADMIN_TRIAGE"
+            label = "⚠️ Hold for Security Triage"
+            urgency = "ANALYST_INVESTIGATION_REQUIRED"
+            summary = f"Hold attachment '{filename}' in user quarantine for administrative security evaluation. Route to isolated sandbox before release."
+            end_user = "CAUTION: This attachment has unusual formatting or encrypted contents that require IT verification before it can be safely opened."
+            soc_playbook = [
+                f"1. Detonation: Route attachment '{filename}' to an isolated micro-VM sandbox (ANY.RUN, Cuckoo) for runtime behavior observation.",
+                "2. Out-of-Band Verification: Contact the purported sender via a trusted phone number to verify whether they sent an encrypted archive or macro document.",
+                "3. In-Memory Extraction: If encrypted archive with body password, extract in an airgapped sandbox environment and inspect uncompressed contents.",
+                "4. Administrative Decision: Release message only if sender confirms validity and sandbox analysis records zero network egress."
+            ]
+            remediation = [
+                {"task": "Hold in Quarantine", "status": "REQUIRED", "action": "Prevent delivery to primary inbox until triaged."},
+                {"task": "Dynamic Sandbox Detonation", "status": "REQUIRED", "action": "Submit attachment to micro-VM for API observation."},
+                {"task": "Out-of-Band Sender Verification", "status": "RECOMMENDED", "action": "Confirm document necessity with business counterparty."}
+            ]
+
+        else:
+            primary = "PERMIT_DELIVERY"
+            label = "✅ Permit Inbox Delivery"
+            urgency = "ROUTINE_TRAFFIC"
+            summary = f"Permit delivery of attachment '{filename}'. Static byte-stream analysis verified genuine benign structure with zero threat markers."
+            end_user = "SAFE: In-memory static forensics verified this attachment as clean. Safe for normal opening."
+            soc_playbook = [
+                f"1. Audit Logging: Record Section 65B electronic record certificate token 'BSA65B-ATT-{sha_short}' in benign audit journal.",
+                "2. Standard Delivery: Deliver email to recipient inbox without modification or warning banners."
+            ]
+            remediation = [
+                {"task": "Standard Delivery", "status": "COMPLETED", "action": "Deliver clean message to recipient primary inbox."},
+                {"task": "Record Cryptographic Hash", "status": "COMPLETED", "action": "Log SHA-256 for compliance audit trail."}
+            ]
+
+        # Enrich with rec_data if available
+        safe_viewer = rec_data.get("safe_viewer_guidance") if rec_data else {}
+        quarantine = rec_data.get("quarantine_guidance") if rec_data else {}
+        verification = rec_data.get("sender_verification_guidance") if rec_data else {}
+
+        return {
+            "primary_action": primary,
+            "action_label": label,
+            "urgency": urgency,
+            "summary": summary,
+            "end_user_guidance": end_user,
+            "soc_analyst_playbook": soc_playbook,
+            "remediation_checklist": remediation,
+            "safe_viewer_profile": safe_viewer,
+            "quarantine_profile": quarantine,
+            "sender_verification_profile": verification
+        }
+
+    @classmethod
+    def _build_report_card(
+        cls,
+        filename: str,
+        sha256: str,
+        size_bytes: int,
+        detected_file_type: Dict[str, Any],
+        suspicious_features: List[Dict[str, Any]],
+        benign_features: List[str],
+        risk_level: str,
+        risk_score: float,
+        classification: str,
+        recommended_action: Dict[str, Any],
+        triggered_rules: Optional[List[Dict[str, Any]]],
+        mitre_techniques: Optional[List[str]]
+    ) -> Dict[str, Any]:
+        """Synthesizes the complete Per-Attachment Report Card container."""
+        severity_tier = (
+            "CRITICAL_THREAT" if risk_score >= 80.0
+            else ("ELEVATED_RISK" if risk_score >= 30.0 else "NEGLIGIBLE_RISK")
+        )
+        card_id = f"REPCARD-ATT-{sha256[:12].upper() if sha256 else '000000000000'}"
+        bsa_token = f"BSA65B-ATT-{sha256[:16].upper() if sha256 else '0000000000000000'}"
+
+        return {
+            "card_id": card_id,
+            "filename": filename,
+            "sha256": sha256,
+            "size_bytes": size_bytes,
+            "size_formatted": detected_file_type.get("size_formatted", f"{size_bytes} B"),
+            "detected_file_type": detected_file_type,
+            "suspicious_features": suspicious_features,
+            "suspicious_features_count": len(suspicious_features),
+            "benign_features": benign_features,
+            "benign_features_count": len(benign_features),
+            "risk_level": risk_level,
+            "risk_score": round(risk_score, 1),
+            "severity_tier": severity_tier,
+            "classification": classification,
+            "recommended_action": recommended_action,
+            "mitre_techniques": mitre_techniques or [],
+            "triggered_rules": [r["rule_id"] for r in (triggered_rules or []) if isinstance(r, dict) and "rule_id" in r],
+            "zero_execution_guarantee": "Analyzed entirely in-memory via static byte inspection. No file was opened, mounted, rendered, or executed.",
+            "legal_evidence_certificate": {
+                "statute": "Bharatiya Sakshya Adhiniyam (BSA) 2023 §65B",
+                "certificate_id": bsa_token,
+                "admissibility": "VERIFIED_AUTHENTIC_ELECTRONIC_RECORD"
+            }
+        }
+
+    @classmethod
     def _build_result(
         cls,
         filename: str,
@@ -1635,6 +2298,47 @@ class AttachmentAnalyzer:
         triggered_rules: Optional[List[Dict[str, Any]]] = None,
         mitre_techniques: Optional[List[str]] = None
     ) -> Dict[str, Any]:
+        rec_data = None
+        if ActionableRecommendationEngine:
+            rec_data = ActionableRecommendationEngine.generate_attachment_recommendations(
+                filename=filename,
+                extension=extension,
+                detected_type=detected_type,
+                risk_level=risk_level,
+                risk_score=risk_score,
+                classification=classification,
+                evidence=evidence
+            )
+
+        detected_file_type = cls._build_detected_file_type(
+            filename, extension, size_bytes, declared_type, detected_type,
+            magic_hex, magic_ascii, classification
+        )
+        suspicious_features = cls._build_suspicious_features(
+            filename, extension, detected_type, magic_hex, magic_ascii,
+            risk_level, classification, evidence, reasons,
+            triggered_rules, mitre_techniques
+        )
+        benign_features = cls._build_benign_features(risk_level, classification, evidence)
+        recommended_action = cls._build_recommended_action(
+            filename, sha256, risk_level, classification, suspicious_features, rec_data
+        )
+
+        # Merge any MITRE techniques found in suspicious features
+        combined_mitre = list(mitre_techniques or [])
+        for feat in suspicious_features:
+            m = feat.get("mitre_attack")
+            if m and m != "N/A":
+                technique_id = m.split()[0]
+                if technique_id not in combined_mitre:
+                    combined_mitre.append(technique_id)
+
+        report_card = cls._build_report_card(
+            filename, sha256, size_bytes, detected_file_type, suspicious_features,
+            benign_features, risk_level, risk_score, classification,
+            recommended_action, triggered_rules, combined_mitre
+        )
+
         return {
             "filename": filename,
             "extension": extension,
@@ -1653,5 +2357,15 @@ class AttachmentAnalyzer:
             "zero_execution_guarantee": "Analyzed entirely in-memory via static byte inspection. No file was opened, mounted, rendered, or executed.",
             "triggered_rules": triggered_rules or [],
             "triggered_rule_ids": [r["rule_id"] for r in (triggered_rules or []) if isinstance(r, dict) and "rule_id" in r],
-            "mitre_techniques": mitre_techniques or []
+            "mitre_techniques": combined_mitre,
+            "safe_viewer_guidance": rec_data["safe_viewer_guidance"] if rec_data else {},
+            "quarantine_guidance": rec_data["quarantine_guidance"] if rec_data else {},
+            "sender_verification_guidance": rec_data["sender_verification_guidance"] if rec_data else {},
+            "recommendations": rec_data["recommendations"] if rec_data else [],
+            # ── PER-ATTACHMENT REPORT CARD DELIVERABLES ──
+            "detected_file_type": detected_file_type,
+            "suspicious_features": suspicious_features,
+            "benign_features": benign_features,
+            "recommended_action": recommended_action,
+            "report_card": report_card
         }
