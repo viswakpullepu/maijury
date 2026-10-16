@@ -65,6 +65,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def vercel_routing_middleware(request: Request, call_next):
+    orig_path = request.headers.get("x-matched-path")
+    if orig_path:
+        path_only = orig_path.split("?")[0]
+        if path_only:
+            request.scope["path"] = path_only
+    return await call_next(request)
+
+
 @app.on_event("startup")
 async def startup_event():
     """Auto-start autonomous background daemon upon server boot."""
@@ -147,6 +157,7 @@ def _run_full_trial(raw_bytes: bytes) -> dict:
 # ─── REST ENDPOINTS ────────────────────────────────────────────────────────
 
 @app.get("/")
+@app.get("/api/index.py")
 async def root():
     return {
         "service": "MailJury Adversarial Email Security Courtroom",
@@ -156,6 +167,7 @@ async def root():
         "api_health": "/api/health",
         "mission_02_benchmark": "/api/mission-02/benchmark"
     }
+
 
 @app.get("/api/health")
 async def health():
