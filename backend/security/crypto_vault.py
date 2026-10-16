@@ -11,9 +11,15 @@ import hmac
 import hashlib
 from typing import Dict, Any, Tuple, Optional
 
-from Cryptodome.Cipher import AES
-from Cryptodome.Protocol.KDF import HKDF
-from Cryptodome.Hash import SHA256
+try:
+    from Cryptodome.Cipher import AES
+    from Cryptodome.Protocol.KDF import HKDF
+    from Cryptodome.Hash import SHA256
+except ImportError:
+    from Crypto.Cipher import AES
+    from Crypto.Protocol.KDF import HKDF
+    from Crypto.Hash import SHA256
+
 
 class CryptoVault:
     """Enterprise encryption vault for OAuth tokens, API secrets, and sensitive memory."""

@@ -146,8 +146,20 @@ def _run_full_trial(raw_bytes: bytes) -> dict:
 
 # ─── REST ENDPOINTS ────────────────────────────────────────────────────────
 
+@app.get("/")
+async def root():
+    return {
+        "service": "MailJury Adversarial Email Security Courtroom",
+        "status": "operational",
+        "version": "2.1.0",
+        "docs_url": "/docs",
+        "api_health": "/api/health",
+        "mission_02_benchmark": "/api/mission-02/benchmark"
+    }
+
 @app.get("/api/health")
 async def health():
+
     return {
         "status": "operational",
         "version": "2.1.0",
