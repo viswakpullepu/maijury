@@ -1652,5 +1652,6 @@ class AttachmentAnalyzer:
             "is_safe": is_safe,
             "zero_execution_guarantee": "Analyzed entirely in-memory via static byte inspection. No file was opened, mounted, rendered, or executed.",
             "triggered_rules": triggered_rules or [],
+            "triggered_rule_ids": [r["rule_id"] for r in (triggered_rules or []) if isinstance(r, dict) and "rule_id" in r],
             "mitre_techniques": mitre_techniques or []
         }

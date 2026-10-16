@@ -147,6 +147,109 @@ class TestMission02Deliverables(unittest.TestCase):
         self.assertGreaterEqual(report["risk_score"], 95.0)
         self.assertIn("Macro", report["classification"])
         self.assertTrue(any("vbaProject.bin" in ev for ev in report["evidence"]))
+        self.assertIn("RULE_MACRO_WEAPONIZED_EXECUTION", report.get("triggered_rule_ids", []))
+        self.assertIn("T1059.005", report.get("mitre_techniques", []))
+
+    def test_02b_deceptive_macro_extension_docx(self):
+        """Req 3: Detect deceptive macro injection in non-macro OOXML container (.docx)."""
+        bio = io.BytesIO()
+        with zipfile.ZipFile(bio, 'w') as zf:
+            zf.writestr("[Content_Types].xml", "<Types></Types>")
+            zf.writestr("word/vbaProject.bin", b"VBA Project Data Inside Plain DOCX")
+        payload = bio.getvalue()
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Quarterly_Report.docx",
+            payload=payload,
+            declared_ct="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertGreaterEqual(report["risk_score"], 98.0)
+        self.assertIn("Deceptive Macro Injection", report["classification"])
+        self.assertIn("RULE_MACRO_DECEPTIVE_EXTENSION", report.get("triggered_rule_ids", []))
+        self.assertIn("T1036.008", report.get("mitre_techniques", []))
+
+    def test_02c_macro_low_level_win32_api_injection(self):
+        """Req 3: Detect Win32 low-level memory & process injection APIs in macro stream."""
+        bio = io.BytesIO()
+        with zipfile.ZipFile(bio, 'w') as zf:
+            zf.writestr("[Content_Types].xml", "<Types></Types>")
+            zf.writestr(
+                "word/vbaProject.bin",
+                b"Private Declare PtrSafe Function VirtualAlloc Lib \"kernel32\" ... RtlMoveMemory ... CreateThread ..."
+            )
+        payload = bio.getvalue()
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Invoice_Macro.docm",
+            payload=payload,
+            declared_ct="application/vnd.ms-word.document.macroEnabled.12"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertGreaterEqual(report["risk_score"], 99.0)
+        self.assertIn("Native Memory API Execution", report["classification"])
+        self.assertIn("RULE_MACRO_LOW_LEVEL_API_INJECTION", report.get("triggered_rule_ids", []))
+        self.assertIn("T1055", report.get("mitre_techniques", []))
+
+    def test_02d_excel4_xlm_macro_sheets(self):
+        """Req 3: Detect Excel 4.0 (XLM) macro sheets and execution formulas."""
+        bio = io.BytesIO()
+        with zipfile.ZipFile(bio, 'w') as zf:
+            zf.writestr("[Content_Types].xml", "<Types></Types>")
+            zf.writestr("xl/macrosheets/sheet1.xml", b'<macroSheet><c r="A1"><f>=EXEC("calc.exe")</f></c></macroSheet>')
+        payload = bio.getvalue()
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Financial_Model.xlsm",
+            payload=payload,
+            declared_ct="application/vnd.ms-excel.sheet.macroEnabled.12"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertGreaterEqual(report["risk_score"], 96.0)
+        self.assertIn("Excel 4.0", report["classification"])
+        self.assertIn("RULE_MACRO_EXCEL4_XLM", report.get("triggered_rule_ids", []))
+        self.assertIn("T1137", report.get("mitre_techniques", []))
+
+    def test_02e_macro_obfuscation_evasion(self):
+        """Req 3: Detect heavy character concatenation and reversal obfuscation in macro stream."""
+        bio = io.BytesIO()
+        obf_payload = (
+            b"Sub Test()\n"
+            + b"x = Chr$(112) & Chr$(111) & Chr$(119) & Chr$(101) & Chr$(114) & Chr$(115) & Chr$(104) & Chr$(101) & Chr$(108) & Chr$(108)\n" * 5
+            + b"y = StrReverse(x)\nEnd Sub"
+        )
+        with zipfile.ZipFile(bio, 'w') as zf:
+            zf.writestr("[Content_Types].xml", "<Types></Types>")
+            zf.writestr("word/vbaProject.bin", obf_payload)
+        payload = bio.getvalue()
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Obfuscated_Document.docm",
+            payload=payload,
+            declared_ct="application/vnd.ms-word.document.macroEnabled.12"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertIn("Obfuscated", report["classification"])
+        self.assertIn("RULE_MACRO_OBFUSCATION_EVASION", report.get("triggered_rule_ids", []))
+        self.assertIn("T1027", report.get("mitre_techniques", []))
+
+    def test_02f_benign_macro_container_policy(self):
+        """Req 3: Flag generic macro-enabled container as SUSPICIOUS under organizational policy."""
+        bio = io.BytesIO()
+        with zipfile.ZipFile(bio, 'w') as zf:
+            zf.writestr("[Content_Types].xml", "<Types></Types>")
+            zf.writestr("word/vbaProject.bin", b"Sub FormatTable()\n  Selection.Font.Bold = True\nEnd Sub")
+        payload = bio.getvalue()
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Report_Template.docm",
+            payload=payload,
+            declared_ct="application/vnd.ms-word.document.macroEnabled.12"
+        )
+        self.assertEqual(report["risk_level"], "SUSPICIOUS")
+        self.assertEqual(report["risk_score"], 55.0)
+        self.assertIn("Macro-Enabled", report["classification"])
+        self.assertIn("RULE_MACRO_GENERAL_CONTAINER", report.get("triggered_rule_ids", []))
 
     def test_03_suspicious_document_structure_template_injection(self):
         """Req 3: Detect suspicious document structure (remote template injection)."""
@@ -170,6 +273,181 @@ class TestMission02Deliverables(unittest.TestCase):
         self.assertEqual(report["risk_level"], "MALICIOUS")
         self.assertIn("Template Injection", report["classification"])
         self.assertIn("c2-attacker.com", " ".join(report["evidence"]))
+        self.assertIn("RULE_STRUCT_REMOTE_TEMPLATE_INJECTION", report.get("triggered_rule_ids", []))
+        self.assertIn("T1221", report.get("mitre_techniques", []))
+
+    def test_03b_follina_msdt_protocol_handler(self):
+        """Req 3: Detect Follina ms-msdt / MHTML URI protocol handler injection."""
+        bio = io.BytesIO()
+        with zipfile.ZipFile(bio, 'w') as zf:
+            zf.writestr("[Content_Types].xml", "<Types></Types>")
+            zf.writestr(
+                "word/_rels/document.xml.rels",
+                '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+                '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject" '
+                'Target="ms-msdt:/id PCWDiagnostic /skip force /param &quot;IT_RebrowseForFile=cal?c&quot;" TargetMode="External"/>'
+                '</Relationships>'
+            )
+        payload = bio.getvalue()
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Urgent_Notice.docx",
+            payload=payload,
+            declared_ct="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertGreaterEqual(report["risk_score"], 98.0)
+        self.assertIn("Protocol Handler Exploit", report["classification"])
+        self.assertIn("RULE_STRUCT_PROTOCOL_HANDLER_INJECTION", report.get("triggered_rule_ids", []))
+        self.assertIn("T1221", report.get("mitre_techniques", []))
+
+    def test_03c_embedded_executable_ole_package_dropper(self):
+        """Req 3: Detect embedded executable dropper in document package (word/embeddings/)."""
+        bio = io.BytesIO()
+        with zipfile.ZipFile(bio, 'w') as zf:
+            zf.writestr("[Content_Types].xml", "<Types></Types>")
+            zf.writestr("word/embeddings/payload.exe", b"MZ\x90\x00\x03\x00\x00\x00" + b"\x00" * 128)
+        payload = bio.getvalue()
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Purchase_Contract.docx",
+            payload=payload,
+            declared_ct="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertGreaterEqual(report["risk_score"], 98.0)
+        self.assertIn("Embedded Executable", report["classification"])
+        self.assertIn("RULE_STRUCT_EMBEDDED_EXECUTABLE_PACKAGE", report.get("triggered_rule_ids", []))
+        self.assertIn("T1027.005", report.get("mitre_techniques", []))
+
+    def test_03d_equation_editor_clsid_exploit(self):
+        """Req 3: Detect Equation Editor CLSID (CVE-2017-11882) exploit structure."""
+        bio = io.BytesIO()
+        clsid_bin = b"\x00" * 32 + b"0002CE02-0000-0000-C000-000000000046" + b"\x00" * 64
+        with zipfile.ZipFile(bio, 'w') as zf:
+            zf.writestr("[Content_Types].xml", "<Types></Types>")
+            zf.writestr("word/embeddings/oleObject1.bin", clsid_bin)
+        payload = bio.getvalue()
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Math_Assignment.docx",
+            payload=payload,
+            declared_ct="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertEqual(report["risk_score"], 100.0)
+        self.assertIn("Equation Editor Exploit", report["classification"])
+        self.assertIn("RULE_STRUCT_EQUATION_EDITOR_EXPLOIT", report.get("triggered_rule_ids", []))
+        self.assertIn("T1203", report.get("mitre_techniques", []))
+
+    def test_03e_dde_command_execution(self):
+        """Req 3: Detect Dynamic Data Exchange (DDE / DDEAUTO) field command injection."""
+        bio = io.BytesIO()
+        dde_xml = (
+            '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+            '<w:body><w:p><w:fldSimple w:instr="DDEAUTO &quot;C:\\\\Windows\\\\System32\\\\cmd.exe&quot; &quot;/c calc.exe&quot;"/>'
+            '</w:p></w:body></w:document>'
+        )
+        with zipfile.ZipFile(bio, 'w') as zf:
+            zf.writestr("[Content_Types].xml", "<Types></Types>")
+            zf.writestr("word/document.xml", dde_xml)
+        payload = bio.getvalue()
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Financial_Report.docx",
+            payload=payload,
+            declared_ct="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertGreaterEqual(report["risk_score"], 95.0)
+        self.assertIn("DDE", report["classification"])
+        self.assertIn("Command Execution", report["classification"])
+        self.assertIn("RULE_STRUCT_DDE_COMMAND_EXECUTION", report.get("triggered_rule_ids", []))
+        self.assertIn("T1559.002", report.get("mitre_techniques", []))
+
+    def test_03f_malicious_rtf_embedded_dropper(self):
+        """Req 3: Detect weaponized RTF document with embedded OLE executable dropper."""
+        rtf_payload = (
+            b"{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang1033"
+            b"{\\object\\objdata 0105000002000000 4d5a900003000000 ... ole10native ... }"
+            b"\\par}"
+        )
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Briefing_Notes.rtf",
+            payload=rtf_payload,
+            declared_ct="application/rtf"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertGreaterEqual(report["risk_score"], 96.0)
+        self.assertIn("RTF Document", report["classification"])
+        self.assertIn("RULE_STRUCT_MALICIOUS_RTF_OBJECT", report.get("triggered_rule_ids", []))
+        self.assertIn("T1203", report.get("mitre_techniques", []))
+
+    def test_03g_encrypted_office_storage_evasion(self):
+        """Req 3: Detect encrypted OLE compound storage evasion."""
+        ole_header = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1" + b"\x00" * 40
+        ole_payload = ole_header + b"SomeStreamDataEncryptedPackageMoreData" + b"\x00" * 512
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Protected_Financials.doc",
+            payload=ole_payload,
+            declared_ct="application/msword"
+        )
+        self.assertEqual(report["risk_level"], "SUSPICIOUS")
+        self.assertEqual(report["risk_score"], 60.0)
+        self.assertIn("Encrypted", report["classification"])
+        self.assertIn("RULE_STRUCT_ENCRYPTED_OFFICE_STORAGE", report.get("triggered_rule_ids", []))
+        self.assertIn("T1027", report.get("mitre_techniques", []))
+
+    def test_03h_legacy_ole_weaponized_macro(self):
+        """Req 3: Detect weaponized VBA macro inside legacy OLE compound document."""
+        ole_header = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1" + b"\x00" * 40
+        ole_payload = ole_header + b"_VBA_PROJECT_CUR...AutoOpen...cmd.exe /c powershell.exe -enc..." + b"\x00" * 512
+
+        report = AttachmentAnalyzer.inspect_attachment(
+            filename="Invoice_Legacy.doc",
+            payload=ole_payload,
+            declared_ct="application/msword"
+        )
+        self.assertEqual(report["risk_level"], "MALICIOUS")
+        self.assertGreaterEqual(report["risk_score"], 95.0)
+        self.assertIn("Legacy", report["classification"])
+        self.assertIn("RULE_MACRO_LEGACY_OLE_WEAPONIZED", report.get("triggered_rule_ids", []))
+        self.assertIn("T1137.001", report.get("mitre_techniques", []))
+
+    def test_03i_static_rule_catalog_integrity(self):
+        """Req 3: Verify static detection rule catalog integrity and MITRE ATT&CK mappings."""
+        rules = AttachmentAnalyzer.get_rule_catalog()
+        self.assertGreaterEqual(len(rules), 14)
+        rule_ids = {r["rule_id"] for r in rules}
+        expected_ids = {
+            "RULE_MACRO_DECEPTIVE_EXTENSION",
+            "RULE_MACRO_WEAPONIZED_EXECUTION",
+            "RULE_MACRO_LOW_LEVEL_API_INJECTION",
+            "RULE_MACRO_EXCEL4_XLM",
+            "RULE_MACRO_OBFUSCATION_EVASION",
+            "RULE_MACRO_GENERAL_CONTAINER",
+            "RULE_MACRO_LEGACY_OLE_WEAPONIZED",
+            "RULE_MACRO_LEGACY_OLE_CONTAINER",
+            "RULE_STRUCT_REMOTE_TEMPLATE_INJECTION",
+            "RULE_STRUCT_PROTOCOL_HANDLER_INJECTION",
+            "RULE_STRUCT_EMBEDDED_EXECUTABLE_PACKAGE",
+            "RULE_STRUCT_EQUATION_EDITOR_EXPLOIT",
+            "RULE_STRUCT_DDE_COMMAND_EXECUTION",
+            "RULE_STRUCT_MALICIOUS_RTF_OBJECT",
+            "RULE_STRUCT_ENCRYPTED_OFFICE_STORAGE",
+        }
+        for expected in expected_ids:
+            self.assertIn(expected, rule_ids)
+
+        for rule in rules:
+            self.assertIn("rule_id", rule)
+            self.assertIn("name", rule)
+            self.assertIn("category", rule)
+            self.assertIn("severity", rule)
+            self.assertIn("base_score", rule)
+            self.assertIn("mitre_attack", rule)
+            self.assertIn("description", rule)
 
     def test_04_password_protected_zip_with_in_body_password(self):
         """Req 4: Detect password-protected ZIP archive & identify password provided in email body."""
