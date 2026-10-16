@@ -67,11 +67,21 @@ app.add_middleware(
 
 @app.middleware("http")
 async def vercel_routing_middleware(request: Request, call_next):
-    orig_path = request.headers.get("x-matched-path")
-    if orig_path:
-        path_only = orig_path.split("?")[0]
-        if path_only:
+    override_path = request.query_params.get("__path") or request.headers.get("x-matched-path")
+    if override_path:
+        path_only = override_path.split("?")[0]
+        if path_only and path_only != "/api/index.py":
+            if not path_only.startswith("/"):
+                path_only = "/" + path_only
+            while "//" in path_only:
+                path_only = path_only.replace("//", "/")
             request.scope["path"] = path_only
+
+            from urllib.parse import parse_qsl, urlencode
+            qs = request.scope.get("query_string", b"").decode("latin1")
+            if qs:
+                params = [(k, v) for k, v in parse_qsl(qs, keep_blank_values=True) if k != "__path"]
+                request.scope["query_string"] = urlencode(params).encode("latin1")
     return await call_next(request)
 
 
@@ -158,15 +168,11 @@ def _run_full_trial(raw_bytes: bytes) -> dict:
 
 @app.get("/")
 @app.get("/api/index.py")
-async def root(request: Request):
-    headers_dict = {k: v for k, v in request.headers.items()}
+async def root():
     return {
         "service": "MailJury Adversarial Email Security Courtroom",
         "status": "operational",
         "version": "2.1.0",
-        "scope_path": request.scope.get("path"),
-        "raw_path": request.scope.get("raw_path", b"").decode("latin1", errors="replace"),
-        "headers": headers_dict,
         "docs_url": "/docs",
         "api_health": "/api/health",
         "mission_02_benchmark": "/api/mission-02/benchmark"
