@@ -455,19 +455,23 @@ class TeamProsecutor:
 
             # If AttachmentAnalyzer identified a fatal weapon or suspicious structure, file indictment
             if att_report["risk_level"] == "MALICIOUS":
+                mitre_list = att_report.get("mitre_techniques", [])
+                statute = f"MITRE ATT&CK {', '.join(mitre_list)} / Static Binary Forensics" if mitre_list else "MITRE ATT&CK T1036 / Static Binary Forensics"
                 counts.append(IndictmentCount(
                     self._next_count_id(), "ATTACHMENT_PAYLOAD",
                     att_report["classification"], "FATAL_VETO",
-                    "MITRE ATT&CK T1036 / Static Binary Forensics",
+                    statute,
                     f"'{fn}' -> {att_report['evidence'][0] if att_report['evidence'] else 'Malicious payload signature'}",
-                    100.0 if ("MZ" in att_report["classification"] or "Executable" in att_report["classification"]) else 95.0,
+                    100.0 if ("MZ" in att_report["classification"] or "Executable" in att_report["classification"]) else max(95.0, att_report.get("risk_score", 95.0)),
                     att_report["reasons"]
                 ))
             elif att_report["risk_level"] == "SUSPICIOUS":
+                mitre_list = att_report.get("mitre_techniques", [])
+                statute = f"MITRE ATT&CK {', '.join(mitre_list)} / Structural Anomaly" if mitre_list else "Static Binary Inspection / Structural Anomaly"
                 counts.append(IndictmentCount(
                     self._next_count_id(), "ATTACHMENT_PAYLOAD",
                     att_report["classification"], "SUSPICIOUS",
-                    "Static Binary Inspection / Structural Anomaly",
+                    statute,
                     f"'{fn}' -> {att_report['evidence'][0] if att_report['evidence'] else 'Suspicious structure'}",
                     att_report["risk_score"],
                     att_report["reasons"]
