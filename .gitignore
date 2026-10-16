@@ -76,3 +76,4 @@ backend/logs/*
 
 
 auth_url.txt
+.vercel
