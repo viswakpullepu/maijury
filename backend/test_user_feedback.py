@@ -13,18 +13,33 @@ Verifies:
 """
 
 import os
+import sys
 import shutil
 import tempfile
 import pytest
 from fastapi.testclient import TestClient
 
-from backend.feedback_engine import (
-    FeedbackStore,
-    FeedbackSubmission,
-    FeedbackType,
-    FeedbackStatus,
-    ConfusionMatrix,
-)
+# Ensure both backend directory and parent directory are on sys.path
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _current_dir)
+sys.path.insert(0, os.path.dirname(_current_dir))
+
+try:
+    from backend.feedback_engine import (
+        FeedbackStore,
+        FeedbackSubmission,
+        FeedbackType,
+        FeedbackStatus,
+        ConfusionMatrix,
+    )
+except ModuleNotFoundError:
+    from feedback_engine import (
+        FeedbackStore,
+        FeedbackSubmission,
+        FeedbackType,
+        FeedbackStatus,
+        ConfusionMatrix,
+    )
 
 
 @pytest.fixture
@@ -322,7 +337,10 @@ def test_delete_feedback(temp_store: FeedbackStore):
 def test_api_feedback_endpoints():
     """Test full FastAPI endpoint lifecycle for user feedback and accuracy evaluation."""
     os.environ["TESTING"] = "1"
-    from backend.main import app
+    try:
+        from backend.main import app
+    except ModuleNotFoundError:
+        from main import app
     client = TestClient(app)
 
     # 1. Post new feedback
