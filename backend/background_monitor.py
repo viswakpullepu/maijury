@@ -10,6 +10,7 @@ import sys
 import time
 import json
 import threading
+import tempfile
 from typing import Dict, List, Any, Optional
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -59,12 +60,27 @@ class BackgroundMonitorDaemon:
         self.recent_trials: List[Dict[str, Any]] = []
 
         # Audit Log & Spool Directories
-        self.log_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "logs"))
-        self.incoming_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "incoming"))
+        default_dir = os.path.dirname(__file__)
+        if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME") or not os.access(default_dir, os.W_OK):
+            base_log_dir = os.path.join(tempfile.gettempdir(), "threatlens_logs")
+            base_spool_dir = os.path.join(tempfile.gettempdir(), "threatlens_spool")
+        else:
+            base_log_dir = os.path.abspath(os.path.join(default_dir, "logs"))
+            base_spool_dir = os.path.abspath(os.path.join(default_dir, "incoming"))
+
+        self.log_dir = base_log_dir
+        self.incoming_dir = base_spool_dir
         self.processed_dir = os.path.join(self.incoming_dir, "processed")
-        os.makedirs(self.log_dir, exist_ok=True)
-        os.makedirs(self.incoming_dir, exist_ok=True)
-        os.makedirs(self.processed_dir, exist_ok=True)
+        try:
+            os.makedirs(self.log_dir, exist_ok=True)
+            os.makedirs(self.incoming_dir, exist_ok=True)
+            os.makedirs(self.processed_dir, exist_ok=True)
+        except Exception:
+            tmp = tempfile.gettempdir()
+            self.log_dir = tmp
+            self.incoming_dir = tmp
+            self.processed_dir = tmp
+
         self.audit_log_path = os.path.join(self.log_dir, "audit_trail.jsonl")
 
         self._initialized = True

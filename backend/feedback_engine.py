@@ -17,6 +17,7 @@ import time
 import uuid
 import hashlib
 import threading
+import tempfile
 from enum import Enum
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
@@ -106,11 +107,18 @@ class FeedbackStore:
     def __init__(self, storage_dir: Optional[str] = None):
         if storage_dir is None:
             base_dir = os.path.dirname(os.path.abspath(__file__))
-            self.storage_dir = os.path.join(base_dir, "data")
+            if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME") or not os.access(base_dir, os.W_OK):
+                self.storage_dir = os.path.join(tempfile.gettempdir(), "threatlens_data")
+            else:
+                self.storage_dir = os.path.join(base_dir, "data")
         else:
             self.storage_dir = storage_dir
 
-        os.makedirs(self.storage_dir, exist_ok=True)
+        try:
+            os.makedirs(self.storage_dir, exist_ok=True)
+        except Exception:
+            self.storage_dir = tempfile.gettempdir()
+
         self.store_file = os.path.join(self.storage_dir, "feedback_store.json")
         self._lock = threading.RLock()
         self._records: Dict[str, FeedbackRecord] = {}
@@ -138,13 +146,17 @@ class FeedbackStore:
                 self._records = {}
 
     def _save(self):
-        """Atomic write via temporary file to prevent corruption."""
+        """Atomic write via temporary file to prevent corruption, with in-memory resilience."""
         with self._lock:
-            temp_file = f"{self.store_file}.tmp.{uuid.uuid4().hex}"
-            data = [rec.model_dump() for rec in self._records.values()]
-            with open(temp_file, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=2, ensure_ascii=False)
-            os.replace(temp_file, self.store_file)
+            try:
+                temp_file = f"{self.store_file}.tmp.{uuid.uuid4().hex}"
+                data = [rec.model_dump() for rec in self._records.values()]
+                with open(temp_file, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2, ensure_ascii=False)
+                os.replace(temp_file, self.store_file)
+            except Exception as e:
+                # If disk write fails in read-only serverless environment, memory store retains records flawlessly
+                print(f"⚠️ [FeedbackStore] Disk write omitted in serverless sandbox: {e}")
 
     def add_feedback(self, submission: FeedbackSubmission) -> FeedbackRecord:
         """Ingests a new user feedback report and securely commits it."""
