@@ -4,10 +4,12 @@
 
 <br/><br/>
 
-[![Mission 02 Benchmark](https://img.shields.io/badge/Mission%2002-100%25%20Passed-22c55e?style=for-the-badge&logo=shield)](file:///MISSION_02_DELIVERABLE_REPORT.md)
-[![False Positive Rate](https://img.shields.io/badge/False%20Positive%20Rate-0.00%25-3b82f6?style=for-the-badge)](file:///MISSION_02_DELIVERABLE_REPORT.md)
-[![Zero-Execution](https://img.shields.io/badge/Zero--Execution-In--Memory%20100%25-8b5cf6?style=for-the-badge)](file:///backend/attachment_analyzer.py)
-[![Compliance](https://img.shields.io/badge/Legal%20Admissibility-BSA%20§65B-64748b?style=for-the-badge)](file:///backend/courtroom_arbiter.py)
+[![Mission 02 Benchmark](https://img.shields.io/badge/Mission%2002-100%25%20Passed-22c55e?style=for-the-badge&logo=shield)](MISSION_02_DELIVERABLE_REPORT.md)
+[![False Positive Rate](https://img.shields.io/badge/False%20Positive%20Rate-0.00%25-3b82f6?style=for-the-badge)](MISSION_02_DELIVERABLE_REPORT.md)
+[![Zero-Execution](https://img.shields.io/badge/Zero--Execution-In--Memory%20100%25-8b5cf6?style=for-the-badge)](backend/attachment_analyzer.py)
+[![Compliance](https://img.shields.io/badge/Legal%20Admissibility-BSA%20§65B-64748b?style=for-the-badge)](backend/courtroom_arbiter.py)
+[![Live Gmail API](https://img.shields.io/badge/Google%20OAuth2-Connected%20Live-10b981?style=for-the-badge&logo=gmail)](backend/gmail_client.py)
+
 
 <p align="center">
   <strong>An offline-first, zero-execution adversarial email risk checker and autonomous background daemon.</strong><br/>
@@ -124,8 +126,16 @@ python backend/run_daemon.py
 
 The daemon immediately begins polling for unread messages. Any email placed in `backend/incoming/` or received via Gmail is intercepted and adjudicated in real time.
 
-### 4. Run the Full Application (Backend + Frontend)
+### 4. Run the Courtroom Dashboard (1-Click or Manual)
 
+**Option A (1-Click Launcher — Recommended):**
+```bash
+# Starts both Backend and Frontend, then automatically opens http://localhost:5173
+python start_system.py
+```
+*(On Windows, you can also simply double-click `start_dashboard.bat`)*
+
+**Option B (Manual 2-Terminal Launch):**
 ```bash
 # Terminal 1: Start FastAPI Backend Server
 python backend/main.py
@@ -136,7 +146,8 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:5173` to explore the interactive **Courtroom Trial** and **📎 Attachments** forensics inspection console.
+Visit **`http://localhost:5173`** to interact with the **Courtroom Trial Console**, test preset attack scenarios, and inspect zero-execution byte-level forensic evidence under the **📎 Attachments** tab.
+
 
 ---
 
