@@ -165,43 +165,42 @@ class GmailClient:
             existing_labels = {l['name']: l['id'] for l in results.get('labels', [])}
 
             required_labels = [
-                (self.LABEL_QUARANTINE, "#ef4444", "#ffffff"),
-                (self.LABEL_SAFE, "#22c55e", "#ffffff"),
-                (self.LABEL_SUSPICIOUS, "#eab308", "#000000"),
+                self.LABEL_QUARANTINE,
+                self.LABEL_SAFE,
+                self.LABEL_SUSPICIOUS,
             ]
 
-            for lname, bg, fg in required_labels:
+            for lname in required_labels:
                 if lname in existing_labels:
                     self._label_ids[lname] = existing_labels[lname]
                 else:
                     label_body = {
                         "name": lname,
                         "labelListVisibility": "labelShow",
-                        "messageListVisibility": "show",
-                        "color": {
-                            "backgroundColor": bg,
-                            "textColor": fg
-                        }
+                        "messageListVisibility": "show"
                     }
                     try:
                         created = self.service.users().labels().create(userId='me', body=label_body).execute()
                         self._label_ids[lname] = created['id']
                     except Exception:
                         pass
-        except Exception as e:
+        except Exception:
             pass
 
     def fetch_unread_messages(self, max_results: int = 10) -> List[Dict[str, Any]]:
         """
         Fetches unread messages from Gmail (or sandbox queue).
-        Returns a list of message descriptors with id and threadId.
+        Excludes already-quarantined or certified messages to prevent redundant processing.
         """
         if self.is_live and self.service:
             try:
                 resp = self.service.users().messages().list(
-                    userId='me', q='is:unread', maxResults=max_results
+                    userId='me', q='is:unread -label:MAILJURY_QUARANTINED -label:MAILJURY_VERIFIED_SAFE', maxResults=max_results
                 ).execute()
                 return resp.get('messages', [])
+            except Exception as e:
+                return []
+
             except Exception as e:
                 return []
         else:
@@ -248,13 +247,14 @@ class GmailClient:
         elif "LEGITIMATE" in verdict or risk_score <= 25.0:
             target_label = self.LABEL_SAFE
             add_labels = [target_label]
-            remove_labels = []
+            remove_labels = ["UNREAD"]
             action_taken = "CERTIFIED_SAFE_DELIVERED_TO_INBOX"
         else:
             target_label = self.LABEL_SUSPICIOUS
             add_labels = [target_label]
-            remove_labels = []
+            remove_labels = ["UNREAD"]
             action_taken = "FLAGGED_AS_SUSPICIOUS_CAUTION_APPLIED"
+
 
         if self.is_live and self.service:
             try:
