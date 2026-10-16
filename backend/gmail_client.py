@@ -91,34 +91,38 @@ class GmailClient:
             self.is_live = False
             return False, "Google API libraries not installed. Operating in High-Fidelity Sandbox Mode."
 
-        # 1. Check Encrypted Vault Store first
-        try:
-            from security.token_store import EncryptedTokenStore
-        except ImportError:
-            from backend.security.token_store import EncryptedTokenStore
-        token_store = EncryptedTokenStore()
-        vault_tokens = token_store.get_tokens(user_id="primary_user")
-        if vault_tokens:
-            if vault_tokens.get("mode") == "SANDBOX_SIMULATED":
-                self.is_live = False
-                return True, "Authenticated via Encrypted Vault (Sandbox Simulation Mode Active)."
-            try:
-                creds = Credentials(
-                    token=vault_tokens.get("access_token"),
-                    refresh_token=vault_tokens.get("refresh_token"),
-                    token_uri="https://oauth2.googleapis.com/token",
-                    client_id=os.getenv("GOOGLE_CLIENT_ID"),
-                    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-                    scopes=SCOPES
-                )
-            except Exception:
-                creds = None
-
-        if not creds and os.path.exists(self.token_path):
+        # 1. Check live token.json file first
+        creds = None
+        if os.path.exists(self.token_path):
             try:
                 creds = Credentials.from_authorized_user_file(self.token_path, SCOPES)
             except Exception as e:
                 creds = None
+
+        # 2. Check Encrypted Vault Store if not found
+        if not creds:
+            try:
+                from security.token_store import EncryptedTokenStore
+            except ImportError:
+                from backend.security.token_store import EncryptedTokenStore
+            token_store = EncryptedTokenStore()
+            vault_tokens = token_store.get_tokens(user_id="primary_user")
+            if vault_tokens:
+                if vault_tokens.get("mode") == "SANDBOX_SIMULATED":
+                    self.is_live = False
+                    return True, "Authenticated via Encrypted Vault (Sandbox Simulation Mode Active)."
+                try:
+                    creds = Credentials(
+                        token=vault_tokens.get("access_token"),
+                        refresh_token=vault_tokens.get("refresh_token"),
+                        token_uri="https://oauth2.googleapis.com/token",
+                        client_id=os.getenv("GOOGLE_CLIENT_ID"),
+                        client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+                        scopes=SCOPES
+                    )
+                except Exception:
+                    creds = None
+
 
         if creds and creds.expired and creds.refresh_token:
             try:
