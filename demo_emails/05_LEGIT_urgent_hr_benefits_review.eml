@@ -1,0 +1,47 @@
+Content-Type: multipart/mixed; boundary="===============1176550606665266506=="
+MIME-Version: 1.0
+Subject: URGENT: Mandatory 2026 Annual Health Benefits Open Enrollment Closes
+ Today
+From: "Corporate Human Resources" <hr-benefits@company.internal>
+To: all-staff@company.internal
+Date: Wed, 16 Oct 2026 14:30:00 +0530
+Authentication-Results: mx.google.com;
+ spf=pass (google.com: domain of hr-benefits@company.internal designates
+ 10.0.1.50); dkim=pass header.i=@company.internal; dmarc=pass
+
+--===============1176550606665266506==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+ATTENTION ALL EMPLOYEES: IMMEDIATE ACTION REQUIRED BY 5:00 PM TODAY
+
+This is your final notice regarding the mandatory 2026 Annual Health Benefits Open Enrollment.
+If you do not complete your enrollment verification today, your current medical and dental elections will default to basic coverage.
+
+Please click the secure corporate single-sign-on link below to confirm your elections:
+https://intranet.company.internal/identity/auth/saml2/sso?idp_entity_id=https%3A%2F%2Fokta.company.internal%2Fapp%2Fsso&session_state=b8a92f019c4d8e72a1&target_relay_state=https%3A%2F%2Fbenefits.portal.company.internal%2Fannual-enrollment%2F2026%2Femployee-selection-confirmation%3Fdepartment_code%3DENG%26location%3DUS-WEST
+
+Attached is the official 2026 Benefits Guidebook for your reference.
+
+Corporate People & Culture Department
+--===============1176550606665266506==
+Content-Type: 
+ application/vnd.openxmlformats-officedocument.wordprocessingml.document
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="2026_Benefits_Guidebook.docx"
+
+UEsDBBQAAAAIAEm2UF3GEnoHrAAAAPEAAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbF2Puw7CMAxF
+f6XKihoXBgaUlIEdGPgBK3HbiOahJBT4exKQOjBax/dcWxxfdm4Wisl4J9mWd+zYi9s7UGoKcUmy
+KedwAEhqIouJ+0CukMFHi7mMcYSA6o4jwa7r9qC8y+Rym6uD9eJS5NFoaq4Y8xktSQZPHzVorx62
+bPJiY83pF6vNkmEIs1GYy02wOP3X2fphMIrWfLWF6BWlZNxoZ74Si8Ztqh56Ad+n+g9QSwMEFAAA
+AAgASbZQXU2STy2jAAAA2gAAABEAAAB3b3JkL2RvY3VtZW50LnhtbEXPwQ6CMAwG4FdpuOsIBw4E
+OUiMR32FsRVY3Nal24K+vQwPXr4/TZP+ab91mlR26BO8nfWx2y7VmlLohIhqRSfjmQL6fTcTO5n2
+kRexEevApDBG4xdnRVPXrXDS+Grot24i/SkZClxIw2OejTLSQlM3LdxcsPRBhCt6nE2KcM9G40T0
+ghOMxIFYJoQnUrAI0msYs02ZsRflWpEPw+GvUfy/Gb5QSwECFAAUAAAACABJtlBdxhJ6B6wAAADx
+AAAAEwAAAAAAAAAAAAAAgAEAAAAAW0NvbnRlbnRfVHlwZXNdLnhtbFBLAQIUABQAAAAIAEm2UF1N
+kk8towAAANoAAAARAAAAAAAAAAAAAACAAd0AAAB3b3JkL2RvY3VtZW50LnhtbFBLBQYAAAAAAgAC
+AIAAAACvAQAAAAA=
+
+--===============1176550606665266506==--

@@ -1,0 +1,40 @@
+Content-Type: multipart/mixed; boundary="===============8554104859566727161=="
+MIME-Version: 1.0
+Subject: Invoice #INV-88912 from Cloudflare Enterprise Services
+From: "Cloudflare Billing Department" <billing@cloudflare.com>
+To: billing-admin@target-corp.com
+Date: Wed, 16 Oct 2026 14:25:00 +0530
+Authentication-Results: mx.google.com;
+ spf=pass (google.com: domain of billing@cloudflare.com designates
+ 198.41.128.5); dkim=pass header.i=@cloudflare.com; dmarc=pass
+
+--===============8554104859566727161==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+Dear Customer,
+
+Thank you for choosing Cloudflare Enterprise Services.
+Attached is your monthly billing statement for Invoice #INV-88912 covering period Oct 1 - Oct 31, 2026.
+Your account on file will be automatically charged on October 25, 2026.
+
+For billing inquiries or questions, contact support@cloudflare.com.
+
+Best regards,
+Cloudflare Financial Operations Team
+--===============8554104859566727161==
+Content-Type: application/pdf
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Cloudflare_Invoice_INV88912.pdf"
+
+JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2Jq
+CjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2Jq
+CjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvUmVzb3VyY2VzIDw8ID4+IC9N
+ZWRpYUJveCBbMCAwIDYxMiA3OTJdID4+CmVuZG9iagp4cmVmCjAgNAowMDAwMDAwMDAwIDY1NTM1
+IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1NiAwMDAwMCBuIAowMDAwMDAwMTExIDAw
+MDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNCAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKMTk4CiUl
+RU9G
+
+--===============8554104859566727161==--

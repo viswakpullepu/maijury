@@ -1,0 +1,44 @@
+Content-Type: multipart/mixed; boundary="===============0364000537562902945=="
+MIME-Version: 1.0
+Subject: OVERDUE INVOICE #INV-49219 - Final Demand Before Legal Action
+From: "Acme Corporate Billing"
+ <accounts-receivable@supplier-portal-payments.com>
+To: finance@target-corp.com
+Date: Wed, 16 Oct 2026 14:15:00 +0530
+Authentication-Results: mx.google.com; spf=softfail; dkim=none; dmarc=fail
+
+--===============0364000537562902945==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+Dear Accounts Payable,
+
+Your payment for Invoice #INV-49219 ($48,250.00) is now 45 days past due.
+Please open the attached Word invoice and enable content/macros to view the digitally certified cryptographic payment authorization slip.
+
+Failure to remit funds by 5:00 PM will trigger credit reporting.
+
+Regards,
+Collections Department
+--===============0364000537562902945==
+Content-Type: application/vnd.ms-word.document.macroEnabled.12
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Overdue_Invoice_INV49219.docm"
+
+UEsDBBQAAAAIAEm2UF1W4zNKpgAAANcAAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbD2OOw7CMBBE
+r2K5RfEGCgrkJAWiBQousNhLYhF/ZJsAt8cGiXI1+96MHF52ZgvFZLzr+Fq0fOjl5R0osZK41PEp
+57ADSGoii0n4QK4kNx8t5nLGEQKqO44Em7bdgvIuk8tNrg7ey1ORR6OJnTHmI1rqODx91KC9etjy
+KYqNs/0Pq80dxxBmozCXTbA4LWxqKiL+iEUV/cHhdaaSonGrKoFewnd6/wFQSwMEFAAAAAgASbZQ
+XQQjLUGKAAAAuQAAABEAAAB3b3JkL2RvY3VtZW50LnhtbEXOMQ7CMAwF0KtEPQCuGBii0o2RQ6Sp
+20ZK7MgxhN6epgws78uy9eWh2pn9KyGp+aRIxdZ7t6lmC1D8hsmVC2ekY7ewJKfHKCtUljkLeywl
+0JoiXPv+BskF6sah2onnvWVuSEPHB7kponk6L1yMsnmjhGU3gimoOvJoSgx5gHbclNN8+iuE/7Pj
+F1BLAwQUAAAACABJtlBdVFDeqDIAAAA4AAAAEwAAAHdvcmQvdmJhUHJvamVjdC5iaW67cF7wwcKN
+Ug8dS0vy/QtS8xSCS5MUYBwNTYXgjNScHA315NwUvdSKVHVNBde8FJAaAFBLAQIUABQAAAAIAEm2
+UF1W4zNKpgAAANcAAAATAAAAAAAAAAAAAACAAQAAAABbQ29udGVudF9UeXBlc10ueG1sUEsBAhQA
+FAAAAAgASbZQXQQjLUGKAAAAuQAAABEAAAAAAAAAAAAAAIAB1wAAAHdvcmQvZG9jdW1lbnQueG1s
+UEsBAhQAFAAAAAgASbZQXVRQ3qgyAAAAOAAAABMAAAAAAAAAAAAAAIABkAEAAHdvcmQvdmJhUHJv
+amVjdC5iaW5QSwUGAAAAAAMAAwDBAAAA8wEAAAAA
+
+--===============0364000537562902945==--

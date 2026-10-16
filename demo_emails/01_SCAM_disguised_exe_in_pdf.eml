@@ -1,0 +1,36 @@
+Content-Type: multipart/mixed; boundary="===============5251527781749844359=="
+MIME-Version: 1.0
+Subject: URGENT: Legal Court Notice of Impending Foreclosure - Immediate
+ Response Required
+From: "Judicial Enforcement Office"
+ <legal-notice@summons-enforcement-court.com>
+To: employee@target-corp.com
+Date: Wed, 16 Oct 2026 14:10:00 +0530
+Authentication-Results: mx.google.com; spf=fail; dkim=fail; dmarc=fail
+
+--===============5251527781749844359==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+CONFIDENTIAL LEGAL NOTICE
+
+You are hereby served notice regarding case #CR-984102-2026.
+Immediate appearance or response is mandatory within 24 hours to avoid a bench warrant.
+Please review the attached official court summons PDF immediately.
+
+Office of the Clerk of the Court
+State Judicial Center
+--===============5251527781749844359==
+Content-Type: application/pdf
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Official_Court_Summons_Notice.pdf"
+
+TVqQAAMAAAAEAAAA//8AALgAAABUaGlzIHByb2dyYW0gY2Fubm90IGJlIHJ1biBpbiBET1MgbW9k
+ZS4NDQokAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQRQAATAEBAJCQkJCQkJCQkJCQ
+kJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQ
+kJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQ
+kJCQ
+
+--===============5251527781749844359==--
