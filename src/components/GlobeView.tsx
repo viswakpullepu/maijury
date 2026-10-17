@@ -988,8 +988,7 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
           </div>
 
           {/* Main Visual Display: Street Level Map OR 3D Planetary Globe */}
-          {/* Street Map Container */}
-          <div className={viewMode === 'street' ? 'block' : 'hidden'}>
+          {viewMode === 'street' && (
             <StreetMapView
               threat={activeThreat}
               allThreats={allThreatLocations}
@@ -1001,7 +1000,7 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
               onOpenForensics={onOpenForensics}
               initialLayer={mapTheme === 'satellite' ? 'satellite' : (mapTheme === 'dark' ? 'dark' : 'streets')}
             />
-          </div>
+          )}
 
           {/* Three.js Canvas Container */}
           <div className={viewMode === 'globe' ? 'relative w-full h-[460px] bg-slate-950 overflow-hidden' : 'hidden'}>

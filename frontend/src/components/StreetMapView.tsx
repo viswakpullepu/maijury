@@ -174,6 +174,13 @@ export const StreetMapView: React.FC<StreetMapViewProps> = ({
 
     mapInstanceRef.current = map;
 
+    // Invalidate size after mount
+    setTimeout(() => {
+      try {
+        map.invalidateSize();
+      } catch (_) {}
+    }, 150);
+
     // Add Base Tile Layer
     const baseLayer = L.tileLayer(getTileUrl(activeLayer), {
       maxZoom: 19,
@@ -278,11 +285,20 @@ export const StreetMapView: React.FC<StreetMapViewProps> = ({
 
       accuracyCircleRef.current = circle;
 
-      // Smooth camera pan and deep zoom into streets
-      map.flyTo([targetLat, targetLng], 16, {
-        duration: 1.2,
-        easeLinearity: 0.25
-      });
+      // Smooth camera pan and deep zoom into streets safely
+      try {
+        const size = map.getSize();
+        if (size && size.x > 0 && size.y > 0) {
+          map.flyTo([targetLat, targetLng], 16, {
+            duration: 1.2,
+            easeLinearity: 0.25
+          });
+        } else {
+          map.setView([targetLat, targetLng], 15);
+        }
+      } catch (_) {
+        map.setView([targetLat, targetLng], 15);
+      }
     }
 
     // Add markers for all threats
