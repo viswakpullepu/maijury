@@ -4,27 +4,24 @@ import {
   Globe, 
   Microscope, 
   Database, 
-  Mail, 
   LogOut, 
   ChevronDown, 
+  ChevronRight,
   Sparkles, 
-  User, 
   CheckCircle2, 
-  ShieldAlert,
-  Radio,
-  Lock,
-  Scale,
-  TerminalSquare,
-  Cpu,
-  BarChart3,
-  GitCompare,
-  Zap,
-  Key,
-  Copy,
-  Check,
-  ExternalLink,
-  X,
-  Info
+  Lock, 
+  Scale, 
+  TerminalSquare, 
+  Cpu, 
+  BarChart3, 
+  GitCompare, 
+  Zap, 
+  Key, 
+  Copy, 
+  Check, 
+  ExternalLink, 
+  X, 
+  Menu
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -46,16 +43,28 @@ interface HeaderProps {
   onStartTour?: () => void;
 }
 
+interface TabItem {
+  id: ActiveTab;
+  label: string;
+  category: 'Core Operations' | 'Adversarial Engine' | 'Defense & Shield' | 'Intelligence & Benchmarks';
+  icon: React.ReactNode;
+  badge?: string;
+  badgeColor?: string;
+  description: string;
+}
+
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
   onStartTour
 }) => {
   const { user, isAuthenticated, isLoading, loginWithGoogle, loginWithDemoAccount, logout } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const profileRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   const isUserLoggedIn = Boolean(isAuthenticated && user);
   const activeUser = isUserLoggedIn ? user : null;
@@ -66,6 +75,7 @@ export const Header: React.FC<HeaderProps> = ({
     setTimeout(() => setCopiedField(null), 2000);
   };
 
+  // Close profile on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
@@ -76,17 +86,119 @@ export const Header: React.FC<HeaderProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const tabs: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-    { id: 'dashboard', label: 'Live Radar', icon: <Globe className="w-4 h-4" /> },
-    { id: 'forensics', label: '10-Pass Forensics', icon: <Microscope className="w-4 h-4" /> },
-    { id: 'courtroom', label: 'Adversarial Courtroom', icon: <Scale className="w-4 h-4" /> },
-    { id: 'test-arena', label: '1-Click Test Arena', icon: <Zap className="w-4 h-4 text-amber-500 fill-amber-500" /> },
-    { id: 'feedback', label: 'Feedback & Evaluation', icon: <BarChart3 className="w-4 h-4" /> },
-    { id: 'shield', label: 'Enclave Mail Shield', icon: <Lock className="w-4 h-4" /> },
-    { id: 'intel', label: 'Threat Intelligence', icon: <Database className="w-4 h-4" /> },
-    { id: 'lab', label: 'Adversarial Lab', icon: <TerminalSquare className="w-4 h-4" /> },
-    { id: 'training', label: 'AI Training Studio', icon: <Cpu className="w-4 h-4" /> },
-    { id: 'ml-comparison', label: 'ML Benchmark', icon: <GitCompare className="w-4 h-4" /> }
+  // Close drawers/modals on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsSidebarOpen(false);
+        setIsProfileOpen(false);
+        setIsDemoModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const tabs: TabItem[] = [
+    { 
+      id: 'test-arena', 
+      label: '1-Click Test Arena', 
+      category: 'Core Operations',
+      icon: <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />,
+      badge: 'PS4 Core',
+      badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+      description: 'Run 45 official benchmark tests in volatile RAM'
+    },
+    { 
+      id: 'dashboard', 
+      label: 'Live Radar', 
+      category: 'Core Operations',
+      icon: <Globe className="w-4 h-4 text-emerald-400" />,
+      badge: 'Autonomous',
+      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+      description: 'Real-time telemetry and 3D threat map'
+    },
+    { 
+      id: 'forensics', 
+      label: '10-Pass Forensics', 
+      category: 'Core Operations',
+      icon: <Microscope className="w-4 h-4 text-blue-400" />,
+      badge: 'Deep Inspection',
+      badgeColor: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+      description: 'MIME vs magic bytes & password extraction'
+    },
+    { 
+      id: 'courtroom', 
+      label: 'Adversarial Courtroom', 
+      category: 'Adversarial Engine',
+      icon: <Scale className="w-4 h-4 text-purple-400" />,
+      badge: 'BSA §65B Trial',
+      badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+      description: 'Prosecution vs defense trial adjudication'
+    },
+    { 
+      id: 'lab', 
+      label: 'Adversarial Lab', 
+      category: 'Adversarial Engine',
+      icon: <TerminalSquare className="w-4 h-4 text-rose-400" />,
+      badge: 'Simulations',
+      badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
+      description: 'Zero-day attack vectors & mutation testbed'
+    },
+    { 
+      id: 'shield', 
+      label: 'Enclave Mail Shield', 
+      category: 'Defense & Shield',
+      icon: <Lock className="w-4 h-4 text-indigo-400" />,
+      badge: 'AES-256 Envelope',
+      badgeColor: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
+      description: 'Zero-knowledge quarantine & OAuth dispatch'
+    },
+    { 
+      id: 'intel', 
+      label: 'Threat Intelligence', 
+      category: 'Defense & Shield',
+      icon: <Database className="w-4 h-4 text-cyan-400" />,
+      badge: 'IOC Feeds',
+      badgeColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+      description: 'MITRE ATT&CK correlation database'
+    },
+    { 
+      id: 'feedback', 
+      label: 'Feedback & Evaluation', 
+      category: 'Intelligence & Benchmarks',
+      icon: <BarChart3 className="w-4 h-4 text-teal-400" />,
+      badge: 'Human-in-Loop',
+      badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/30',
+      description: 'Ground-truth feedback and accuracy metrics'
+    },
+    { 
+      id: 'training', 
+      label: 'AI Training Studio', 
+      category: 'Intelligence & Benchmarks',
+      icon: <Cpu className="w-4 h-4 text-emerald-400" />,
+      badge: 'Self-Improving',
+      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+      description: 'Autonomous weights tuning and threat models'
+    },
+    { 
+      id: 'ml-comparison', 
+      label: 'ML Benchmark', 
+      category: 'Intelligence & Benchmarks',
+      icon: <GitCompare className="w-4 h-4 text-fuchsia-400" />,
+      badge: 'Evaluation',
+      badgeColor: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30',
+      description: 'Empirical model accuracy vs rule heuristics'
+    }
+  ];
+
+  const currentTab = tabs.find(t => t.id === activeTab) || tabs[0];
+
+  const categories: TabItem['category'][] = [
+    'Core Operations',
+    'Adversarial Engine',
+    'Defense & Shield',
+    'Intelligence & Benchmarks'
   ];
 
   return (
@@ -95,51 +207,66 @@ export const Header: React.FC<HeaderProps> = ({
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
           
-          {/* Brand Logo & Platform Title */}
-          <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-            <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md ring-1 ring-indigo-500">
-              <ShieldCheck className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold text-base tracking-tight text-slate-950">
-                  ThreatLens
-                </span>
-                <span 
-                  data-tour="live-radar-badge"
-                  className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  LIVE RADAR ACTIVE
-                </span>
+          {/* Left: Hamburger Button + Brand Title */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Hamburger Side Menu Trigger */}
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="p-2 -ml-1 text-slate-700 hover:text-slate-950 hover:bg-slate-100 rounded-xl transition-all flex items-center gap-2 border border-slate-200/90 shadow-2xs cursor-pointer group"
+              title="Open Navigation Menu"
+              aria-label="Open Navigation Menu"
+            >
+              <Menu className="w-5 h-5 text-slate-700 group-hover:text-indigo-600 transition-colors" />
+              <span className="text-xs font-bold text-slate-800 hidden sm:inline">Menu</span>
+            </button>
+
+            {/* Brand Logo & Platform Title */}
+            <div 
+              className="flex items-center gap-2.5 cursor-pointer" 
+              onClick={() => setActiveTab('dashboard')}
+              title="ThreatLens Home"
+            >
+              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md ring-1 ring-indigo-500">
+                <ShieldCheck className="w-5 h-5 text-white" />
               </div>
-              <p className="text-[11px] text-slate-500 hidden xl:block">
-                Real-Time Multi-Vector Threat Defense & Automated Inbound Mailbox Guard
-              </p>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-extrabold text-base tracking-tight text-slate-950">
+                    ThreatLens
+                  </span>
+                  <span 
+                    data-tour="live-radar-badge"
+                    className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    LIVE RADAR ACTIVE
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 hidden xl:block">
+                  Autonomous Threat Defense & Mailbox Guard
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Navigation Tabs (Smoothly scrollable & responsive) */}
-          <nav className="flex items-center gap-1 p-1 bg-slate-100 rounded-2xl border border-slate-200 overflow-x-auto flex-1 max-w-3xl py-1 px-1.5 no-scrollbar">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  data-tour={`tab-${tab.id}`}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl whitespace-nowrap transition-all ${
-                    isActive
-                      ? 'bg-slate-900 text-white shadow-md'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
-                  }`}
-                >
-                  {tab.icon}
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </nav>
+          {/* Center: Active Module Switcher Pill (Click to open Drawer) */}
+          <div className="flex items-center gap-2">
+            <button
+              data-tour={`tab-${activeTab}`}
+              onClick={() => setIsSidebarOpen(true)}
+              className="flex items-center gap-2.5 px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-xs border border-slate-800 transition-all cursor-pointer group"
+              title="Click to switch modules from side menu"
+            >
+              <div className="flex items-center gap-2 text-xs font-bold">
+                {currentTab.icon}
+                <span className="text-white">{currentTab.label}</span>
+              </div>
+              <div className="flex items-center gap-1.5 pl-2.5 border-l border-slate-700 text-[10px] text-slate-400 group-hover:text-indigo-300">
+                <span className="hidden sm:inline">Switch</span>
+                <ChevronDown className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
+              </div>
+            </button>
+          </div>
 
           {/* Right Action: Authentication & Demo Portal Section */}
           <div className="flex items-center gap-2 shrink-0">
@@ -281,7 +408,6 @@ export const Header: React.FC<HeaderProps> = ({
             ) : (
               /* Unauthenticated: Clean Action Bar with Google OAuth */
               <div className="flex items-center gap-2">
-
                 {/* Live Google OAuth Button */}
                 <button
                   onClick={loginWithGoogle}
@@ -310,6 +436,136 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
       </header>
+
+      {/* SIDE DRAWER HAMBURGER MENU */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 z-50 flex animate-in fade-in duration-200">
+          {/* Backdrop Overlay */}
+          <div 
+            className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+
+          {/* Side Drawer Panel */}
+          <div 
+            ref={sidebarRef}
+            className="relative w-84 max-w-[85vw] h-full bg-slate-950 text-slate-100 border-r border-slate-800/90 shadow-2xl flex flex-col justify-between z-10 animate-in slide-in-from-left duration-250 ease-out"
+          >
+            {/* Drawer Header */}
+            <div className="p-4 border-b border-slate-800/80 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md ring-1 ring-indigo-400">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-sm text-white tracking-tight">ThreatLens SOC</span>
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                      LIVE
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">Autonomous Security Modules</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsSidebarOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+                title="Close Side Menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Categorized Navigation Links (Scrollable) */}
+            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4 no-scrollbar">
+              {categories.map((cat) => {
+                const categoryTabs = tabs.filter(t => t.category === cat);
+                return (
+                  <div key={cat} className="space-y-1">
+                    <div className="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                      {cat}
+                    </div>
+
+                    <div className="space-y-0.5">
+                      {categoryTabs.map((tab) => {
+                        const isActive = activeTab === tab.id;
+                        return (
+                          <button
+                            key={tab.id}
+                            data-tour={`tab-${tab.id}`}
+                            onClick={() => {
+                              setActiveTab(tab.id);
+                              setIsSidebarOpen(false);
+                            }}
+                            className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-all cursor-pointer group ${
+                              isActive
+                                ? 'bg-indigo-600/25 text-white border-l-2 border-indigo-500 shadow-inner'
+                                : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className={`p-1.5 rounded-lg ${isActive ? 'bg-indigo-600 text-white' : 'bg-slate-800/80 text-slate-400 group-hover:text-white'}`}>
+                                {tab.icon}
+                              </div>
+                              <div className="min-w-0">
+                                <div className="text-xs font-bold truncate flex items-center gap-1.5">
+                                  <span>{tab.label}</span>
+                                  {isActive && (
+                                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                                  )}
+                                </div>
+                                <div className="text-[10px] text-slate-400 truncate">
+                                  {tab.description}
+                                </div>
+                              </div>
+                            </div>
+
+                            {tab.badge && (
+                              <span className={`shrink-0 ml-2 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold border ${tab.badgeColor || 'bg-slate-800 text-slate-400 border-slate-700'}`}>
+                                {tab.badge}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Drawer Footer Actions */}
+            <div className="p-3 border-t border-slate-800/80 bg-slate-900/50 space-y-2">
+              <button
+                onClick={() => {
+                  setIsSidebarOpen(false);
+                  onStartTour?.();
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold rounded-xl shadow-md transition-all cursor-pointer"
+              >
+                <Zap className="w-4 h-4 fill-white" />
+                <span>⚡ Launch Jury Guided Tour</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsSidebarOpen(false);
+                  setIsDemoModalOpen(true);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-1.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold rounded-xl border border-slate-700/80 transition-all cursor-pointer"
+              >
+                <Key className="w-3.5 h-3.5 text-amber-400" />
+                <span>View Demo Credentials</span>
+              </button>
+
+              <div className="text-center text-[10px] font-mono text-slate-400 pt-1">
+                Press <kbd className="px-1 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300">ESC</kbd> to close
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* JURY & DEMO CREDENTIALS MODAL */}
       {isDemoModalOpen && (
@@ -447,4 +703,3 @@ export const Header: React.FC<HeaderProps> = ({
     </>
   );
 };
-
