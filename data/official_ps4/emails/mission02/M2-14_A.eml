@@ -1,0 +1,15 @@
+From: "CampusLife Weekly" <newsletter@campuslife.example>
+To: Sara Iyer <sara.iyer@northwind.example>
+Subject: Monthly digest
+Date: Tue, 03 Nov 2026 05:39:00 +0530
+Message-ID: <179205599283.1113.15601420962218212353@mail.northwind.example>
+Return-Path: <newsletter@campuslife.example>
+Authentication-Results: mx.northwind.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Read online: https://www.campuslife.example/digest/=
+nov

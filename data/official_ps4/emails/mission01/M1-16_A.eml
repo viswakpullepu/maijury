@@ -1,0 +1,15 @@
+From: "SwiftParcel" <updates@swiftparcel.example>
+To: Dev Nair <dev.nair@northwind.example>
+Subject: Your parcel is out for delivery
+Date: Fri, 06 Nov 2026 08:58:00 +0530
+Message-ID: <179205599268.1113.17407875846836293619@mail.northwind.example>
+Return-Path: <updates@swiftparcel.example>
+Authentication-Results: mx.northwind.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Track: https://www.swiftparcel.example/track/812566=
+0016

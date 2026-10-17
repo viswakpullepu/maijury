@@ -1,0 +1,37 @@
+From: "Northwind Institute Webmail" <webmail@northwind-secure.example>
+To: Sara Iyer <sara.iyer@northwind.example>
+Subject: Review shared file
+Date: Mon, 02 Nov 2026 11:56:00 +0530
+Message-ID: <179205599282.1113.6239788454511628170@mail.northwind.example>
+Return-Path: <webmail@northwind-secure.example>
+Authentication-Results: mx.northwind.example; spf=fail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============2383526438664811357=="
+
+--===============2383526438664811357==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+[SYNTHETIC SAMPLE] HTML attachment with a password field (credential-harvest =
+indicator).
+
+--===============2383526438664811357==
+Content-Type: text/html
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="secure_message.html"
+MIME-Version: 1.0
+
+PCEtLSBNSVNTSU9OQVRIT04gMjAyNiBURVNUIEZJWFRVUkUgLSBpbmVydCwgc2FmZSwgbm9uLWV4
+ZWN1dGFibGUuIFNhbXBsZSBjb250YWluaW5nIGEgcGFzc3dvcmQgZmllbGQgZm9yIGRldGVjdGlv
+biBwcmFjdGljZS4gRm9ybSB0YXJnZXQgaXMgJyMnLiAtLT4KPGh0bWw+PGhlYWQ+PHRpdGxlPk5v
+cnRod2luZCBJbnN0aXR1dGUgd2VibWFpbDwvdGl0bGU+PC9oZWFkPjxib2R5Pgo8Zm9ybSBhY3Rp
+b249IiMiIG1ldGhvZD0icG9zdCIgb25zdWJtaXQ9InJldHVybiBmYWxzZTsiPgogIDxsYWJlbD5F
+bWFpbDwvbGFiZWw+PGlucHV0IHR5cGU9InRleHQiIG5hbWU9ImVtYWlsIiB2YWx1ZT0idXNlckBu
+b3J0aHdpbmQuZXhhbXBsZSI+CiAgPGxhYmVsPlBhc3N3b3JkPC9sYWJlbD48aW5wdXQgdHlwZT0i
+cGFzc3dvcmQiIG5hbWU9InBhc3N3b3JkIj4KICA8YnV0dG9uIHR5cGU9InN1Ym1pdCI+U2lnbiBp
+bjwvYnV0dG9uPgo8L2Zvcm0+CjwhLS0gZW5kIG9mIGluZXJ0IHNhbXBsZSAtLT48L2JvZHk+PC9o
+dG1sPgo=
+
+--===============2383526438664811357==--

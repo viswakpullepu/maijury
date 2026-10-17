@@ -1,0 +1,56 @@
+From: "Brightpath Supplies Accounts" <accounts@brightpath.example>
+To: Vikram Menon <vikram.menon@northwind.example>
+Subject: Invoice INV-2210 for October
+Date: Fri, 06 Nov 2026 09:16:00 +0530
+Message-ID: <179205599268.1113.6582475805572906264@mail.northwind.example>
+Return-Path: <accounts@brightpath.example>
+Authentication-Results: mx.northwind.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============6187439867446986030=="
+
+--===============6187439867446986030==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC BENIGN SAMPLE] Monthly invoice attached; terms 30 days.
+
+--===============6187439867446986030==
+Content-Type: application/pdf
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="invoice_october.pdf"
+MIME-Version: 1.0
+
+JVBERi0xLjMKJZOMi54gUmVwb3J0TGFiIEdlbmVyYXRlZCBQREYgZG9jdW1lbnQgKG9wZW5zb3Vy
+Y2UpCjEgMCBvYmoKPDwKL0YxIDIgMCBSIC9GMiAzIDAgUgo+PgplbmRvYmoKMiAwIG9iago8PAov
+QmFzZUZvbnQgL0hlbHZldGljYSAvRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZyAvTmFtZSAvRjEg
+L1N1YnR5cGUgL1R5cGUxIC9UeXBlIC9Gb250Cj4+CmVuZG9iagozIDAgb2JqCjw8Ci9CYXNlRm9u
+dCAvSGVsdmV0aWNhLUJvbGQgL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcgL05hbWUgL0YyIC9T
+dWJ0eXBlIC9UeXBlMSAvVHlwZSAvRm9udAo+PgplbmRvYmoKNCAwIG9iago8PAovQ29udGVudHMg
+OCAwIFIgL01lZGlhQm94IFsgMCAwIDU5NS4yNzU2IDg0MS44ODk4IF0gL1BhcmVudCA3IDAgUiAv
+UmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9J
+bWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdl
+Cj4+CmVuZG9iago1IDAgb2JqCjw8Ci9QYWdlTW9kZSAvVXNlTm9uZSAvUGFnZXMgNyAwIFIgL1R5
+cGUgL0NhdGFsb2cKPj4KZW5kb2JqCjYgMCBvYmoKPDwKL0F1dGhvciAoYW5vbnltb3VzKSAvQ3Jl
+YXRpb25EYXRlIChEOjIwMjYxMDE1MDkxOTUyKzAwJzAwJykgL0NyZWF0b3IgKGFub255bW91cykg
+L0tleXdvcmRzICgpIC9Nb2REYXRlIChEOjIwMjYxMDE1MDkxOTUyKzAwJzAwJykgL1Byb2R1Y2Vy
+IChSZXBvcnRMYWIgUERGIExpYnJhcnkgLSBcKG9wZW5zb3VyY2VcKSkgCiAgL1N1YmplY3QgKHVu
+c3BlY2lmaWVkKSAvVGl0bGUgKHVudGl0bGVkKSAvVHJhcHBlZCAvRmFsc2UKPj4KZW5kb2JqCjcg
+MCBvYmoKPDwKL0NvdW50IDEgL0tpZHMgWyA0IDAgUiBdIC9UeXBlIC9QYWdlcwo+PgplbmRvYmoK
+OCAwIG9iago8PAovRmlsdGVyIFsgL0FTQ0lJODVEZWNvZGUgL0ZsYXRlRGVjb2RlIF0gL0xlbmd0
+aCAyNjYKPj4Kc3RyZWFtCkdhczJBOk1bZzQmNGMyPE1Wa1woKGpGUEpXXmhjIUpRQlRcVSI7MCcy
+JWwqIT1pSEhaRjs9aCtRQFYnL0grWTtWRzAnLGcjPj8hNS49aWFoJThybCRJaiFtNms3U0pTNHBw
+RDpkbEEhSF1GUDBqTFIxVCdzKG40VURNKiVMRDM6Omw4VTc5KmJlL1A6aTltR3ByWl41PjREVlsl
+UlVaTiVYZjY8KWldX0I1JiM+USZFazkmbCE9XSxXcnBgU1lxJSVEay4uWExkLFlhS0FJKkFxOSop
+YWtEYFtQRGRJLlByRjdMc2NZQyk8UGpDRDNBQmIrOlZeRCIlInIwXUM4aEZGRjhEIkJXRH4+ZW5k
+c3RyZWFtCmVuZG9iagp4cmVmCjAgOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwNjEgMDAw
+MDAgbiAKMDAwMDAwMDEwMiAwMDAwMCBuIAowMDAwMDAwMjA5IDAwMDAwIG4gCjAwMDAwMDAzMjEg
+MDAwMDAgbiAKMDAwMDAwMDUyNCAwMDAwMCBuIAowMDAwMDAwNTkyIDAwMDAwIG4gCjAwMDAwMDA4
+NTMgMDAwMDAgbiAKMDAwMDAwMDkxMiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9JRCAKWzw5M2UzMTgy
+NTdiYmYxNWE3YzI5OWEzMTk0MGFmY2E4OT48OTNlMzE4MjU3YmJmMTVhN2MyOTlhMzE5NDBhZmNh
+ODk+XQolIFJlcG9ydExhYiBnZW5lcmF0ZWQgUERGIGRvY3VtZW50IC0tIGRpZ2VzdCAob3BlbnNv
+dXJjZSkKCi9JbmZvIDYgMCBSCi9Sb290IDUgMCBSCi9TaXplIDkKPj4Kc3RhcnR4cmVmCjEyNjgK
+JSVFT0YK
+
+--===============6187439867446986030==--

@@ -1,4 +1,4 @@
-import { TrainingSample, ModelMetrics, ThreatCategory } from '../types';
+import type { TrainingSample, ModelMetrics, ThreatCategory } from '../types';
 import { INITIAL_TRAINING_DATASET } from './threatKnowledgeBase';
 import { updateClassifierWeights, classifyThreat } from './threatClassifier';
 

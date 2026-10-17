@@ -1,0 +1,15 @@
+From: Northwind Institute IT Services <it-services@northwind.example>
+To: all-staff@northwind.example
+Subject: Scheduled maintenance this Saturday
+Date: Sat, 07 Nov 2026 09:45:00 +0530
+Message-ID: <179205599267.1113.10673049236345460034@mail.northwind.example>
+Return-Path: <it-services@northwind.example>
+Authentication-Results: mx.northwind.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Email down Sat 02:00-04:00. No action needed. Statu=
+s: https://status.northwind.example

@@ -1,1 +1,77 @@
-[]
+[
+  {
+    "feedback_id": "FB-E9859BA060CF",
+    "timestamp": 1792187416.0104396,
+    "timestamp_iso": "2026-10-16T21:50:16Z",
+    "submission": {
+      "email_sha256": "4d715a9e320f839b22a63e9f4560b4cb185c830f305f81a7b4587c69991be234",
+      "email_subject": "URGENT: Payroll Direct Deposit Verification Required by 5 PM",
+      "email_from": "payroll@internal-finance.corp",
+      "original_verdict": "PHISHING / MALICIOUS",
+      "original_risk_score": 78.5,
+      "reported_classification": "LEGITIMATE",
+      "feedback_type": "FALSE_POSITIVE",
+      "disputed_indicators": [
+        "COUNT #1: Urgent Deadline / Financial Pressure Phrasing",
+        "COUNT #2: Short-Window Authentication Trigger"
+      ],
+      "analyst_notes": "Legitimate monthly payroll verification email sent to all engineering contractors. The urgent deadline is genuine due to bank ACH cutoff.",
+      "reporter_role": "soc_analyst",
+      "suggested_risk_score": 10.0
+    },
+    "status": "PENDING_REVIEW",
+    "evidence_token": "BSA65B-FB-3dd695ec70a7fa48b4fe78880b183345",
+    "resolved_at": null,
+    "resolution_notes": null
+  },
+  {
+    "feedback_id": "FB-E903C820170D",
+    "timestamp": 1792187416.013119,
+    "timestamp_iso": "2026-10-16T21:50:16Z",
+    "submission": {
+      "email_sha256": "8f12a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f70",
+      "email_subject": "Notice: MFA Token Security Upgrade Required",
+      "email_from": "notifications@identity-security-check.com",
+      "original_verdict": "LEGITIMATE / SAFE",
+      "original_risk_score": 12.0,
+      "reported_classification": "PHISHING",
+      "feedback_type": "FALSE_NEGATIVE",
+      "disputed_indicators": [
+        "PROOF #1: SPF/DKIM Alignment On Lookalike Domain",
+        "MISSED: Embedded QR Code Redirecting to Evilginx Proxy"
+      ],
+      "analyst_notes": "Attacker registered lookalike domain with valid SPF/DKIM and embedded a QR code image to harvest Microsoft 365 session cookies.",
+      "reporter_role": "security_admin",
+      "suggested_risk_score": 95.0
+    },
+    "status": "PENDING_REVIEW",
+    "evidence_token": "BSA65B-FB-c9838db550e89177d72f8d0339baac68",
+    "resolved_at": null,
+    "resolution_notes": null
+  },
+  {
+    "feedback_id": "FB-B33A7CF2736D",
+    "timestamp": 1792187416.015139,
+    "timestamp_iso": "2026-10-16T21:50:16Z",
+    "submission": {
+      "email_sha256": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+      "email_subject": "Confidential RFQ Documents - Encrypted Package",
+      "email_from": "rfq-bids@trusted-partner.com",
+      "original_verdict": "SUSPICIOUS / ELEVATED RISK",
+      "original_risk_score": 65.0,
+      "reported_classification": "LEGITIMATE",
+      "feedback_type": "ATTACHMENT_MISCLASSIFICATION",
+      "disputed_indicators": [
+        "ATTACHMENT: PASSWORD_PROTECTED_ARCHIVE",
+        "IN-BODY PASSWORD EXTRACTION"
+      ],
+      "analyst_notes": "Legitimate defense procurement bid with password sent out-of-band via SMS. Container contains legitimate CAD drawings.",
+      "reporter_role": "end_user",
+      "suggested_risk_score": 15.0
+    },
+    "status": "PENDING_REVIEW",
+    "evidence_token": "BSA65B-FB-f62047f900275fe4d20cf9468431ce05",
+    "resolved_at": null,
+    "resolution_notes": null
+  }
+]

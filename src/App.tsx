@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Header, ActiveTab } from './components/Header';
+import { Header, type ActiveTab } from './components/Header';
 import { GlobeView } from './components/GlobeView';
 import { ForensicsView } from './components/ForensicsView';
 import { CourtroomView } from './components/CourtroomView';
@@ -10,6 +10,7 @@ import { AITrainingStudio } from './components/AITrainingStudio';
 import { LiveEmailInterceptor } from './components/LiveEmailInterceptor';
 import { FeedbackDashboard } from './components/FeedbackDashboard';
 import { MLComparisonView } from './components/MLComparisonView';
+import { OfficialTestArena } from './components/OfficialTestArena';
 import { AuthProvider } from './context/AuthContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
@@ -52,7 +53,12 @@ export const AppContent: React.FC = () => {
             <CourtroomView />
           )}
 
-          {/* VIEW 3B: Ground-Truth Feedback & Accuracy Evaluation (Mission 02 Req 4) */}
+          {/* VIEW 3B: Official Hackathon Benchmark & 1-Click Test Arena (PS4 Mission 04) */}
+          {activeTab === 'test-arena' && (
+            <OfficialTestArena />
+          )}
+
+          {/* VIEW 3C: Ground-Truth Feedback & Accuracy Evaluation (Mission 02 Req 4) */}
           {activeTab === 'feedback' && (
             <FeedbackDashboard />
           )}

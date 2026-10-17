@@ -525,6 +525,27 @@ class AttachmentAnalyzer:
         classification = "Unclassified Attachment"
         is_safe = True
 
+        # ── 0. ZERO-BYTE & OVERSIZED CHECKS (POLICY / RESOURCE LIMITS) ──
+        if size_bytes == 0:
+            return cls._build_result(
+                fn, ext, 0, sha256, declared_ct, "application/x-empty",
+                "", "", "SUSPICIOUS", 40.0,
+                "Zero-Byte Truncated Attachment (Unscannable)",
+                ["Attachment payload length is 0 bytes (empty or truncated file stream)"],
+                ["Empty attachments cannot be statically validated for safety and fail ingestion integrity policy."],
+                False
+            )
+
+        if size_bytes > 10 * 1024 * 1024:
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, detected_mime,
+                magic_hex, magic_ascii, "SUSPICIOUS", 50.0,
+                "Oversized Attachment (>10MB Gateway Policy Limit)",
+                [f"Attachment payload size ({size_bytes / (1024*1024):.2f} MB) exceeds maximum inspectable threshold of 10 MB"],
+                ["Oversized attachments exceed automated in-memory inspection buffers and must be handled via out-of-band quarantine."],
+                False
+            )
+
         # Evidence point: initial signature
         evidence.append(f"Magic Signature: [{magic_hex}] ('{magic_ascii}') -> {detected_desc}")
 
@@ -611,12 +632,12 @@ class AttachmentAnalyzer:
                 )
 
         # ── 2. RTLO & DOUBLE EXTENSION CHECKS ──
-        if "\u202e" in fn:
+        if "\u202e" in fn or "[rlo]" in fn.lower():
             risk_score = 98.0
             risk_level = "MALICIOUS"
             is_safe = False
             classification = "Right-to-Left Override (RTLO) Deceptive Attachment"
-            evidence.append(f"RTLO Unicode Character (U+202E) detected in filename: {repr(fn)}")
+            evidence.append(f"RTLO Unicode / Override token detected in filename: {repr(fn)}")
             reasons.append(
                 "Filename utilizes Unicode Right-to-Left Override to invert displayed file extension in operating systems, "
                 "masking executable payloads as harmless media or text files."
@@ -649,6 +670,32 @@ class AttachmentAnalyzer:
                 magic_hex, magic_ascii, risk_level, risk_score, classification,
                 evidence, reasons, is_safe
             )
+
+        # ── 2b. HIGH-RISK SCRIPT & INSTALLER EXTENSIONS ──
+        HIGH_RISK_EXTS = {"js", "vbs", "hta", "bat", "ps1", "cmd", "jar", "msi", "iso", "scr", "wsf", "cpl"}
+        clean_ext = ext.lower().lstrip(".")
+        if clean_ext in HIGH_RISK_EXTS:
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, detected_mime,
+                magic_hex, magic_ascii, "SUSPICIOUS", 80.0,
+                f"High-Risk Script / Installer Package Extension (.{clean_ext.upper()})",
+                evidence + [f"High-Risk Extension Policy: .{clean_ext} files can execute arbitrary shellcode outside containerization"],
+                reasons + [f"Direct email transmission of standalone .{clean_ext} scripts or installers is a high-risk delivery technique (MITRE ATT&CK T1059 / T1204.002)."],
+                False
+            )
+
+        # ── 2c. HTML CREDENTIAL HARVESTING PASSWORD FIELD ──
+        if ext in [".html", ".htm"] or detected_mime == "text/html":
+            payload_str = payload.decode("utf-8", errors="ignore").lower()
+            if 'type="password"' in payload_str or "type='password'" in payload_str or "type=password" in payload_str or ("<form" in payload_str and "password" in payload_str):
+                return cls._build_result(
+                    fn, ext, size_bytes, sha256, declared_ct, detected_mime,
+                    magic_hex, magic_ascii, "SUSPICIOUS", 85.0,
+                    "HTML Attachment with Embedded Password Input / Credential Harvester",
+                    evidence + ["Credential Form Detected: HTML file embeds interactive <input type='password'> form element"],
+                    reasons + ["Attacker delivers local HTML attachments containing offline credential harvesting forms to evade URL domain reputation scanners (MITRE ATT&CK T1566.001 / T1056.002)."],
+                    False
+                )
 
         # ── 3. STATIC OFFICE DOCUMENT INSPECTION (OOXML & OLE & RTF) ──
         if ext in cls.OFFICE_EXTENSIONS or detected_mime in ["application/zip", "application/x-ole-storage", "application/rtf"] or payload.startswith((b"PK\x03\x04", b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1", b"{\\rtf")):
@@ -1504,6 +1551,24 @@ class AttachmentAnalyzer:
                 mitre_techniques
             )
 
+        # Check for structural integrity (mandatory EOF trailer or object definitions)
+        has_structure = (b"%%EOF" in payload or b"xref" in payload or b"trailer" in payload or b"obj" in payload) and size_bytes >= 100
+        if not has_structure:
+            return cls._build_result(
+                fn, ext, size_bytes, sha256, declared_ct, "application/pdf",
+                magic_hex, magic_ascii, "SUSPICIOUS", 45.0,
+                "Corrupt / Truncated PDF Document (Missing EOF / Object Structure)",
+                evidence + [
+                    "Structural Anomaly: PDF lacks mandatory '%%EOF' trailer or valid object catalog structure",
+                    f"Payload stream is truncated ({size_bytes} bytes)"
+                ],
+                reasons + [
+                    "Attachment declares PDF format but contains malformed or truncated binary data without proper document structures. "
+                    "Marked UNSCANNED / SUSPICIOUS per zero-trust parser policy."
+                ],
+                False
+            )
+
         # Zero threat tokens found -> Genuine Vendor PDF Invoice / Document
         return cls._build_result(
             fn, ext, size_bytes, sha256, declared_ct, "application/pdf",
@@ -1557,6 +1622,32 @@ class AttachmentAnalyzer:
                         "Malicious ZIP Archive with Path Traversal (Zip Slip / Directory Escape)",
                         evidence + ["Detected directory traversal sequence ('../' or '..\\') in internal member path"],
                         reasons + ["Archive attempts to write or overwrite system binaries outside the extraction target directory."],
+                        False
+                    )
+
+                # 1b. Check archive nesting depth (anti-zip bomb / policy recursion limit)
+                def _calc_depth(zf_obj, current_depth=1):
+                    if current_depth >= 8:
+                        return current_depth
+                    max_d = current_depth
+                    for n in zf_obj.namelist():
+                        if n.lower().endswith('.zip'):
+                            try:
+                                inner_data = zf_obj.read(n)
+                                with zipfile.ZipFile(io.BytesIO(inner_data), "r") as inner_zf:
+                                    max_d = max(max_d, _calc_depth(inner_zf, current_depth + 1))
+                            except Exception:
+                                pass
+                    return max_d
+
+                nesting_depth = _calc_depth(zf)
+                if nesting_depth > 2:
+                    return cls._build_result(
+                        fn, ext, size_bytes, sha256, declared_ct, "application/zip",
+                        magic_hex, magic_ascii, "SUSPICIOUS", 65.0,
+                        f"Nested Archive Recursion Depth Exceeds Limit ({nesting_depth} > 2)",
+                        evidence + [f"Nested Archive Recursion: Detected {nesting_depth} nested zip layers (security policy max: 2)"],
+                        reasons + ["Deeply nested archives bypass automated perimeter inspection and pose decompression bomb denial of service risks. Marked UNSCANNED / SUSPICIOUS per policy."],
                         False
                     )
 

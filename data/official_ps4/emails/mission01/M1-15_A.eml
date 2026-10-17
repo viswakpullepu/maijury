@@ -1,0 +1,15 @@
+From: "Unity Bank" <statements@unitybank.example>
+To: Sara Iyer <sara.iyer@northwind.example>
+Subject: Your monthly statement is ready
+Date: Thu, 05 Nov 2026 04:45:00 +0530
+Message-ID: <179205599268.1113.16897929893444551230@mail.northwind.example>
+Return-Path: <statements@unitybank.example>
+Authentication-Results: mx.northwind.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Log in via the official app or type https://www.uni=
+tybank.example yourself. We never ask for your password by email.

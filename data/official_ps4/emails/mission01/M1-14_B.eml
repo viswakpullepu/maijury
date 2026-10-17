@@ -1,0 +1,14 @@
+From: Jon Mathew <jon.mathew@lakeview.example>
+To: Rahul Das <rahul.das@lakeview.example>
+Subject: Lunch on Friday?
+Date: Tue, 10 Nov 2026 07:48:00 +0530
+Message-ID: <179205599298.1113.343046107366241725@mail.lakeview.example>
+Return-Path: <jon.mathew@lakeview.example>
+Authentication-Results: mx.lakeview.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Still on for lunch Friday?

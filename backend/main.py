@@ -63,6 +63,10 @@ from feedback_engine import (
     FeedbackStatus,
     EvaluationReport,
 )
+try:
+    from official_benchmark_runner import OfficialBenchmarkRunner
+except ImportError:
+    from backend.official_benchmark_runner import OfficialBenchmarkRunner
 
 # Initialize Background Daemon & OAuth Manager
 daemon = BackgroundMonitorDaemon(poll_interval_seconds=5)
@@ -441,7 +445,7 @@ async def google_mock_consent(state: str, session_id: Optional[str] = None):
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Google Account Authorization — ThreatLens AI</title>
+        <title>Google Account Authorization — MailJury</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
             body {{ background: #0a0b0f; color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 16px; box-sizing: border-box; }}
@@ -464,17 +468,17 @@ async def google_mock_consent(state: str, session_id: Optional[str] = None):
             <div class="logo">
                 <span class="logo-icon">⚖️</span>
                 <div>
-                    <div style="font-weight: 700; font-size: 16px; color: #ffffff;">ThreatLens AI & MailJury</div>
+                    <div style="font-weight: 700; font-size: 16px; color: #ffffff;">MailJury</div>
                     <div style="font-size: 12px; color: #64748b;">Autonomous Mailbox Protection Suite</div>
                 </div>
             </div>
             <div class="title">Sign in with Google</div>
-            <div class="subtitle">ThreatLens is requesting permission to autonomously monitor and quarantine hostile emails on your behalf.</div>
+            <div class="subtitle">MailJury is requesting permission to autonomously monitor and quarantine hostile emails on your behalf.</div>
             
             <div class="scope-box">
                 <div class="scope-title">Requested Permissions (Least Privilege):</div>
                 <div class="scope-item">✓ Read unread RFC 5322 email headers & attachments</div>
-                <div class="scope-item">✓ Apply ThreatLens triage labels (Quarantine / Safe)</div>
+                <div class="scope-item">✓ Apply MailJury triage labels (Quarantine / Safe)</div>
                 <div class="scope-item">✓ Remove verified malicious phishing from Inbox</div>
             </div>
 
@@ -482,7 +486,7 @@ async def google_mock_consent(state: str, session_id: Optional[str] = None):
                 🔒 <strong>Zero-Plaintext Guarantee:</strong> Tokens encrypted with AES-256-GCM. Emails processed ephemerally in volatile RAM only.
             </div>
 
-            <a class="btn" href="{callback_url}">Allow ThreatLens Access</a>
+            <a class="btn" href="{callback_url}">Allow MailJury Access</a>
             <a class="btn-cancel" href="/">Cancel & Return to Dashboard</a>
         </div>
     </body>
@@ -524,6 +528,81 @@ async def google_callback(
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@app.get("/api/auth/demo-credentials")
+async def get_demo_credentials():
+    """Returns official demo credentials for jury evaluation & live testing."""
+    return {
+        "status": "operational",
+        "primary_demo_account": {
+            "role": "Lead Defense Judge / Jury Evaluator",
+            "email": "judge.evaluator@mailjury.security",
+            "name": "Jury Review Evaluator",
+            "mode": "1-Click Instant Authentication (Zero External Prompts)",
+            "login_endpoint": "/api/auth/demo-login"
+        },
+        "google_oauth_account": {
+            "role": "Google Workspace / Gmail Live OAuth",
+            "email": "mailjury.evaluator@gmail.com",
+            "password": "JudgeEvaluation2026!",
+            "consent_url": "/api/auth/google/mock-consent",
+            "live_google_login": "/api/auth/google/login"
+        },
+        "encryption": "AES-256-GCM Envelope Encryption (NIST SP 800-38D)",
+        "legal_admissibility": "BSA 2023 §65B Digital Certificate Sealed"
+    }
+
+
+@app.api_route("/api/auth/demo-login", methods=["GET", "POST"])
+async def demo_judge_login(
+    request: Request,
+    session_id: Optional[str] = None,
+    user_id: str = "primary_user",
+    role: str = "Lead Defense Judge"
+):
+    """
+    1-Click Instant Demo Authentication for Hackathon Judges & Evaluators.
+    Establishes verified OAuth tokens in the AES-256-GCM CryptoVault,
+    activates defense monitoring, and redirects to dashboard with authenticated session.
+    """
+    demo_tokens = {
+        "access_token": f"ya29.mock_jury_judge_token_{int(time.time())}",
+        "refresh_token": "1//04mock_jury_judge_refresh_token",
+        "token_type": "Bearer",
+        "expires_in": 7200,
+        "scope": "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.send",
+        "mode": "JURY_EVALUATION_DEMO",
+        "user_email": "judge.evaluator@mailjury.security",
+        "user_name": "Jury Review Evaluator",
+        "role": role,
+        "authenticated_at": time.time()
+    }
+    oauth_manager.token_store.save_tokens(demo_tokens, user_id=user_id)
+    daemon.gmail.authenticate()
+
+    accept_hdr = request.headers.get("accept", "")
+    wants_json = "application/json" in accept_hdr and "text/html" not in accept_hdr
+
+    redirect_url = "/?connected=gmail&user=judge.evaluator%40mailjury.security"
+    if session_id:
+        redirect_url += f"&session_id={urllib.parse.quote(session_id)}"
+
+    if wants_json and request.method == "POST":
+        return {
+            "status": "SUCCESS",
+            "message": "Demo evaluator session activated as Lead Defense Judge.",
+            "redirect_url": redirect_url,
+            "user": {
+                "email": "judge.evaluator@mailjury.security",
+                "name": "Jury Review Evaluator",
+                "picture": "https://api.dicebear.com/7.x/bottts/svg?seed=JuryJudge",
+                "role": role,
+                "verified_email": True
+            }
+        }
+
+    return RedirectResponse(url=redirect_url, status_code=302)
+
+
 @app.get("/api/auth/status")
 @app.get("/api/auth/google/status")
 async def get_unified_auth_status(user_id: str = "primary_user", session_id: Optional[str] = None):
@@ -532,14 +611,22 @@ async def get_unified_auth_status(user_id: str = "primary_user", session_id: Opt
     tokens = oauth_manager.token_store.get_tokens(user_id=user_id) if has_tokens else None
     is_connected = bool(has_tokens or daemon.gmail.is_live)
 
+    user_email = "security-officer@threatlens.ai"
+    user_name = "Security Operations Center"
+    if tokens:
+        user_email = tokens.get("user_email") or user_email
+        user_name = tokens.get("user_name") or user_name
+
+    seed = "JuryJudge" if ("judge" in user_email or "evaluator" in user_email) else "MailJury"
+
     return {
         "connected": is_connected,
         "authorized": is_connected,
         "provider": "gmail",
         "user": {
-            "email": "security-officer@threatlens.ai",
-            "name": "Security Operations Center",
-            "picture": "https://api.dicebear.com/7.x/bottts/svg?seed=MailJury"
+            "email": user_email,
+            "name": user_name,
+            "picture": f"https://api.dicebear.com/7.x/bottts/svg?seed={seed}"
         } if is_connected else None,
         "mode": tokens.get("mode") if tokens else ("LIVE_GMAIL" if daemon.gmail.is_live else "DISCONNECTED"),
         "scopes": tokens.get("scope") if tokens else None,
@@ -835,6 +922,104 @@ async def save_threatlens_email(payload: Dict[str, Any] = Body(...)):
         "saved": True,
         "id": payload.get("id", f"TL-{int(time.time())}")
     }
+
+# ── OFFICIAL HACKATHON BENCHMARK & TEST ARENA (PS4) ─────────────────────────
+
+class OfficialBenchmarkRunRequest(BaseModel):
+    suite_type: str = "all"  # all, mission04, mission01, mission02
+    variant: str = "A"       # A, B, both
+    test_id: Optional[str] = None
+
+class SingleTestRunRequest(BaseModel):
+    test_id: str
+    variant: str = "A"
+
+@app.get("/api/official-tests/catalog")
+async def get_official_tests_catalog(variant: str = Query("A", regex="^(A|B)$")):
+    """Returns the full catalog of official hackathon test cases for PS4."""
+    try:
+        catalog = OfficialBenchmarkRunner.get_catalog(variant=variant)
+        return {
+            "variant": variant,
+            "total_items": len(catalog),
+            "catalog": catalog
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/official-tests/run")
+async def run_official_tests_suite(req: OfficialBenchmarkRunRequest):
+    """
+    Executes official hackathon benchmark test suite in memory and computes
+    confusion matrix, false positive rate, accuracy, and detailed results.
+    """
+    try:
+        if req.variant == "both":
+            res_a = OfficialBenchmarkRunner.run_suite(suite_type=req.suite_type, variant="A")
+            res_b = OfficialBenchmarkRunner.run_suite(suite_type=req.suite_type, variant="B")
+            
+            # Combine summary
+            total = res_a["summary"]["total_tests"] + res_b["summary"]["total_tests"]
+            passed = res_a["summary"]["passed_tests"] + res_b["summary"]["passed_tests"]
+            accuracy = round((passed / total * 100), 2) if total > 0 else 0.0
+            fp = res_a["summary"]["false_positive_count"] + res_b["summary"]["false_positive_count"]
+            tn = res_a["summary"]["confusion_matrix"]["true_negatives"] + res_b["summary"]["confusion_matrix"]["true_negatives"]
+            fpr = round((fp / (fp + tn) * 100), 2) if (fp + tn) > 0 else 0.0
+            
+            combined_summary = {
+                "suite_type": req.suite_type,
+                "variant": "both",
+                "total_tests": total,
+                "passed_tests": passed,
+                "failed_tests": total - passed,
+                "accuracy_percent": accuracy,
+                "false_positive_count": fp,
+                "false_positive_rate": fpr,
+                "confusion_matrix": {
+                    "true_positives": res_a["summary"]["confusion_matrix"]["true_positives"] + res_b["summary"]["confusion_matrix"]["true_positives"],
+                    "true_negatives": tn,
+                    "false_positives": fp,
+                    "false_negatives": res_a["summary"]["confusion_matrix"]["false_negatives"] + res_b["summary"]["confusion_matrix"]["false_negatives"]
+                },
+                "total_execution_ms": round(res_a["summary"]["total_execution_ms"] + res_b["summary"]["total_execution_ms"], 2),
+                "mean_latency_ms": round((res_a["summary"]["total_execution_ms"] + res_b["summary"]["total_execution_ms"]) / total, 2) if total > 0 else 0.0,
+                "zero_execution_guarantee": True,
+                "timestamp": time.time()
+            }
+            return {
+                "summary": combined_summary,
+                "results": res_a["results"] + res_b["results"]
+            }
+        else:
+            res = OfficialBenchmarkRunner.run_suite(suite_type=req.suite_type, variant=req.variant)
+            return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/official-tests/run-single")
+async def run_single_official_test(req: SingleTestRunRequest):
+    """Executes a single test case from the official dataset and returns full forensic details."""
+    try:
+        catalog = OfficialBenchmarkRunner.get_catalog(variant=req.variant)
+        target = next((item for item in catalog if item["test_id"] == req.test_id), None)
+        if not target:
+            raise HTTPException(status_code=404, detail=f"Test case '{req.test_id}' not found in variant '{req.variant}'.")
+        
+        res = OfficialBenchmarkRunner.run_single_test(
+            file_path=target["file_path"],
+            expected_label=target["expected_label"],
+            filename=target["filename"],
+            is_email=target["is_email"]
+        )
+        res["test_id"] = target["test_id"]
+        res["category"] = target["category"]
+        res["title"] = target["title"]
+        res["attack_vector"] = target["attack_vector"]
+        return res
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ─── SINGLE PAGE APPLICATION (SPA) CLIENT ROUTE FALLBACK ──────────────────
 

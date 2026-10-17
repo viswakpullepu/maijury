@@ -1,0 +1,15 @@
+From: "Lakeview College Exams" <exams@lakeview.example>
+To: students@lakeview.example
+Subject: Reminder: exam registration closes today
+Date: Wed, 11 Nov 2026 22:00:00 +0530
+Message-ID: <179205599306.1113.11200862329687971489@mail.lakeview.example>
+Return-Path: <exams@lakeview.example>
+Authentication-Results: mx.lakeview.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Register: https://exams.lakeview.example/register?t=
+erm=3D2026-odd&sem=3D5&session=3Dreg&src=3Demail

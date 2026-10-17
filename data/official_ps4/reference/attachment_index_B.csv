@@ -1,0 +1,18 @@
+email_id,folder,filename_display,declared_content_type,detected_type,size_bytes,sha256,attachment_label,attachment_flags
+M1-02,mission01,invoice_2026.pdf.exe,application/octet-stream,MZ executable stub (inert),167,d7b9ef929023c4a963ca6f2853629f1619c767aeac60c04b0439d834c0f5d423,suspicious,double_extension;high_risk_extension;executable_magic_MZ
+M1-05,mission01,payment_details.js,application/javascript,JavaScript text (comments only),145,26174d08beb10910c7008409f0807aad42ac3d9edbaa326daea9e3027d55e75c,suspicious,high_risk_extension
+M1-07,mission01,account_update.hta,application/hta,HTML text (no script),183,408dc84106d539c57d110b6c527c532ea45f86c0e49cc47946c83f43f5648c1d,suspicious,high_risk_extension
+M1-09,mission01,timetable.pdf,application/pdf,PDF (no active content),1664,dac69778725aa83c4e60b362dc7fe6d0bf36fb4526d6de238571ab52936ec1fb,benign,none
+M1-10,mission01,meeting_minutes.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,DOCX (no macros),36691,ed74b4755cbcd38cf5930081dd599ad1a06215080081f3cb4a84dcfb19936a70,benign,none
+M1-13,mission01,invoice_october.pdf,application/pdf,PDF (no active content),1659,a4f88e3a7d8c5f0e223516e25ae82fd770055b03d24c6c37e12efde744be3407,benign,none
+M2-03,mission02,invoice_sept.pdf,application/pdf,PDF (no active content),1664,58d18045e2191df61cc2882efba34a0520ba94f0b11ba22897e21d8d1f4d036f,benign,none
+M2-04,mission02,event_photos.zip,application/zip,ZIP of PNG images,442,f3bad58dc01e812499687b8e9a79b1b9844e54665306308de0b6a3401e2cf3b7,benign,archive_contains_images_only
+M2-05,mission02,project_notes.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,DOCX (no macros),36690,f483484bcdd97ef53476d09821d8c32086858e6a76914481fc2f41ff0add5000,benign,none
+M2-06,mission02,statement.pdf.exe,application/octet-stream,MZ executable stub (inert),169,f56d0cd8d985680e2ff5bfdec84c44cdf4fd45ab96b74ef16b25bdebc361d392,suspicious,double_extension;high_risk_extension;executable_magic_MZ
+M2-07,mission02,report[RLO]fdp.exe,application/octet-stream,MZ executable stub (inert); filename uses RLO override,163,b4dc55083bf5cd578dfacb61bf9c3f2ef5d98b2fb852cd4cfe6db2fa01e30a02,suspicious,rtl_override_filename;high_risk_extension;executable_magic_MZ
+M2-08,mission02,invoice_scan.docm,application/vnd.ms-word.document.macroEnabled.12,DOCM with inert placeholder vbaProject,37045,72f72c59174a7a6b358aaf9cb9c4d2608cb4e2489c22e6f45d8f0321372d55bc,suspicious,macro_enabled_office;vba_project_present
+M2-09,mission02,shared_document.pdf,application/pdf,"PDF with /OpenAction+/JavaScript (comment-only, inert)",1839,ff1290961c2b2d2bd89282e803a3328d8e06c524346581032c3d66b9a39511f0,suspicious,pdf_openaction;pdf_javascript
+M2-10,mission02,secure_message.html,text/html,HTML with password field; form target '#',514,3ebc7195011136c758fa788169f90fd2bbd10c1cbdc641ba24036b0bc590847e,suspicious,html_password_field;html_form
+M2-11,mission02,salary_details.zip,application/zip,Password-protected ZIP (password in body),34354,bc1041ee1c07d8530376fc71cd98dc70fc7c5e74c13a819e3d6cb027bade10ce,suspicious,encrypted_archive;password_in_body
+M2-12,mission02,archive.zip,application/zip,"Nested ZIP, 4 layers (exceeds depth limit of 2)",467,67bd89e049b11cf22799e58e325a0a4ad6e78c611d1e57b72202b1f7e4a664bd,suspicious,nested_archive_depth_exceeds_limit
+M2-13,mission02,delivery_note.pdf,application/pdf,Declared application/pdf; actual bytes MZ executable,172,3e32aa1ed83751455d208812c8c5b14fe08d784d7b18e01337bff51079a35a08,suspicious,declared_pdf_but_MZ_magic;extension_mime_magic_mismatch

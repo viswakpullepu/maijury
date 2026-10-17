@@ -1,0 +1,30 @@
+From: "Kestrel Office Supplies Accounts" <accounts@kestrel.example>
+To: Meena Pillai <meena.pillai@lakeview.example>
+Subject: Overdue invoice - pay today
+Date: Mon, 09 Nov 2026 21:44:00 +0530
+Message-ID: <179205599292.1113.4867297781900931214@mail.lakeview.example>
+Reply-To: payments@mailbox-free.test
+Return-Path: <accounts@kestrel.example>
+Authentication-Results: mx.lakeview.example; spf=softfail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0938734083065770221=="
+
+--===============0938734083065770221==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] Invoice notice. See attachment.
+
+--===============0938734083065770221==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="invoice_2026.pdf.exe"
+MIME-Version: 1.0
+
+TVqQAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAA0KTUlTU0lPTkFUSE9OIDIwMjYgVEVTVCBGSVhUVVJFIC0gaW5lcnQsIHNhZmUsIG5v
+bi1leGVjdXRhYmxlLiBbaW52b2ljZV0gTm8gZXhlY3V0YWJsZSBjb2RlIHByZXNlbnQuDQo=
+
+--===============0938734083065770221==--

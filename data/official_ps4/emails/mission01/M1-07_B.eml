@@ -1,0 +1,30 @@
+From: "Lakeview College IT" <it@lakeview-portal.example>
+To: Jon Mathew <jon.mathew@lakeview.example>
+Subject: Mandatory security update
+Date: Wed, 11 Nov 2026 12:40:00 +0530
+Message-ID: <179205599293.1113.7587278416114040819@mail.lakeview.example>
+Return-Path: <it@lakeview-portal.example>
+Authentication-Results: mx.lakeview.example; spf=fail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============1081078870213701783=="
+
+--===============1081078870213701783==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] 'Run the attached update' lure.
+
+--===============1081078870213701783==
+Content-Type: application/hta
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="account_update.hta"
+MIME-Version: 1.0
+
+PCEtLSBNSVNTSU9OQVRIT04gMjAyNiBURVNUIEZJWFRVUkUgLSBpbmVydCwgc2FmZSwgbm9uLWV4
+ZWN1dGFibGUuIC0tPgo8aHRtbD48aGVhZD48dGl0bGU+QWNjb3VudCB1cGRhdGU8L3RpdGxlPjwv
+aGVhZD48Ym9keT48cD5JbmVydCB0ZXN0IGZpbGUuIE5vIHNjcmlwdCwgbm8gZm9ybS48L3A+PC9i
+b2R5PjwvaHRtbD4K
+
+--===============1081078870213701783==--

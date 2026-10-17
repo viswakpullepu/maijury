@@ -1,0 +1,30 @@
+From: "Meena Pillai" <meena.personal@mailbox-free.test>
+To: Rahul Das <rahul.das@lakeview.example>
+Subject: Quick favour - are you at your desk?
+Date: Thu, 12 Nov 2026 07:29:00 +0530
+Message-ID: <179205599293.1113.7808906240313240096@mail.lakeview.example>
+Return-Path: <meena.personal@mailbox-free.test>
+Authentication-Results: mx.lakeview.example; spf=pass dkim=pass dmarc=none
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============7335261226066575922=="
+
+--===============7335261226066575922==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+[SYNTHETIC SAMPLE] Vendor-payment request from a colleague's name on an outsi=
+de address. Attachment included.
+
+--===============7335261226066575922==
+Content-Type: application/javascript
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="payment_details.js"
+MIME-Version: 1.0
+
+Ly8gTUlTU0lPTkFUSE9OIDIwMjYgVEVTVCBGSVhUVVJFIC0gaW5lcnQsIHNhZmUsIG5vbi1leGVj
+dXRhYmxlLgovLyBKYXZhU2NyaXB0IHNhbXBsZSAtIGNvbW1lbnRzIG9ubHkKLy8gRmlsZSBjb250
+YWlucyBvbmx5IHRoZXNlIGNvbW1lbnQgbGluZXMuCg==
+
+--===============7335261226066575922==--

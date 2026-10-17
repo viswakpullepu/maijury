@@ -1,0 +1,29 @@
+From: "Shared Drive" <share@file-drop.test>
+To: Dev Nair <dev.nair@northwind.example>
+Subject: You received a document
+Date: Tue, 03 Nov 2026 06:29:00 +0530
+Message-ID: <179205599281.1113.11313895720634454042@mail.northwind.example>
+Return-Path: <share@file-drop.test>
+Authentication-Results: mx.northwind.example; spf=none dkim=none dmarc=none
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0194132786760330934=="
+
+--===============0194132786760330934==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] 'Open the attached document' lure.
+
+--===============0194132786760330934==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename*=utf-8''report%E2%80%AEfdp.exe
+MIME-Version: 1.0
+
+TVqQAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAA0KTUlTU0lPTkFUSE9OIDIwMjYgVEVTVCBGSVhUVVJFIC0gaW5lcnQsIHNhZmUsIG5v
+bi1leGVjdXRhYmxlLiBbcmxvXSBObyBleGVjdXRhYmxlIGNvZGUgcHJlc2VudC4NCg==
+
+--===============0194132786760330934==--

@@ -1,0 +1,14 @@
+From: "SwiftParcel" <tracking@swiftparcel-delivery.test>
+To: Dev Nair <dev.nair@northwind.example>
+Subject: Parcel could not be delivered
+Date: Fri, 06 Nov 2026 14:36:00 +0530
+Message-ID: <179205599263.1113.8361226144615270927@mail.northwind.example>
+Return-Path: <tracking@swiftparcel-delivery.test>
+Authentication-Results: mx.northwind.example; spf=pass dkim=none dmarc=none
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+
+[SYNTHETIC SAMPLE] Redelivery-fee lure: https://shrt.example/x7Kq2

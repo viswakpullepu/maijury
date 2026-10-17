@@ -1,0 +1,30 @@
+From: "QuickCrate Logistics" <delivery@quickcrate-note.test>
+To: Meena Pillai <meena.pillai@lakeview.example>
+Subject: Delivery note
+Date: Wed, 11 Nov 2026 07:35:00 +0530
+Message-ID: <179205599310.1113.7706309753185582222@mail.lakeview.example>
+Return-Path: <delivery@quickcrate-note.test>
+Authentication-Results: mx.lakeview.example; spf=fail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============3222016538192870910=="
+
+--===============3222016538192870910==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] File declared as PDF but bytes are an executable.
+
+--===============3222016538192870910==
+Content-Type: application/pdf
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="delivery_note.pdf"
+MIME-Version: 1.0
+
+TVqQAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAA0KTUlTU0lPTkFUSE9OIDIwMjYgVEVTVCBGSVhUVVJFIC0gaW5lcnQsIHNhZmUsIG5v
+bi1leGVjdXRhYmxlLiBbZGVjbGFyZWQtcGRmXSBObyBleGVjdXRhYmxlIGNvZGUgcHJlc2VudC4N
+Cg==
+
+--===============3222016538192870910==--

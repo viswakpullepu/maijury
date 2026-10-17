@@ -13,7 +13,7 @@ import {
   Layers
 } from 'lucide-react';
 import { classifyThreat } from '../engine/threatClassifier';
-import { ThreatAnalysisResult } from '../types';
+import type { ThreatAnalysisResult } from '../types';
 
 export const ThreatInspector: React.FC = () => {
   const [payloadInput, setPayloadInput] = useState<string>("' UNION SELECT null, username, password FROM users--");

@@ -1,0 +1,30 @@
+From: "Vikram Menon" <vikram.personal@mailbox-free.test>
+To: Anita Rao <anita.rao@northwind.example>
+Subject: Quick favour - are you at your desk?
+Date: Fri, 06 Nov 2026 14:25:00 +0530
+Message-ID: <179205599263.1113.3366609793301945694@mail.northwind.example>
+Return-Path: <vikram.personal@mailbox-free.test>
+Authentication-Results: mx.northwind.example; spf=pass dkim=pass dmarc=none
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============4193412324153864212=="
+
+--===============4193412324153864212==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+[SYNTHETIC SAMPLE] Vendor-payment request from a colleague's name on an outsi=
+de address. Attachment included.
+
+--===============4193412324153864212==
+Content-Type: application/javascript
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="payment_details.js"
+MIME-Version: 1.0
+
+Ly8gTUlTU0lPTkFUSE9OIDIwMjYgVEVTVCBGSVhUVVJFIC0gaW5lcnQsIHNhZmUsIG5vbi1leGVj
+dXRhYmxlLgovLyBKYXZhU2NyaXB0IHNhbXBsZSAtIGNvbW1lbnRzIG9ubHkKLy8gRmlsZSBjb250
+YWlucyBvbmx5IHRoZXNlIGNvbW1lbnQgbGluZXMuCg==
+
+--===============4193412324153864212==--

@@ -1,0 +1,15 @@
+From: "Harbour Bank" <statements@harbourbank.example>
+To: Farah Khan <farah.khan@lakeview.example>
+Subject: Your monthly statement is ready
+Date: Fri, 13 Nov 2026 01:16:00 +0530
+Message-ID: <179205599298.1113.10290249337302166180@mail.lakeview.example>
+Return-Path: <statements@harbourbank.example>
+Authentication-Results: mx.lakeview.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Log in via the official app or type https://www.har=
+bourbank.example yourself. We never ask for your password by email.

@@ -1,0 +1,9 @@
+url,label,reason
+https://www.northwind.example/login,benign,official domain
+https://n0rthwind.example/hr/letter.php,phishing,lookalike domain
+https://shrt.example/x7Kq2,phishing,URL shortener hiding destination
+http://northwlnd.example/verify?id=1,phishing,lookalike domain + http
+http://northwind-secure-login.test/,phishing,brand + security words in cheap TLD
+http://192.0.2.45/northwind.example/login,phishing,IP-literal URL with brand in path
+https://www.campus-shop.example/cart?id=55&ref=newsletter&utm=weekly,benign,long but benign tracking URL
+https://exams.northwind.example/register?term=2026&sem=5,benign,"official subdomain, long but benign query"

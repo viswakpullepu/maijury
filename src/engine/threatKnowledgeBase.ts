@@ -1,4 +1,4 @@
-import { TrainingSample, ThreatCategory } from '../types';
+import type { TrainingSample, ThreatCategory } from '../types';
 
 export const THREAT_CATEGORIES_METADATA: Record<ThreatCategory, {
   name: string;

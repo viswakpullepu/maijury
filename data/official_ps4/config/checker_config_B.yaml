@@ -1,0 +1,35 @@
+# PS4 checker configuration - variant B
+# All values are starting points; teams may tune them but must document changes.
+org_domain: lakeview.example
+known_internal_display_names: ['Rahul Das', 'Meena Pillai', 'Farah Khan', 'Jon Mathew']
+
+limits:
+  max_attachment_size_mb: 10
+  max_attachments_per_email: 15
+  max_archive_nesting_depth: 2        # anything deeper is marked UNSCANNED, never SAFE
+
+high_risk_extensions: [exe, scr, js, vbs, hta, lnk, iso, bat, ps1, cmd, jar, msi]
+office_macro_extensions: [docm, xlsm, pptm, dotm, xltm]
+detect_type_by: magic_bytes           # never trust extension or declared MIME alone
+
+url_rules:
+  flag_ip_literal: true
+  flag_url_shorteners: true
+  shortener_domains: ['qk.example', 'snip.example']
+  flag_link_text_href_mismatch: true
+
+header_rules:
+  check_spf_dkim_dmarc: true          # read from Authentication-Results header; no live DNS
+  flag_reply_to_mismatch: true
+  flag_return_path_mismatch: true
+  flag_display_name_spoof: true
+
+safety:
+  never_execute_attachments: true
+  never_extract_to_disk: true         # parse in memory or a temp folder deleted after analysis
+  never_upload_to_online_scanners: true
+  hash_list: config/known_bad_hashes_B.csv
+
+scoring:
+  risk_levels: [low, medium, high]
+  show_body_score_and_attachment_score_separately: true

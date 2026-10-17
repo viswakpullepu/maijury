@@ -1,0 +1,30 @@
+From: "SwiftParcel" <delivery@swiftparcel-note.test>
+To: Vikram Menon <vikram.menon@northwind.example>
+Subject: Delivery note
+Date: Wed, 04 Nov 2026 08:50:00 +0530
+Message-ID: <179205599283.1113.1383525821893443138@mail.northwind.example>
+Return-Path: <delivery@swiftparcel-note.test>
+Authentication-Results: mx.northwind.example; spf=fail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============5730598002340065122=="
+
+--===============5730598002340065122==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] File declared as PDF but bytes are an executable.
+
+--===============5730598002340065122==
+Content-Type: application/pdf
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="delivery_note.pdf"
+MIME-Version: 1.0
+
+TVqQAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAA0KTUlTU0lPTkFUSE9OIDIwMjYgVEVTVCBGSVhUVVJFIC0gaW5lcnQsIHNhZmUsIG5v
+bi1leGVjdXRhYmxlLiBbZGVjbGFyZWQtcGRmXSBObyBleGVjdXRhYmxlIGNvZGUgcHJlc2VudC4N
+Cg==
+
+--===============5730598002340065122==--

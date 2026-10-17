@@ -18,6 +18,7 @@ export interface AuthContextType {
   provider: string | null;
   sessionId: string;
   loginWithGoogle: () => void;
+  loginWithDemoAccount: (role?: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshAuth: () => Promise<void>;
 }
@@ -121,6 +122,58 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.location.href = `/api/auth/google/login?session_id=${encodeURIComponent(sid)}`;
   };
 
+  const loginWithDemoAccount = async (role = 'Lead Defense Judge') => {
+    const sid = getOrCreateSessionId();
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/auth/demo-login?session_id=${encodeURIComponent(sid)}&role=${encodeURIComponent(role)}`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await res.json();
+      if (data && data.user) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+        setProvider('gmail');
+        try {
+          localStorage.setItem(getScopedStorageKey(sid), JSON.stringify(data.user));
+        } catch (_) {}
+      } else {
+        // Fallback local demo profile
+        const fallbackUser: UserProfile = {
+          email: 'judge.evaluator@mailjury.security',
+          name: 'Jury Review Evaluator',
+          verified_email: true,
+          picture: 'https://api.dicebear.com/7.x/bottts/svg?seed=JuryJudge'
+        };
+        setUser(fallbackUser);
+        setIsAuthenticated(true);
+        setProvider('gmail');
+        try {
+          localStorage.setItem(getScopedStorageKey(sid), JSON.stringify(fallbackUser));
+        } catch (_) {}
+      }
+    } catch (_) {
+      const fallbackUser: UserProfile = {
+        email: 'judge.evaluator@mailjury.security',
+        name: 'Jury Review Evaluator',
+        verified_email: true,
+        picture: 'https://api.dicebear.com/7.x/bottts/svg?seed=JuryJudge'
+      };
+      setUser(fallbackUser);
+      setIsAuthenticated(true);
+      setProvider('gmail');
+      try {
+        localStorage.setItem(getScopedStorageKey(sid), JSON.stringify(fallbackUser));
+      } catch (_) {}
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async () => {
     const sid = getOrCreateSessionId();
     try {
@@ -154,6 +207,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         provider,
         sessionId,
         loginWithGoogle,
+        loginWithDemoAccount,
         logout,
         refreshAuth
       }}

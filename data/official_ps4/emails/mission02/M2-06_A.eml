@@ -1,0 +1,29 @@
+From: "Unity Bank" <no-reply@unitybank.example.account-check.test>
+To: Sara Iyer <sara.iyer@northwind.example>
+Subject: Account statement
+Date: Thu, 05 Nov 2026 04:25:00 +0530
+Message-ID: <179205599280.1113.13471477000798022562@mail.northwind.example>
+Return-Path: <no-reply@unitybank.example.account-check.test>
+Authentication-Results: mx.northwind.example; spf=fail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0401484944463197746=="
+
+--===============0401484944463197746==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] Invoice notice. See attachment.
+
+--===============0401484944463197746==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="statement.pdf.exe"
+MIME-Version: 1.0
+
+TVqQAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAA0KTUlTU0lPTkFUSE9OIDIwMjYgVEVTVCBGSVhUVVJFIC0gaW5lcnQsIHNhZmUsIG5v
+bi1leGVjdXRhYmxlLiBbc3RhdGVtZW50XSBObyBleGVjdXRhYmxlIGNvZGUgcHJlc2VudC4NCg==
+
+--===============0401484944463197746==--

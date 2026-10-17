@@ -1,0 +1,28 @@
+From: "Northwind Institute HR" <hr@n0rthwind.example>
+To: Sara Iyer <sara.iyer@northwind.example>
+Subject: Salary revision letter - action needed
+Date: Wed, 04 Nov 2026 22:20:00 +0530
+Message-ID: <179205599263.1113.12521270332078125567@mail.northwind.example>
+Return-Path: <hr@n0rthwind.example>
+Authentication-Results: mx.northwind.example; spf=fail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="===============1805495930894392475=="
+
+--===============1805495930894392475==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] See HTML version.
+
+--===============1805495930894392475==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<!-- synthetic --><p>Review your letter: <a href=3D"http://n0rthwind.example/=
+hr/letter.php">https://hr.northwind.example/letters</a></p>
+
+--===============1805495930894392475==--

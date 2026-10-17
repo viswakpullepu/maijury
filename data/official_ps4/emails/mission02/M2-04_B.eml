@@ -1,0 +1,34 @@
+From: Farah Khan <farah.khan@lakeview.example>
+To: Jon Mathew <jon.mathew@lakeview.example>
+Subject: Project photos
+Date: Tue, 10 Nov 2026 22:28:00 +0530
+Message-ID: <179205599306.1113.17963241524598373492@mail.lakeview.example>
+Return-Path: <farah.khan@lakeview.example>
+Authentication-Results: mx.lakeview.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============3602903081514160769=="
+
+--===============3602903081514160769==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC BENIGN SAMPLE] Event photos attached.
+
+--===============3602903081514160769==
+Content-Type: application/zip
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="event_photos.zip"
+MIME-Version: 1.0
+
+UEsDBBQAAAAIAHpKT118BJjxcgAAAAUBAAAKAAAAcGhvdG8xLnBuZ+sM8HPn5ZLiYmBg4PX0cAkC
+0hVAHMDBBCRjf6rdA1JnPF0cQyrmvL3gKHhAgeGAgcMzE0WeyOCNnyIWLbj+843xj3u7ZD+Iu7n3
+9EnIGlollRx50XFRcLHyYBQ4wW0xlckvTrVfFegvBk9XP5d1TglNAFBLAwQUAAAACAB6Sk9dJ+DV
+JHIAAAAFAQAACgAAAHBob3RvMi5wbmfrDPBz5+WS4mJgYOD19HAJAtIVQBzAwQQkY3+q3QNSZzxd
+HEMq5ry94Ch4QIHhgIHDQxUl9sjgjZ8iFi24XvnN+Me9XbIfxN3ce/okZA2tkkqOvOi4KLhYeTAK
+nOBeeJgpouv9O5BHGTxd/VzWOSU0AQBQSwECFAMUAAAACAB6Sk9dfASY8XIAAAAFAQAACgAAAAAA
+AAAAAAAAgAEAAAAAcGhvdG8xLnBuZ1BLAQIUAxQAAAAIAHpKT10n4NUkcgAAAAUBAAAKAAAAAAAA
+AAAAAACAAZoAAABwaG90bzIucG5nUEsFBgAAAAACAAIAcAAAADQBAAAAAA==
+
+--===============3602903081514160769==--

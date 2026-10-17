@@ -1,0 +1,31 @@
+email_id,folder,file,label,signals
+M1-01,mission01,M1-01_B.eml,phishing,lookalike_domain;urgency;display_name_spoof;spf_fail;dmarc_fail
+M1-02,mission01,M1-02_B.eml,phishing,reply_to_mismatch;urgency;double_extension_attachment;dmarc_fail
+M1-03,mission01,M1-03_B.eml,phishing,ip_literal_url;brand_in_subdomain;spf_fail
+M1-04,mission01,M1-04_B.eml,phishing,url_shortener;payment_request;unknown_sender_domain
+M1-05,mission01,M1-05_B.eml,phishing,display_name_of_colleague_external_domain;urgency;secrecy;high_risk_attachment
+M1-06,mission01,M1-06_B.eml,phishing,link_text_href_mismatch;lookalike_domain;dmarc_fail
+M1-07,mission01,M1-07_B.eml,phishing,lookalike_domain;high_risk_attachment;dmarc_fail
+M1-08,mission01,M1-08_B.eml,phishing,too_good_to_be_true;urgency;credential_or_payment_request
+M1-09,mission01,M1-09_B.eml,legitimate,none
+M1-10,mission01,M1-10_B.eml,legitimate,none
+M1-11,mission01,M1-11_B.eml,legitimate,none
+M1-12,mission01,M1-12_B.eml,legitimate,none (long tracking URL is benign)
+M1-13,mission01,M1-13_B.eml,legitimate,none (benign invoice lookalike)
+M1-14,mission01,M1-14_B.eml,legitimate,none
+M1-15,mission01,M1-15_B.eml,legitimate,none
+M1-16,mission01,M1-16_B.eml,legitimate,none
+M2-01,mission02,M2-01_B.eml,legitimate,none (urgency words only; official domain; auth pass)
+M2-02,mission02,M2-02_B.eml,legitimate,none (urgency + long URL but official domain)
+M2-03,mission02,M2-03_B.eml,legitimate,none (genuine vendor PDF)
+M2-04,mission02,M2-04_B.eml,legitimate,none (normal image ZIP)
+M2-05,mission02,M2-05_B.eml,legitimate,none
+M2-06,mission02,M2-06_B.eml,phishing,double_extension_attachment;brand_in_subdomain;dmarc_fail
+M2-07,mission02,M2-07_B.eml,phishing,rtl_override_filename;unknown_sender;high_risk_attachment
+M2-08,mission02,M2-08_B.eml,phishing,macro_enabled_attachment;dmarc_fail
+M2-09,mission02,M2-09_B.eml,phishing,pdf_active_content;unknown_sender;dmarc_fail
+M2-10,mission02,M2-10_B.eml,phishing,html_credential_form;lookalike_domain;dmarc_fail
+M2-11,mission02,M2-11_B.eml,phishing,encrypted_archive_password_in_body;unknown_sender
+M2-12,mission02,M2-12_B.eml,suspicious,nested_archive_depth;unknown_sender
+M2-13,mission02,M2-13_B.eml,phishing,type_mismatch_attachment;dmarc_fail
+M2-14,mission02,M2-14_B.eml,legitimate,none

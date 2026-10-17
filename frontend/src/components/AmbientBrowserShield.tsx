@@ -18,7 +18,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { classifyThreat, sanitizePayload } from '../engine/threatClassifier';
-import { ThreatAnalysisResult, BrowserTab } from '../types';
+import type { ThreatAnalysisResult, BrowserTab } from '../types';
 
 interface AmbientBrowserShieldProps {
   onThreatDetected: (result: ThreatAnalysisResult, source: string, action: 'BLOCKED' | 'SANITIZED' | 'ALLOWED') => void;

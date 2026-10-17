@@ -16,7 +16,7 @@ import {
 import confetti from 'canvas-confetti';
 import { trainingEngineInstance } from '../engine/trainingEngine';
 import { THREAT_CATEGORIES_METADATA } from '../engine/threatKnowledgeBase';
-import { ModelMetrics, ThreatCategory } from '../types';
+import type { ModelMetrics, ThreatCategory } from '../types';
 
 interface AITrainingStudioProps {
   onMetricsUpdated: (metrics: ModelMetrics) => void;

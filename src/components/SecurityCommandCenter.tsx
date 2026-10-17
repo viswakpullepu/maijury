@@ -13,7 +13,7 @@ import {
   Clock,
   Filter
 } from 'lucide-react';
-import { LiveThreatLog, ThreatCategory } from '../types';
+import type { LiveThreatLog, ThreatCategory } from '../types';
 import { THREAT_CATEGORIES_METADATA } from '../engine/threatKnowledgeBase';
 
 interface SecurityCommandCenterProps {

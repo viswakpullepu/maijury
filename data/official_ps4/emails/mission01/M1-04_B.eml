@@ -1,0 +1,14 @@
+From: "QuickCrate Logistics" <tracking@quickcrate-delivery.test>
+To: Jon Mathew <jon.mathew@lakeview.example>
+Subject: Parcel could not be delivered
+Date: Wed, 11 Nov 2026 12:19:00 +0530
+Message-ID: <179205599293.1113.15939451134022587913@mail.lakeview.example>
+Return-Path: <tracking@quickcrate-delivery.test>
+Authentication-Results: mx.lakeview.example; spf=pass dkim=none dmarc=none
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+
+[SYNTHETIC SAMPLE] Redelivery-fee lure: https://qk.example/x7Kq2

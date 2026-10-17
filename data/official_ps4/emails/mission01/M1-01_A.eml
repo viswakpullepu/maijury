@@ -1,0 +1,15 @@
+From: "Northwind Institute IT Helpdesk" <helpdesk@northwlnd.example>
+To: Anita Rao <anita.rao@northwind.example>
+Subject: URGENT: mailbox will be suspended in 24 hours
+Date: Thu, 05 Nov 2026 00:06:00 +0530
+Message-ID: <179205599261.1113.8241411189138085112@mail.northwind.example>
+Return-Path: <helpdesk@northwlnd.example>
+Authentication-Results: mx.northwind.example; spf=fail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC PHISHING SAMPLE] Account-warning lure. Verify link: http://northwl=
+nd.example/verify?id=3D88213

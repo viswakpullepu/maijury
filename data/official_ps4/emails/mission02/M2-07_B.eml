@@ -1,0 +1,29 @@
+From: "Shared Drive" <share@file-drop.test>
+To: Jon Mathew <jon.mathew@lakeview.example>
+Subject: You received a document
+Date: Sat, 14 Nov 2026 06:37:00 +0530
+Message-ID: <179205599307.1113.14271679167439014885@mail.lakeview.example>
+Return-Path: <share@file-drop.test>
+Authentication-Results: mx.lakeview.example; spf=none dkim=none dmarc=none
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============6686385286266681598=="
+
+--===============6686385286266681598==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] 'Open the attached document' lure.
+
+--===============6686385286266681598==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename*=utf-8''report%E2%80%AEfdp.exe
+MIME-Version: 1.0
+
+TVqQAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAA0KTUlTU0lPTkFUSE9OIDIwMjYgVEVTVCBGSVhUVVJFIC0gaW5lcnQsIHNhZmUsIG5v
+bi1leGVjdXRhYmxlLiBbcmxvXSBObyBleGVjdXRhYmxlIGNvZGUgcHJlc2VudC4NCg==
+
+--===============6686385286266681598==--

@@ -1,0 +1,15 @@
+From: "Lucky Draw Team" <winner@prize-claim.test>
+To: Vikram Menon <vikram.menon@northwind.example>
+Subject: Congratulations! You won a laptop
+Date: Fri, 06 Nov 2026 14:59:00 +0530
+Message-ID: <179205599264.1113.14002528225012746071@mail.northwind.example>
+Return-Path: <winner@prize-claim.test>
+Authentication-Results: mx.northwind.example; spf=none dkim=none dmarc=none
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC SAMPLE] Prize lure: http://prize-claim.test/claim?u=3D8821 (asks f=
+or bank details).

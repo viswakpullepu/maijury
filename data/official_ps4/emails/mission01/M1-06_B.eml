@@ -1,0 +1,28 @@
+From: "Lakeview College HR" <hr@1akeview.example>
+To: Farah Khan <farah.khan@lakeview.example>
+Subject: Salary revision letter - action needed
+Date: Wed, 11 Nov 2026 13:36:00 +0530
+Message-ID: <179205599293.1113.1227022282168456659@mail.lakeview.example>
+Return-Path: <hr@1akeview.example>
+Authentication-Results: mx.lakeview.example; spf=fail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="===============4218640530104597566=="
+
+--===============4218640530104597566==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] See HTML version.
+
+--===============4218640530104597566==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<!-- synthetic --><p>Review your letter: <a href=3D"http://1akeview.example/h=
+r/letter.php">https://hr.lakeview.example/letters</a></p>
+
+--===============4218640530104597566==--

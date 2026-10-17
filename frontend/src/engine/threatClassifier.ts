@@ -1,4 +1,4 @@
-import { ThreatCategory, ThreatAnalysisResult, SeverityLevel } from '../types';
+import type { ThreatCategory, ThreatAnalysisResult, SeverityLevel } from '../types';
 import { THREAT_CATEGORIES_METADATA } from './threatKnowledgeBase';
 
 export interface ClassifierWeights {

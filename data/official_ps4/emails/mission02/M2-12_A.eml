@@ -1,0 +1,35 @@
+From: "Backup Service" <backup@archive-store.test>
+To: Anita Rao <anita.rao@northwind.example>
+Subject: Your archive
+Date: Tue, 03 Nov 2026 04:38:00 +0530
+Message-ID: <179205599282.1113.5854288444280395661@mail.northwind.example>
+Return-Path: <backup@archive-store.test>
+Authentication-Results: mx.northwind.example; spf=none dkim=none dmarc=none
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0298577850460168040=="
+
+--===============0298577850460168040==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] Deeply nested archive (zip in zip in zip).
+
+--===============0298577850460168040==
+Content-Type: application/zip
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="archive.zip"
+MIME-Version: 1.0
+
+UEsDBBQAAAAIAHpKT13UJEH8XQEAAIABAAAKAAAAbGF5ZXIxLnppcAvwZmYRYWBg4GCo8vKPbTln
+78HFyMBgCMRcQNGcxMrUIiO9qswC7g9paYKJCQkPElZ8+tQfuvPb53d5Cu8tBYoZC/2SUrMmbowL
+TWP83r7F5OCRlhZ2Tm272lffeVdHSR/4qDLlZECMQ83KW5vUT8f58s689PHsIo9rHgse5Md9nVrN
+v33r/xu1ztctVpnsfdyXemuKKtts/ncVlfn3v/y8/+q/+L7CPaXP33zK2W1Rf9ug9VJ5u/xc833q
+wt/tzRTePF32SvfdOq7b78++/Vf9+9a3pb+2XyrfM7POteKlluX9tec6m56b/P7xPb/y/8+Tb7bY
+NuqH19rWFgs/3isnv9TY+tkmw8/fPmR8+Fjn4Z36ziQh6oRVoly6hLZzg7nyZA7jPP9DDszKzF3T
+mfdE3nRQ6nHIYFwi3xzKyBDgzcgkwow7zGCggZEBJQQDvFnZQCKMQGgBpI3A8gBQSwECFAMUAAAA
+CAB6Sk9d1CRB/F0BAACAAQAACgAAAAAAAAAAAAAAgAEAAAAAbGF5ZXIxLnppcFBLBQYAAAAAAQAB
+ADgAAACFAQAAAAA=
+
+--===============0298577850460168040==--

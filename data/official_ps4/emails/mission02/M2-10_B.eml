@@ -1,0 +1,37 @@
+From: "Lakeview College Webmail" <webmail@lakeview-portal.example>
+To: Farah Khan <farah.khan@lakeview.example>
+Subject: Review shared file
+Date: Thu, 12 Nov 2026 09:20:00 +0530
+Message-ID: <179205599309.1113.23214549671911738@mail.lakeview.example>
+Return-Path: <webmail@lakeview-portal.example>
+Authentication-Results: mx.lakeview.example; spf=fail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0976077300383960080=="
+
+--===============0976077300383960080==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+[SYNTHETIC SAMPLE] HTML attachment with a password field (credential-harvest =
+indicator).
+
+--===============0976077300383960080==
+Content-Type: text/html
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="secure_message.html"
+MIME-Version: 1.0
+
+PCEtLSBNSVNTSU9OQVRIT04gMjAyNiBURVNUIEZJWFRVUkUgLSBpbmVydCwgc2FmZSwgbm9uLWV4
+ZWN1dGFibGUuIFNhbXBsZSBjb250YWluaW5nIGEgcGFzc3dvcmQgZmllbGQgZm9yIGRldGVjdGlv
+biBwcmFjdGljZS4gRm9ybSB0YXJnZXQgaXMgJyMnLiAtLT4KPGh0bWw+PGhlYWQ+PHRpdGxlPkxh
+a2V2aWV3IENvbGxlZ2Ugd2VibWFpbDwvdGl0bGU+PC9oZWFkPjxib2R5Pgo8Zm9ybSBhY3Rpb249
+IiMiIG1ldGhvZD0icG9zdCIgb25zdWJtaXQ9InJldHVybiBmYWxzZTsiPgogIDxsYWJlbD5FbWFp
+bDwvbGFiZWw+PGlucHV0IHR5cGU9InRleHQiIG5hbWU9ImVtYWlsIiB2YWx1ZT0idXNlckBsYWtl
+dmlldy5leGFtcGxlIj4KICA8bGFiZWw+UGFzc3dvcmQ8L2xhYmVsPjxpbnB1dCB0eXBlPSJwYXNz
+d29yZCIgbmFtZT0icGFzc3dvcmQiPgogIDxidXR0b24gdHlwZT0ic3VibWl0Ij5TaWduIGluPC9i
+dXR0b24+CjwvZm9ybT4KPCEtLSBlbmQgb2YgaW5lcnQgc2FtcGxlIC0tPjwvYm9keT48L2h0bWw+
+Cg==
+
+--===============0976077300383960080==--

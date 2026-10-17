@@ -58,6 +58,15 @@ body {
   font-family: var(--font-mono);
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* 3D Actual Earth Globe Canvas Container */
 #globe-canvas-container {
   cursor: grab;

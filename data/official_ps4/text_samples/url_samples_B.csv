@@ -1,0 +1,9 @@
+url,label,reason
+http://lakevlew.example/verify?id=1,phishing,lookalike domain + http
+https://www.lakeview.example/login,benign,official domain
+https://qk.example/x7Kq2,phishing,URL shortener hiding destination
+https://1akeview.example/hr/letter.php,phishing,lookalike domain
+http://lakeview-secure-login.test/,phishing,brand + security words in cheap TLD
+https://exams.lakeview.example/register?term=2026&sem=5,benign,"official subdomain, long but benign query"
+https://www.campus-shop.example/cart?id=55&ref=newsletter&utm=weekly,benign,long but benign tracking URL
+http://192.0.2.45/lakeview.example/login,phishing,IP-literal URL with brand in path

@@ -1,4 +1,4 @@
-import { LinkedMailAccount, IncomingEmailMessage } from '../types';
+import type { LinkedMailAccount, IncomingEmailMessage } from '../types';
 
 export const INITIAL_LINKED_ACCOUNTS: LinkedMailAccount[] = [
   {

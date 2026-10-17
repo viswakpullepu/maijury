@@ -419,6 +419,45 @@ class TeamProsecutor:
                     "Routes to raw numeric IP to evade DNS reputation and WHOIS scrutiny."
                 ))
 
+            # Hex / Octal / Dword IP literal obfuscation
+            if re.search(r'https?://(?:0x[0-9a-fA-F]+|\d{8,11})', u_str):
+                counts.append(IndictmentCount(
+                    self._next_count_id(), "URL_DECEPTION",
+                    "Hex / Octal / Dword Obfuscated IP Destination", "FATAL_VETO",
+                    "RFC 3986 / URI Evasion Techniques",
+                    f"Obfuscated IP destination: {u_str[:80]}", 85.0,
+                    "Converts numeric IP address to dword/hex/octal notation to evade naive regex and domain reputation scanners."
+                ))
+
+            # Obfuscated URL Shorteners
+            shortener_domains = {
+                "bit.ly", "tinyurl.com", "t.co", "is.gd", "rebrand.ly", "cutt.ly", "ow.ly", "shorturl.at",
+                "shrt.example", "tinylink.example", "qk.example", "snip.example"
+            }
+            try:
+                u_host = u_str.split('/')[2].lower().split(':')[0]
+                if u_host in shortener_domains or any(u_host.endswith("." + sd) for sd in shortener_domains):
+                    # Check if body also has payment/fee/lure words
+                    has_fee_lure = any(w in full_text.lower() for w in ["fee", "payment", "redelivery", "parcel", "charge", "cost", "lure"])
+                    if has_fee_lure:
+                        counts.append(IndictmentCount(
+                            self._next_count_id(), "URL_DECEPTION",
+                            "URL Shortener Hiding Payment / Delivery Fee Destination", "FATAL_VETO",
+                            "MITRE ATT&CK T1566.002 / T1204.001",
+                            f"Shortener destination: {u_str[:80]} with fee/delivery solicitation in text", 85.0,
+                            "Combines redirect cloaking with financial/delivery solicitation — characteristic phishing lure."
+                        ))
+                    else:
+                        counts.append(IndictmentCount(
+                            self._next_count_id(), "URL_DECEPTION",
+                            "Obfuscated URL Shortener Service (Redirect Cloaking)", "SUSPICIOUS",
+                            "MITRE ATT&CK T1566.002 / URL Obfuscation",
+                            f"Shortener destination: {u_str[:80]}", 45.0,
+                            "Leverages an intermediary URL shortening redirect service to mask the true destination from reputation scanners."
+                        ))
+            except Exception:
+                pass
+
             # Punycode
             if "xn--" in u_str.lower():
                 counts.append(IndictmentCount(

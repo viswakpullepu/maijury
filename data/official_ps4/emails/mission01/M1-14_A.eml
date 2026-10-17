@@ -1,0 +1,14 @@
+From: Dev Nair <dev.nair@northwind.example>
+To: Anita Rao <anita.rao@northwind.example>
+Subject: Lunch on Friday?
+Date: Thu, 05 Nov 2026 23:06:00 +0530
+Message-ID: <179205599268.1113.7045012793094731459@mail.northwind.example>
+Return-Path: <dev.nair@northwind.example>
+Authentication-Results: mx.northwind.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Still on for lunch Friday?

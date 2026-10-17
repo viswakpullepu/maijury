@@ -1,0 +1,31 @@
+From: "Brightpath Supplies Accounts" <accounts@brightpath.example>
+To: Vikram Menon <vikram.menon@northwind.example>
+Subject: Overdue invoice - pay today
+Date: Wed, 04 Nov 2026 15:52:00 +0530
+Message-ID: <179205599262.1113.17009304126890443309@mail.northwind.example>
+Reply-To: payments@mailbox-free.test
+Return-Path: <accounts@brightpath.example>
+Authentication-Results:
+ mx.northwind.example; spf=softfail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============2911326445766744848=="
+
+--===============2911326445766744848==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] Invoice notice. See attachment.
+
+--===============2911326445766744848==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="invoice_2026.pdf.exe"
+MIME-Version: 1.0
+
+TVqQAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAA0KTUlTU0lPTkFUSE9OIDIwMjYgVEVTVCBGSVhUVVJFIC0gaW5lcnQsIHNhZmUsIG5v
+bi1leGVjdXRhYmxlLiBbaW52b2ljZV0gTm8gZXhlY3V0YWJsZSBjb2RlIHByZXNlbnQuDQo=
+
+--===============2911326445766744848==--

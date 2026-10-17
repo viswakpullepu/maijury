@@ -1,0 +1,15 @@
+From: "Harbour Bank Security" <alerts@harbourbank.example.secure-login.test>
+To: Farah Khan <farah.khan@lakeview.example>
+Subject: Unusual sign-in to your account
+Date: Thu, 12 Nov 2026 19:26:00 +0530
+Message-ID: <179205599292.1113.4001733563080115517@mail.lakeview.example>
+Return-Path: <alerts@harbourbank.example.secure-login.test>
+Authentication-Results: mx.lakeview.example; spf=fail dkim=none dmarc=none
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC PHISHING SAMPLE] Account-warning lure. Verify link: http://192.0.2=
+.45/harbourbank.example/login

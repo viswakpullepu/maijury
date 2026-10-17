@@ -1,0 +1,6 @@
+sample_id,text,label,signals
+T1,[SYNTHETIC] Your account will be closed. Verify now: http://northwlnd.example/v,phishing,urgency;lookalike_domain
+T2,[SYNTHETIC] Reminder: library books due Friday. No action needed.,legitimate,none
+T3,"[SYNTHETIC] Send me 5 gift card codes urgently, I'm in a meeting. -Vikram Menon",phishing,gift_card_scam;urgency;impersonation
+T4,[SYNTHETIC] Your package is out for delivery: https://www.swiftparcel.example/track/55,legitimate,none
+T5,,invalid,empty_input

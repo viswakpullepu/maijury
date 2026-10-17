@@ -1,0 +1,29 @@
+From: "Harbour Bank" <no-reply@harbourbank.example.account-check.test>
+To: Farah Khan <farah.khan@lakeview.example>
+Subject: Account statement
+Date: Wed, 11 Nov 2026 08:33:00 +0530
+Message-ID: <179205599307.1113.3069928599890754151@mail.lakeview.example>
+Return-Path: <no-reply@harbourbank.example.account-check.test>
+Authentication-Results: mx.lakeview.example; spf=fail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============8082323544810184342=="
+
+--===============8082323544810184342==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] Invoice notice. See attachment.
+
+--===============8082323544810184342==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="statement.pdf.exe"
+MIME-Version: 1.0
+
+TVqQAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAA0KTUlTU0lPTkFUSE9OIDIwMjYgVEVTVCBGSVhUVVJFIC0gaW5lcnQsIHNhZmUsIG5v
+bi1leGVjdXRhYmxlLiBbc3RhdGVtZW50XSBObyBleGVjdXRhYmxlIGNvZGUgcHJlc2VudC4NCg==
+
+--===============8082323544810184342==--

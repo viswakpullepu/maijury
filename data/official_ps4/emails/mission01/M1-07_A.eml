@@ -1,0 +1,30 @@
+From: "Northwind Institute IT" <it@northwind-secure.example>
+To: Dev Nair <dev.nair@northwind.example>
+Subject: Mandatory security update
+Date: Tue, 03 Nov 2026 08:19:00 +0530
+Message-ID: <179205599263.1113.1375598129271063219@mail.northwind.example>
+Return-Path: <it@northwind-secure.example>
+Authentication-Results: mx.northwind.example; spf=fail dkim=none dmarc=fail
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============8260837047688999092=="
+
+--===============8260837047688999092==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+[SYNTHETIC SAMPLE] 'Run the attached update' lure.
+
+--===============8260837047688999092==
+Content-Type: application/hta
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="account_update.hta"
+MIME-Version: 1.0
+
+PCEtLSBNSVNTSU9OQVRIT04gMjAyNiBURVNUIEZJWFRVUkUgLSBpbmVydCwgc2FmZSwgbm9uLWV4
+ZWN1dGFibGUuIC0tPgo8aHRtbD48aGVhZD48dGl0bGU+QWNjb3VudCB1cGRhdGU8L3RpdGxlPjwv
+aGVhZD48Ym9keT48cD5JbmVydCB0ZXN0IGZpbGUuIE5vIHNjcmlwdCwgbm8gZm9ybS48L3A+PC9i
+b2R5PjwvaHRtbD4K
+
+--===============8260837047688999092==--

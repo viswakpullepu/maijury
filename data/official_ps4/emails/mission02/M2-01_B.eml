@@ -1,0 +1,15 @@
+From: Lakeview College IT Services <it-services@lakeview.example>
+To: all-staff@lakeview.example
+Subject: ACTION REQUIRED: password expires in 3 days
+Date: Fri, 13 Nov 2026 11:38:00 +0530
+Message-ID: <179205599306.1113.4450816344270272697@mail.lakeview.example>
+Return-Path: <it-services@lakeview.example>
+Authentication-Results: mx.lakeview.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Urgency words but official domain. Change at https:=
+//password.lakeview.example; we never ask by email.

@@ -1,0 +1,15 @@
+From: "Unity Bank Security" <alerts@unitybank.example.secure-login.test>
+To: Sara Iyer <sara.iyer@northwind.example>
+Subject: Unusual sign-in to your account
+Date: Fri, 06 Nov 2026 18:17:00 +0530
+Message-ID: <179205599262.1113.8437451448190546029@mail.northwind.example>
+Return-Path: <alerts@unitybank.example.secure-login.test>
+Authentication-Results: mx.northwind.example; spf=fail dkim=none dmarc=none
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC PHISHING SAMPLE] Account-warning lure. Verify link: http://192.0.2=
+.45/unitybank.example/login

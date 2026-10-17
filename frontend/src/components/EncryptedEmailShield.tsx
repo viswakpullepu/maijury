@@ -24,7 +24,7 @@ import {
   Check,
   Plus
 } from 'lucide-react';
-import { 
+import type { 
   IncomingEmailMessage, 
   EmailInspectionReport, 
   LinkedMailAccount, 

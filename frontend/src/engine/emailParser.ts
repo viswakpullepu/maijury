@@ -1,5 +1,5 @@
-import { analyzeEmailTextTfidf, NlpTfidfAnalysisResult } from './nlpTfidfEngine';
-import { runDeepForensicAudit, DeepForensicAudit } from './deepAuditEngine';
+import { analyzeEmailTextTfidf, type NlpTfidfAnalysisResult } from './nlpTfidfEngine';
+import { runDeepForensicAudit, type DeepForensicAudit } from './deepAuditEngine';
 
 export interface ParsedForensicEmail {
   id: string;

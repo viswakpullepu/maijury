@@ -1,0 +1,15 @@
+From: "QuickCrate Logistics" <updates@quickcrate.example>
+To: Jon Mathew <jon.mathew@lakeview.example>
+Subject: Your parcel is out for delivery
+Date: Fri, 13 Nov 2026 18:09:00 +0530
+Message-ID: <179205599298.1113.11454668709777116505@mail.lakeview.example>
+Return-Path: <updates@quickcrate.example>
+Authentication-Results: mx.lakeview.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Track: https://www.quickcrate.example/track/3086224=
+154

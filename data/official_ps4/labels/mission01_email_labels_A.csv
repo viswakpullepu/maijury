@@ -1,0 +1,17 @@
+email_id,label,signals
+M1-01,phishing,lookalike_domain;urgency;display_name_spoof;spf_fail;dmarc_fail
+M1-02,phishing,reply_to_mismatch;urgency;double_extension_attachment;dmarc_fail
+M1-03,phishing,ip_literal_url;brand_in_subdomain;spf_fail
+M1-04,phishing,url_shortener;payment_request;unknown_sender_domain
+M1-05,phishing,display_name_of_colleague_external_domain;urgency;secrecy;high_risk_attachment
+M1-06,phishing,link_text_href_mismatch;lookalike_domain;dmarc_fail
+M1-07,phishing,lookalike_domain;high_risk_attachment;dmarc_fail
+M1-08,phishing,too_good_to_be_true;urgency;credential_or_payment_request
+M1-09,legitimate,none
+M1-10,legitimate,none
+M1-11,legitimate,none
+M1-12,legitimate,none (long tracking URL is benign)
+M1-13,legitimate,none (benign invoice lookalike)
+M1-14,legitimate,none
+M1-15,legitimate,none
+M1-16,legitimate,none

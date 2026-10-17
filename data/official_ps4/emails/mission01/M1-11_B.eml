@@ -1,0 +1,15 @@
+From: Lakeview College IT Services <it-services@lakeview.example>
+To: all-staff@lakeview.example
+Subject: Scheduled maintenance this Saturday
+Date: Fri, 13 Nov 2026 11:30:00 +0530
+Message-ID: <179205599296.1113.18156217530229890266@mail.lakeview.example>
+Return-Path: <it-services@lakeview.example>
+Authentication-Results: mx.lakeview.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant B synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Email down Sat 02:00-04:00. No action needed. Statu=
+s: https://status.lakeview.example

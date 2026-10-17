@@ -1,0 +1,15 @@
+From: "Northwind Institute Exams" <exams@northwind.example>
+To: students@northwind.example
+Subject: Reminder: exam registration closes today
+Date: Mon, 02 Nov 2026 10:42:00 +0530
+Message-ID: <179205599279.1113.16804191351703687666@mail.northwind.example>
+Return-Path: <exams@northwind.example>
+Authentication-Results: mx.northwind.example; spf=pass dkim=pass dmarc=pass
+X-Missionathon-Fixture:
+ PS4 variant A synthetic test email - not a real message
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+[SYNTHETIC BENIGN SAMPLE] Register: https://exams.northwind.example/register?=
+term=3D2026-odd&sem=3D5&session=3Dreg&src=3Demail
