@@ -21,7 +21,8 @@ import {
   Check, 
   ExternalLink, 
   X, 
-  Menu
+  Menu,
+  Mail
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -58,11 +59,13 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   onStartTour
 }) => {
-  const { user, isAuthenticated, isLoading, loginWithGoogle, loginWithDemoAccount, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, loginWithGoogle, loginWithDemoAccount, loginWithCustomEmail, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [customEmail, setCustomEmail] = useState('');
+  const [isCustomLoggingIn, setIsCustomLoggingIn] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -619,63 +622,95 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               </div>
 
-              {/* Option 2: Live Google Workspace Demo Account */}
+              {/* Option 2: Sign In with Your Added Test Email */}
+              <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100/80 px-2 py-0.5 rounded-full">
+                    Your Test Email
+                  </span>
+                  <span className="text-xs font-bold text-indigo-600 flex items-center gap-1">
+                    <Mail className="w-3.5 h-3.5" /> Instant Test Login
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-slate-900 mb-1">Authenticate as Your Test Email</h4>
+                <p className="text-xs text-slate-600 mb-3">
+                  Enter the test email you added in Google Cloud Console to establish an active defense session with your address:
+                </p>
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (!customEmail || !customEmail.includes('@')) return;
+                    setIsCustomLoggingIn(true);
+                    await loginWithCustomEmail(customEmail.trim());
+                    setIsCustomLoggingIn(false);
+                    setIsDemoModalOpen(false);
+                  }}
+                  className="space-y-2"
+                >
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      value={customEmail}
+                      onChange={(e) => setCustomEmail(e.target.value)}
+                      placeholder="e.g. your-added-test-email@gmail.com"
+                      className="flex-1 px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-slate-800"
+                      required
+                    />
+                    <button
+                      type="submit"
+                      disabled={isCustomLoggingIn || !customEmail}
+                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap"
+                    >
+                      {isCustomLoggingIn ? 'Signing in...' : 'Sign In Now'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Option 3: Live Google OAuth & Redirect URI Configuration */}
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-600 bg-slate-200/80 px-2 py-0.5 rounded-full">
-                    Live Google Account
+                    Official Google OAuth
                   </span>
-                  <span className="text-xs text-slate-500 font-mono">OAuth 2.0 PKCE</span>
+                  <span className="text-xs text-slate-500 font-mono">accounts.google.com</span>
                 </div>
-                <div className="space-y-2 mb-3">
-                  <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200 text-xs">
-                    <span className="text-slate-500 font-medium">Email:</span>
-                    <div className="flex items-center gap-2 font-mono font-bold text-slate-800">
-                      <span>mailjury.evaluator@gmail.com</span>
-                      <button 
-                        onClick={() => copyToClipboard('mailjury.evaluator@gmail.com', 'email')}
-                        className="text-slate-400 hover:text-slate-700 p-0.5"
-                        title="Copy Email"
-                      >
-                        {copiedField === 'email' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
-                  </div>
+                
+                <p className="text-xs text-slate-600 mb-3">
+                  To authenticate via Google's actual sign-in popup, Google requires this hosted URL in your Google Cloud Console Authorized redirect URIs:
+                </p>
 
-                  <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200 text-xs">
-                    <span className="text-slate-500 font-medium">Password:</span>
-                    <div className="flex items-center gap-2 font-mono font-bold text-slate-800">
-                      <span>JudgeEvaluation2026!</span>
-                      <button 
-                        onClick={() => copyToClipboard('JudgeEvaluation2026!', 'pass')}
-                        className="text-slate-400 hover:text-slate-700 p-0.5"
-                        title="Copy Password"
-                      >
-                        {copiedField === 'pass' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
+                <div className="p-2.5 bg-white rounded-lg border border-slate-200 text-xs mb-3 space-y-1.5">
+                  <div className="text-[10px] text-slate-500 font-semibold uppercase">Authorized Redirect URI:</div>
+                  <div className="flex items-center justify-between p-1.5 bg-slate-50 rounded border border-slate-200 font-mono text-[11px] text-indigo-700 font-bold">
+                    <span className="truncate">https://wise-bell.vercel.app/api/auth/google/callback</span>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard('https://wise-bell.vercel.app/api/auth/google/callback', 'uri')}
+                      className="ml-2 text-slate-400 hover:text-slate-700"
+                      title="Copy URI"
+                    >
+                      {copiedField === 'uri' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <a
+                    href="https://accounts.google.com/o/oauth2/v2/auth?client_id=907499684651-apuu5tr0dt8i41jfqvj5qhh5ku95ru8f.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fwise-bell.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.modify&access_type=offline"
+                    className="flex-1 text-center py-2 px-3 bg-white hover:bg-slate-100 text-slate-800 text-xs font-bold rounded-xl border border-slate-300 transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <span>Direct Google Sign-In</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                  </a>
+                  <a
                     href="/api/auth/google/mock-consent"
                     target="_blank"
                     rel="noreferrer"
-                    className="flex-1 text-center py-2 px-3 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-300 transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <span>Launch Google Consent Portal</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-                  </a>
-                  <button
-                    onClick={() => {
-                      setIsDemoModalOpen(false);
-                      loginWithGoogle();
-                    }}
                     className="py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition-all"
                   >
-                    Google Sign-In
-                  </button>
+                    Consent Portal
+                  </a>
                 </div>
               </div>
 

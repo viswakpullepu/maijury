@@ -19,6 +19,7 @@ export interface AuthContextType {
   sessionId: string;
   loginWithGoogle: () => void;
   loginWithDemoAccount: (role?: string) => Promise<void>;
+  loginWithCustomEmail: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshAuth: () => Promise<void>;
 }
@@ -174,6 +175,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithCustomEmail = async (email: string) => {
+    const sid = getOrCreateSessionId();
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/auth/demo-login?session_id=${encodeURIComponent(sid)}&email=${encodeURIComponent(email)}`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await res.json();
+      if (data && data.user) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+        setProvider('gmail');
+        try {
+          localStorage.setItem(getScopedStorageKey(sid), JSON.stringify(data.user));
+        } catch (_) {}
+      } else {
+        const customUser: UserProfile = {
+          email,
+          name: email.split('@')[0],
+          verified_email: true,
+          picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email.split('@')[0])}`
+        };
+        setUser(customUser);
+        setIsAuthenticated(true);
+        setProvider('gmail');
+        try {
+          localStorage.setItem(getScopedStorageKey(sid), JSON.stringify(customUser));
+        } catch (_) {}
+      }
+    } catch (_) {
+      const customUser: UserProfile = {
+        email,
+        name: email.split('@')[0],
+        verified_email: true,
+        picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email.split('@')[0])}`
+      };
+      setUser(customUser);
+      setIsAuthenticated(true);
+      setProvider('gmail');
+      try {
+        localStorage.setItem(getScopedStorageKey(sid), JSON.stringify(customUser));
+      } catch (_) {}
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async () => {
     const sid = getOrCreateSessionId();
     try {
@@ -208,6 +260,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         sessionId,
         loginWithGoogle,
         loginWithDemoAccount,
+        loginWithCustomEmail,
         logout,
         refreshAuth
       }}

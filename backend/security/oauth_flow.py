@@ -40,8 +40,8 @@ class GoogleOAuthManager:
         creds_path = os.getenv("GMAIL_CREDENTIALS_PATH", "credentials.json")
         loaded_id, loaded_secret = self._load_credentials_file(creds_path)
 
-        self.client_id = client_id or os.getenv("GOOGLE_CLIENT_ID") or loaded_id or "MOCK_CLIENT_ID_MAILJURY"
-        self.client_secret = client_secret or os.getenv("GOOGLE_CLIENT_SECRET") or loaded_secret or "MOCK_SECRET"
+        self.client_id = client_id or os.getenv("GOOGLE_CLIENT_ID") or loaded_id
+        self.client_secret = client_secret or os.getenv("GOOGLE_CLIENT_SECRET") or loaded_secret
         self.redirect_uri = redirect_uri or os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback")
         
         self.token_store = token_store or EncryptedTokenStore()
@@ -50,26 +50,48 @@ class GoogleOAuthManager:
         # In-memory PKCE state cache: {state: (code_verifier, timestamp)}
         self._pending_flows: Dict[str, Tuple[str, float]] = {}
 
+    def get_redirect_uri(self, request: Optional[Any] = None) -> str:
+        """Determines the appropriate redirect URI dynamically based on the incoming request."""
+        if os.getenv("GOOGLE_REDIRECT_URI"):
+            return os.getenv("GOOGLE_REDIRECT_URI")
+        if request:
+            host = request.headers.get("x-forwarded-host") or request.headers.get("host") or ""
+            scheme = request.headers.get("x-forwarded-proto") or ("http" if "localhost" in host or "127.0.0.1" in host else "https")
+            if host:
+                return f"{scheme}://{host}/api/auth/google/callback"
+        return self.redirect_uri
+
     def _load_credentials_file(self, path: str) -> Tuple[Optional[str], Optional[str]]:
-        if os.path.exists(path):
-            try:
-                with open(path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                client_info = data.get("installed") or data.get("web") or {}
-                return client_info.get("client_id"), client_info.get("client_secret")
-            except Exception:
-                pass
+        possible_paths = [
+            path,
+            os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "credentials.json"),
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "credentials.json")
+        ]
+        for p in possible_paths:
+            if p and os.path.exists(p):
+                try:
+                    with open(p, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    client_info = data.get("installed") or data.get("web") or {}
+                    cid = client_info.get("client_id")
+                    sec = client_info.get("client_secret")
+                    if cid and sec:
+                        return cid, sec
+                except Exception:
+                    pass
         return None, None
 
     def is_configured(self) -> bool:
         """Returns True if legitimate Google Cloud OAuth credentials are set."""
         return bool(self.client_id and self.client_secret and not self.client_id.startswith("MOCK_CLIENT_ID"))
 
-    def create_authorization_url(self, user_id: str = "primary_user") -> Dict[str, str]:
+    def create_authorization_url(self, user_id: str = "primary_user", redirect_uri: Optional[str] = None) -> Dict[str, str]:
         """
         Generates RFC 7636 PKCE code_verifier, code_challenge, anti-CSRF state,
         and returns the complete Google consent redirect URL.
         """
+        effective_redirect = redirect_uri or self.redirect_uri
+
         # 1. Generate RFC 7636 PKCE code_verifier (high entropy)
         code_verifier = secrets.token_urlsafe(64) # ~86 chars, base64url-safe
         # code_challenge = BASE64URL-ENCODE(SHA256(code_verifier))
@@ -82,7 +104,8 @@ class GoogleOAuthManager:
             "nonce": state_nonce,
             "ts": time.time(),
             "uid": user_id,
-            "cv": code_verifier
+            "cv": code_verifier,
+            "ru": effective_redirect
         }
         # Encrypt state token via Vault to prevent forgery or tampering
         state_token = self.vault.encrypt_json(state_payload, context="MailJury-OAuth-State")
@@ -93,8 +116,7 @@ class GoogleOAuthManager:
 
         # 3. Construct OAuth URL
         if not self.is_configured():
-            # Return Mock Sandbox Consent URL for instantaneous testing
-            mock_url = f"http://localhost:8000/api/auth/google/mock-consent?state={urllib.parse.quote(state_token)}"
+            mock_url = f"/api/auth/google/mock-consent?state={urllib.parse.quote(state_token)}"
             return {
                 "authorization_url": mock_url,
                 "mode": "SANDBOX_SIMULATION",
@@ -104,7 +126,7 @@ class GoogleOAuthManager:
 
         params = {
             "client_id": self.client_id,
-            "redirect_uri": self.redirect_uri,
+            "redirect_uri": effective_redirect,
             "response_type": "code",
             "scope": " ".join(self.DEFAULT_SCOPES),
             "access_type": "offline",
@@ -130,10 +152,12 @@ class GoogleOAuthManager:
         code_verifier = None
         user_id = "primary_user"
 
+        saved_redirect_uri = None
         try:
             state_data = self.vault.decrypt_json(state, context="MailJury-OAuth-State")
             user_id = state_data.get("uid", "primary_user")
             code_verifier = state_data.get("cv")
+            saved_redirect_uri = state_data.get("ru")
             timestamp = state_data.get("ts", 0)
             if time.time() - timestamp > 600:
                 raise ValueError("OAuth authorization flow has expired (> 10 minutes).")
@@ -163,7 +187,7 @@ class GoogleOAuthManager:
                 "mode": "SANDBOX_SIMULATED"
             }
         else:
-            token_response = self._request_google_tokens(code, code_verifier)
+            token_response = self._request_google_tokens(code, code_verifier, redirect_uri=saved_redirect_uri)
 
         # 3. Encrypt Immediately into the Vault (Zero-Plaintext on Disk)
         token_record = {
@@ -186,12 +210,12 @@ class GoogleOAuthManager:
             "vault_storage": "AES-256-GCM Envelope Protected"
         }
 
-    def _request_google_tokens(self, code: str, code_verifier: str) -> Dict[str, Any]:
+    def _request_google_tokens(self, code: str, code_verifier: str, redirect_uri: Optional[str] = None) -> Dict[str, Any]:
         data = urllib.parse.urlencode({
             "code": code,
             "client_id": self.client_id,
             "client_secret": self.client_secret,
-            "redirect_uri": self.redirect_uri,
+            "redirect_uri": redirect_uri or self.redirect_uri,
             "grant_type": "authorization_code",
             "code_verifier": code_verifier
         }).encode('utf-8')

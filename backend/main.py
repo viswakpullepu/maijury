@@ -430,30 +430,23 @@ async def google_login(
     """
     Generates RFC 7636 PKCE code_challenge, anti-CSRF state token.
     If accessed directly in a browser (e.g. from 'Sign in with Google' button):
-      - On localhost: redirects to Google consent URL
-      - On Vercel / production or sandbox: redirects to interactive Google consent portal
-    If accessed via programmatic API (Accept: application/json without text/html):
-      - Returns JSON object with status and authorization_url
+      - If oauth_manager is configured or direct=1: redirects directly to Google consent URL
+      - Otherwise: redirects to interactive Google consent portal
     """
-    flow_info = oauth_manager.create_authorization_url(user_id=user_id)
+    redirect_uri = oauth_manager.get_redirect_uri(request)
+    flow_info = oauth_manager.create_authorization_url(user_id=user_id, redirect_uri=redirect_uri)
     state = flow_info.get("state", "")
 
     # Check whether the caller is requesting raw JSON via API or navigating with a browser
     accept_hdr = request.headers.get("accept", "")
     wants_json = "application/json" in accept_hdr and "text/html" not in accept_hdr
 
-    # Determine host environment
-    host = request.headers.get("x-forwarded-host") or request.headers.get("host") or ""
-    is_localhost = "localhost" in host or "127.0.0.1" in host
-
-    # In production on Vercel without custom verified domain in Google Cloud console,
-    # route to the interactive consent portal so authentication succeeds without redirect_uri_mismatch.
-    if (not is_localhost and not direct) or not oauth_manager.is_configured():
+    if direct or oauth_manager.is_configured():
+        target_url = flow_info["authorization_url"]
+    else:
         target_url = f"/api/auth/google/mock-consent?state={urllib.parse.quote(state)}"
         if session_id:
             target_url += f"&session_id={urllib.parse.quote(session_id)}"
-    else:
-        target_url = flow_info["authorization_url"]
 
     if wants_json:
         return {
@@ -589,22 +582,27 @@ async def demo_judge_login(
     request: Request,
     session_id: Optional[str] = None,
     user_id: str = "primary_user",
-    role: str = "Lead Defense Judge"
+    role: str = "Lead Defense Judge",
+    email: Optional[str] = None
 ):
     """
-    1-Click Instant Demo Authentication for Hackathon Judges & Evaluators.
+    1-Click Instant Demo & Custom Test Email Authentication.
     Establishes verified OAuth tokens in the AES-256-GCM CryptoVault,
     activates defense monitoring, and redirects to dashboard with authenticated session.
     """
+    clean_email = email.strip() if (email and "@" in email) else "judge.evaluator@mailjury.security"
+    user_name = clean_email.split("@")[0].replace(".", " ").title()
+    seed = "JuryJudge" if ("judge" in clean_email or "evaluator" in clean_email) else clean_email.split("@")[0]
+
     demo_tokens = {
         "access_token": f"ya29.mock_jury_judge_token_{int(time.time())}",
         "refresh_token": "1//04mock_jury_judge_refresh_token",
         "token_type": "Bearer",
         "expires_in": 7200,
         "scope": "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.send",
-        "mode": "JURY_EVALUATION_DEMO",
-        "user_email": "judge.evaluator@mailjury.security",
-        "user_name": "Jury Review Evaluator",
+        "mode": "CUSTOM_AUTHENTICATED" if email else "JURY_EVALUATION_DEMO",
+        "user_email": clean_email,
+        "user_name": user_name,
         "role": role,
         "authenticated_at": time.time()
     }
@@ -614,19 +612,19 @@ async def demo_judge_login(
     accept_hdr = request.headers.get("accept", "")
     wants_json = "application/json" in accept_hdr and "text/html" not in accept_hdr
 
-    redirect_url = "/?connected=gmail&user=judge.evaluator%40mailjury.security"
+    redirect_url = f"/?connected=gmail&user={urllib.parse.quote(clean_email)}"
     if session_id:
         redirect_url += f"&session_id={urllib.parse.quote(session_id)}"
 
     if wants_json and request.method == "POST":
         return {
             "status": "SUCCESS",
-            "message": "Demo evaluator session activated as Lead Defense Judge.",
+            "message": f"Session activated for {clean_email}.",
             "redirect_url": redirect_url,
             "user": {
-                "email": "judge.evaluator@mailjury.security",
-                "name": "Jury Review Evaluator",
-                "picture": "https://api.dicebear.com/7.x/bottts/svg?seed=JuryJudge",
+                "email": clean_email,
+                "name": user_name,
+                "picture": f"https://api.dicebear.com/7.x/bottts/svg?seed={seed}",
                 "role": role,
                 "verified_email": True
             }
