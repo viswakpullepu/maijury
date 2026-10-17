@@ -1037,11 +1037,27 @@ async def catch_all_spa_fallback(full_path: str):
     # Prevent directory traversal attacks
     safe_path = os.path.abspath(os.path.join(FRONTEND_DIST, full_path))
     if safe_path.startswith(os.path.abspath(FRONTEND_DIST)) and os.path.isfile(safe_path):
-        return FileResponse(safe_path)
+        headers = {}
+        if "/assets/" in safe_path:
+            headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        return FileResponse(safe_path, headers=headers)
+
+    # If an asset was requested but does not exist on disk, return 404
+    # (prevents returning index.html for a missing .js file, which causes browser SyntaxErrors)
+    if full_path.startswith(("assets/", "assets")):
+        raise HTTPException(status_code=404, detail=f"Static asset not found: {full_path}")
 
     index_file = os.path.join(FRONTEND_DIST, "index.html")
     if os.path.exists(index_file):
-        return FileResponse(index_file, media_type="text/html")
+        return FileResponse(
+            index_file, 
+            media_type="text/html",
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            }
+        )
 
     raise HTTPException(status_code=404, detail="Page not found")
 
