@@ -545,7 +545,10 @@ async def google_callback(
                 "details": res
             }
 
+        user_email = res.get("user_email")
         redirect_target = "/?connected=gmail"
+        if user_email:
+            redirect_target += f"&user={urllib.parse.quote(user_email)}"
         if session_id:
             redirect_target += f"&session_id={urllib.parse.quote(session_id)}"
         return RedirectResponse(url=redirect_target, status_code=302)
@@ -648,6 +651,7 @@ async def get_unified_auth_status(user_id: str = "primary_user", session_id: Opt
         user_name = tokens.get("user_name") or user_name
 
     seed = "JuryJudge" if ("judge" in user_email or "evaluator" in user_email) else "MailJury"
+    user_picture = (tokens.get("user_picture") if tokens else None) or f"https://api.dicebear.com/7.x/bottts/svg?seed={seed}"
 
     return {
         "connected": is_connected,
@@ -656,7 +660,7 @@ async def get_unified_auth_status(user_id: str = "primary_user", session_id: Opt
         "user": {
             "email": user_email,
             "name": user_name,
-            "picture": f"https://api.dicebear.com/7.x/bottts/svg?seed={seed}"
+            "picture": user_picture
         } if is_connected else None,
         "mode": tokens.get("mode") if tokens else ("LIVE_GMAIL" if daemon.gmail.is_live else "DISCONNECTED"),
         "scopes": tokens.get("scope") if tokens else None,

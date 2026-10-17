@@ -25,6 +25,9 @@ class GoogleOAuthManager:
     
     # Principle of Least Privilege: Gmail modify + send allows triage, quarantine, and scam alert notifications
     DEFAULT_SCOPES = [
+        "openid",
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile",
         "https://www.googleapis.com/auth/gmail.modify",
         "https://www.googleapis.com/auth/gmail.send"
     ]
@@ -200,11 +203,52 @@ class GoogleOAuthManager:
             "updated_at": time.time()
         }
 
+        # Extract user profile from id_token (JWT) or UserInfo endpoint
+        user_email = None
+        user_name = None
+        user_picture = None
+
+        id_token = token_response.get("id_token")
+        if id_token and isinstance(id_token, str) and "." in id_token:
+            try:
+                import base64
+                payload_segment = id_token.split(".")[1]
+                payload_segment += "=" * (-len(payload_segment) % 4)
+                claims = json.loads(base64.urlsafe_b64decode(payload_segment.encode("utf-8")).decode("utf-8"))
+                user_email = claims.get("email")
+                user_name = claims.get("name")
+                user_picture = claims.get("picture")
+            except Exception:
+                pass
+
+        if not user_email and token_response.get("access_token") and not code.startswith("mock_"):
+            try:
+                uinfo_req = urllib.request.Request(
+                    "https://www.googleapis.com/oauth2/v2/userinfo",
+                    headers={"Authorization": f"Bearer {token_response['access_token']}"}
+                )
+                with urllib.request.urlopen(uinfo_req) as uresp:
+                    uinfo = json.loads(uresp.read().decode("utf-8"))
+                    user_email = uinfo.get("email")
+                    user_name = uinfo.get("name")
+                    user_picture = uinfo.get("picture")
+            except Exception:
+                pass
+
+        if user_email:
+            token_record["user_email"] = user_email
+            token_record["user_name"] = user_name or user_email.split("@")[0].title()
+            if user_picture:
+                token_record["user_picture"] = user_picture
+
         self.token_store.save_tokens(token_record, user_id=user_id)
 
         return {
             "status": "AUTHENTICATED_AND_ENCRYPTED",
             "user_id": user_id,
+            "user_email": token_record.get("user_email"),
+            "user_name": token_record.get("user_name"),
+            "user_picture": token_record.get("user_picture"),
             "mode": token_record["mode"],
             "scopes": token_record["scope"],
             "vault_storage": "AES-256-GCM Envelope Protected"
