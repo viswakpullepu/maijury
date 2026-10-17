@@ -92,6 +92,8 @@ app.add_middleware(
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIST = os.path.join(ROOT_DIR, "frontend", "dist")
+ASSETS_DIR = os.path.join(FRONTEND_DIST, "assets")
+
 def get_latest_asset(prefix: str, extension: str):
     if not os.path.isdir(ASSETS_DIR):
         return None
