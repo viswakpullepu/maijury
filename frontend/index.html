@@ -10,17 +10,36 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
+      // 1. Capture-phase resource error listener for script/link tag 404s
       window.addEventListener('error', function(e) {
+        var target = e.target || e.srcElement;
+        var isScriptOrLink = target && (target.tagName === 'SCRIPT' || target.tagName === 'LINK');
+        console.warn('[ThreatLens] Asset load failure detected:', e.message || target?.src || target?.href);
+        if (isScriptOrLink) {
+          setTimeout(function() {
+            window.location.href = window.location.origin + window.location.pathname + '?_t=' + Date.now();
+          }, 300);
+          return;
+        }
         var root = document.getElementById('root');
         if (root && (!root.children.length || root.innerText.indexOf('Initializing') !== -1)) {
           root.innerHTML = '<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0f172a;color:white;font-family:sans-serif;padding:24px;text-align:center;">' +
             '<div style="background:#ef4444;color:white;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;">⚠️</div>' +
             '<h2 style="font-size:20px;font-weight:bold;margin-bottom:8px;">Defense Environment Initializing</h2>' +
             '<p style="color:#94a3b8;font-size:13px;max-width:480px;margin-bottom:16px;">' + (e.message || 'Initialization script stalled.') + '</p>' +
-            '<button onclick="localStorage.clear();sessionStorage.clear();window.location.reload();" style="background:#6366f1;color:white;border:none;padding:10px 20px;border-radius:10px;font-weight:bold;cursor:pointer;">Reset Cache & Reload</button>' +
+            '<button onclick="localStorage.clear();sessionStorage.clear();window.location.href=window.location.pathname+\'?_t=\'+Date.now();" style="background:#6366f1;color:white;border:none;padding:10px 20px;border-radius:10px;font-weight:bold;cursor:pointer;">Reset Cache & Reload</button>' +
           '</div>';
         }
-      });
+      }, true);
+
+      // 2. Watchdog: if still showing splash loader after 3.5 seconds, auto-refresh with cache-buster
+      setTimeout(function() {
+        var root = document.getElementById('root');
+        if (root && root.innerText && root.innerText.indexOf('Initializing Defense Suite') !== -1) {
+          console.warn('[ThreatLens] App mount watchdog triggered. Reloading fresh bundle...');
+          window.location.href = window.location.origin + window.location.pathname + '?_t=' + Date.now();
+        }
+      }, 3500);
     </script>
   </head>
   <body style="background:#0f172a;margin:0;">
@@ -29,7 +48,7 @@
         <div style="width:48px;height:48px;border:3px solid #38bdf8;border-top-color:transparent;border-radius:50%;animation:tl-spin 1s linear infinite;margin-bottom:16px;"></div>
         <h2 style="font-size:18px;font-weight:800;letter-spacing:-0.02em;margin:0 0 8px 0;color:#f8fafc;">ThreatLens AI — Initializing Defense Suite</h2>
         <p style="color:#94a3b8;font-size:13px;max-width:380px;margin:0 0 20px 0;line-height:1.5;">Establishing encrypted RAM session & live radar telemetry...</p>
-        <button onclick="localStorage.clear();window.location.reload();" style="background:rgba(255,255,255,0.08);color:#cbd5e1;border:1px solid rgba(255,255,255,0.15);padding:6px 14px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;">Hard Reload</button>
+        <button onclick="localStorage.clear();sessionStorage.clear();window.location.href=window.location.pathname+'?_reload='+Date.now();" style="background:rgba(255,255,255,0.08);color:#cbd5e1;border:1px solid rgba(255,255,255,0.15);padding:6px 14px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;">Hard Reload</button>
         <style>@keyframes tl-spin{to{transform:rotate(360deg)}}</style>
       </div>
     </div>

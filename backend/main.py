@@ -92,10 +92,40 @@ app.add_middleware(
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIST = os.path.join(ROOT_DIR, "frontend", "dist")
-ASSETS_DIR = os.path.join(FRONTEND_DIST, "assets")
+def get_latest_asset(prefix: str, extension: str):
+    if not os.path.isdir(ASSETS_DIR):
+        return None
+    try:
+        candidates = [
+            f for f in os.listdir(ASSETS_DIR)
+            if f.startswith(prefix) and f.endswith(extension)
+        ]
+        if not candidates:
+            return None
+        candidates.sort(key=lambda f: os.path.getmtime(os.path.join(ASSETS_DIR, f)), reverse=True)
+        return os.path.join(ASSETS_DIR, candidates[0])
+    except Exception:
+        return None
 
-if os.path.isdir(ASSETS_DIR):
-    app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="frontend_assets")
+@app.get("/assets/{asset_name:path}")
+async def serve_static_asset(asset_name: str):
+    target_file = os.path.abspath(os.path.join(ASSETS_DIR, asset_name))
+    if target_file.startswith(os.path.abspath(ASSETS_DIR)) and os.path.isfile(target_file):
+        media_type = "text/javascript" if asset_name.endswith(".js") else ("text/css" if asset_name.endswith(".css") else None)
+        return FileResponse(target_file, media_type=media_type, headers={"Cache-Control": "public, max-age=31536000, immutable"})
+    
+    # Graceful fallback for stale chunk hashes (e.g. user had old index.html cached)
+    if asset_name.endswith(".js"):
+        fallback_js = get_latest_asset("index-", ".js") or os.path.join(ASSETS_DIR, "index.js")
+        if fallback_js and os.path.isfile(fallback_js):
+            return FileResponse(fallback_js, media_type="text/javascript", headers={"Cache-Control": "no-cache"})
+            
+    if asset_name.endswith(".css"):
+        fallback_css = get_latest_asset("index-", ".css") or os.path.join(ASSETS_DIR, "index.css")
+        if fallback_css and os.path.isfile(fallback_css):
+            return FileResponse(fallback_css, media_type="text/css", headers={"Cache-Control": "no-cache"})
+            
+    raise HTTPException(status_code=404, detail=f"Asset not found: {asset_name}")
 
 @app.middleware("http")
 async def vercel_routing_middleware(request: Request, call_next):
@@ -1042,9 +1072,17 @@ async def catch_all_spa_fallback(full_path: str):
             headers["Cache-Control"] = "public, max-age=31536000, immutable"
         return FileResponse(safe_path, headers=headers)
 
-    # If an asset was requested but does not exist on disk, return 404
-    # (prevents returning index.html for a missing .js file, which causes browser SyntaxErrors)
+    # If an asset was requested but does not exist on disk, fallback to latest active bundle
     if full_path.startswith(("assets/", "assets")):
+        asset_name = full_path.replace("assets/", "", 1) if full_path.startswith("assets/") else full_path
+        if asset_name.endswith(".js"):
+            fallback_js = get_latest_asset("index-", ".js") or os.path.join(ASSETS_DIR, "index.js")
+            if fallback_js and os.path.isfile(fallback_js):
+                return FileResponse(fallback_js, media_type="text/javascript", headers={"Cache-Control": "no-cache"})
+        if asset_name.endswith(".css"):
+            fallback_css = get_latest_asset("index-", ".css") or os.path.join(ASSETS_DIR, "index.css")
+            if fallback_css and os.path.isfile(fallback_css):
+                return FileResponse(fallback_css, media_type="text/css", headers={"Cache-Control": "no-cache"})
         raise HTTPException(status_code=404, detail=f"Static asset not found: {full_path}")
 
     index_file = os.path.join(FRONTEND_DIST, "index.html")
