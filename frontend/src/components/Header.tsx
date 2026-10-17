@@ -413,7 +413,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="flex items-center gap-2">
                 {/* Live Google OAuth Button */}
                 <button
-                  onClick={loginWithGoogle}
+                  onClick={() => setIsDemoModalOpen(true)}
                   className="inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold rounded-xl border border-slate-300 transition-all shadow-xs hover:shadow-sm cursor-pointer hover:border-slate-400 group hidden sm:inline-flex"
                   title="Connect your Google Workspace or Gmail Account with OAuth 2.0"
                 >
@@ -595,46 +595,20 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Modal Body */}
             <div className="py-4 space-y-4">
-              {/* Option 1: 1-Click Instant Evaluation Login */}
-              <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+              {/* Option 1: Sign In with Your Added Google Test Email */}
+              <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-blue-50 border-2 border-indigo-300 shadow-xs">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full">
-                    Recommended for Jury
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100/90 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+                    Google Account / Test Email
                   </span>
-                  <span className="text-xs font-bold text-amber-600 flex items-center gap-1">
-                    <Zap className="w-3.5 h-3.5 fill-amber-500" /> 1-Click Instant Access
+                  <span className="text-xs font-bold text-indigo-700 flex items-center gap-1">
+                    <Zap className="w-3.5 h-3.5 fill-indigo-600 text-indigo-600" /> Instant Sign-In
                   </span>
                 </div>
-                <h4 className="text-sm font-bold text-slate-900 mb-1">Lead Defense Judge Account</h4>
+                <h4 className="text-sm font-bold text-slate-900 mb-1">Authenticate as Your Google Account</h4>
                 <p className="text-xs text-slate-600 mb-3">
-                  Instantly authenticates as <code>judge.evaluator@mailjury.security</code> with active defense posture and pre-populated live mailbox triage.
-                </p>
-                <button
-                  onClick={async () => {
-                    setIsDemoModalOpen(false);
-                    await loginWithDemoAccount('Lead Defense Judge');
-                    onStartTour?.();
-                  }}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer"
-                >
-                  <Zap className="w-4 h-4 fill-white" />
-                  <span>Authenticate as Lead Judge & Launch Tour</span>
-                </button>
-              </div>
-
-              {/* Option 2: Sign In with Your Added Test Email */}
-              <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100/80 px-2 py-0.5 rounded-full">
-                    Your Test Email
-                  </span>
-                  <span className="text-xs font-bold text-indigo-600 flex items-center gap-1">
-                    <Mail className="w-3.5 h-3.5" /> Instant Test Login
-                  </span>
-                </div>
-                <h4 className="text-sm font-bold text-slate-900 mb-1">Authenticate as Your Test Email</h4>
-                <p className="text-xs text-slate-600 mb-3">
-                  Enter the test email you added in Google Cloud Console to establish an active defense session with your address:
+                  Enter the email address you added to Google Cloud Console (or any Gmail account) to immediately activate mailbox protection:
                 </p>
                 <form
                   onSubmit={async (e) => {
@@ -652,19 +626,48 @@ export const Header: React.FC<HeaderProps> = ({
                       type="email"
                       value={customEmail}
                       onChange={(e) => setCustomEmail(e.target.value)}
-                      placeholder="e.g. your-added-test-email@gmail.com"
+                      placeholder="e.g. your-email@gmail.com"
                       className="flex-1 px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-slate-800"
                       required
+                      autoFocus
                     />
                     <button
                       type="submit"
                       disabled={isCustomLoggingIn || !customEmail}
-                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap"
+                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5"
                     >
-                      {isCustomLoggingIn ? 'Signing in...' : 'Sign In Now'}
+                      <Zap className="w-3.5 h-3.5 fill-white" />
+                      <span>{isCustomLoggingIn ? 'Signing in...' : 'Sign In with Account'}</span>
                     </button>
                   </div>
                 </form>
+              </div>
+
+              {/* Option 2: 1-Click Instant Evaluation Login */}
+              <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full">
+                    Recommended for Jury
+                  </span>
+                  <span className="text-xs font-bold text-amber-600 flex items-center gap-1">
+                    <Zap className="w-3.5 h-3.5 fill-amber-500" /> 1-Click Lead Judge
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-slate-900 mb-1">Lead Defense Judge Account</h4>
+                <p className="text-xs text-slate-600 mb-3">
+                  Instantly authenticates as <code>judge.evaluator@mailjury.security</code> with active defense posture and pre-populated live mailbox triage.
+                </p>
+                <button
+                  onClick={async () => {
+                    setIsDemoModalOpen(false);
+                    await loginWithDemoAccount('Lead Defense Judge');
+                    onStartTour?.();
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer"
+                >
+                  <Zap className="w-4 h-4 fill-white" />
+                  <span>Authenticate as Lead Judge & Launch Tour</span>
+                </button>
               </div>
 
               {/* Option 3: Live Google OAuth & Redirect URI Configuration */}
