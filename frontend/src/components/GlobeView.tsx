@@ -42,6 +42,8 @@ interface ThreatLocationItem {
   isThreat?: boolean;
 }
 
+export type MapTheme = 'satellite' | 'night' | 'dark';
+
 import { getOrCreateSessionId } from './LiveEmailInterceptor';
 import { SAMPLE_EMAILS } from '../data/threatData';
 
@@ -191,10 +193,14 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
       setSelectedThreat(allThreatLocations[0]);
     }
   }, [allThreatLocations]);
+
+  const [mapTheme, setMapTheme] = useState<MapTheme>('satellite');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isAutoRotating, setIsAutoRotating] = useState(true);
+  const [isAutoRotating, setIsAutoRotating] = useState(false);
   const [cameraDistance, setCameraDistance] = useState(230);
+  const [hoveredThreat, setHoveredThreat] = useState<ThreatLocationItem | null>(null);
+  const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
 
   // Three.js refs
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -203,8 +209,10 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
   const controlsRef = useRef<OrbitControls | null>(null);
   const globeGroupRef = useRef<THREE.Group | null>(null);
   const cloudsMeshRef = useRef<THREE.Mesh | null>(null);
+  const earthMaterialRef = useRef<THREE.MeshStandardMaterial | null>(null);
   const beaconMeshRef = useRef<THREE.Mesh | null>(null);
   const pulseRingsRef = useRef<THREE.Mesh[]>([]);
+  const pinMeshesRef = useRef<THREE.Mesh[]>([]);
   const animationFrameId = useRef<number | null>(null);
   const isUserInteracting = useRef(false);
 
@@ -214,6 +222,16 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
   const cameraAnimDuration = useRef(1200); // 1.2s smooth easing
   const cameraStartPos = useRef(new THREE.Vector3());
   const cameraTargetPos = useRef(new THREE.Vector3());
+
+  // Real Earth Textures Loader
+  const textureLoader = useMemo(() => new THREE.TextureLoader(), []);
+  const textures = useMemo(() => ({
+    satellite: textureLoader.load('/assets/earth_blue_marble.jpg'),
+    night: textureLoader.load('/assets/earth_night.jpg'),
+    dark: textureLoader.load('/assets/earth_dark.jpg'),
+    clouds: textureLoader.load('/assets/earth_clouds.jpg'),
+    topology: textureLoader.load('/assets/earth_topology.png')
+  }), [textureLoader]);
 
   // Helper: Lat/Lng to 3D Cartesian coordinates on sphere
   const latLngToVector3 = (lat: number, lng: number, radius: number = 80): THREE.Vector3 => {
@@ -225,57 +243,42 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
     return new THREE.Vector3(x, y, z);
   };
 
-  // Helper: Procedural Earth Texture
-  const generateProceduralEarthTexture = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 2048;
-    canvas.height = 1024;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return new THREE.CanvasTexture(canvas);
-
-    // Deep high-contrast cyber ocean gradient
-    const oceanGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    oceanGrad.addColorStop(0, '#0f172a');
-    oceanGrad.addColorStop(0.5, '#1e1b4b');
-    oceanGrad.addColorStop(1, '#020617');
-    ctx.fillStyle = oceanGrad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Subtle lat/long coordinates grid lines
-    ctx.strokeStyle = 'rgba(99, 102, 241, 0.16)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < canvas.width; x += 64) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, canvas.height);
-      ctx.stroke();
+  // Dynamically update globe material when mapTheme changes
+  useEffect(() => {
+    if (!earthMaterialRef.current) return;
+    const mat = earthMaterialRef.current;
+    if (mapTheme === 'satellite') {
+      mat.map = textures.satellite;
+      mat.bumpMap = textures.topology;
+      mat.bumpScale = 0.65;
+      mat.roughness = 0.6;
+      mat.metalness = 0.08;
+      mat.emissive = new THREE.Color(0x000000);
+      mat.emissiveMap = null;
+      mat.emissiveIntensity = 0.0;
+    } else if (mapTheme === 'night') {
+      mat.map = textures.night;
+      mat.bumpMap = textures.topology;
+      mat.bumpScale = 0.45;
+      mat.roughness = 0.8;
+      mat.metalness = 0.05;
+      mat.emissive = new THREE.Color(0xffe082);
+      mat.emissiveMap = textures.night;
+      mat.emissiveIntensity = 0.85;
+    } else {
+      mat.map = textures.dark;
+      mat.bumpMap = textures.topology;
+      mat.bumpScale = 0.35;
+      mat.roughness = 0.65;
+      mat.metalness = 0.15;
+      mat.emissive = new THREE.Color(0x0284c7);
+      mat.emissiveMap = textures.dark;
+      mat.emissiveIntensity = 0.35;
     }
-    for (let y = 0; y < canvas.height; y += 64) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(canvas.width, y);
-      ctx.stroke();
-    }
+    mat.needsUpdate = true;
+  }, [mapTheme, textures]);
 
-    // High craft continent geometry
-    ctx.fillStyle = '#312e81';
-    const drawLand = (x: number, y: number, w: number, h: number, rad: number = 10) => {
-      ctx.beginPath();
-      ctx.roundRect ? ctx.roundRect(x, y, w, h, rad) : ctx.rect(x, y, w, h);
-      ctx.fill();
-    };
-
-    drawLand(200, 200, 450, 300, 40);
-    drawLand(450, 550, 250, 350, 30);
-    drawLand(900, 180, 280, 200, 25);
-    drawLand(920, 400, 320, 380, 35);
-    drawLand(1200, 150, 600, 400, 50);
-    drawLand(1550, 650, 280, 200, 30);
-
-    return new THREE.CanvasTexture(canvas);
-  };
-
-  // Main Three.js Initialization with OrbitControls & Realistic Physics
+  // Main Three.js Initialization with True Free OrbitControls & Real Maps
   useEffect(() => {
     const container = canvasContainerRef.current;
     if (!container) return;
@@ -289,7 +292,7 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
 
     // 2. Camera
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.set(0, 40, 230);
+    camera.position.set(0, 35, 220);
     cameraRef.current = camera;
 
     let renderer: THREE.WebGLRenderer;
@@ -302,21 +305,22 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+    renderer.toneMappingExposure = 1.15;
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // 4. OrbitControls: Smooth real-life pan, zoom, and rotate with damping
+    // 4. Free OrbitControls: Fluid 360° omnidirectional rotation, inertia damping, no center drift
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.rotateSpeed = 0.8;
-    controls.zoomSpeed = 1.0;
-    controls.panSpeed = 0.8;
-    controls.minDistance = 110;  // Prevents clipping into globe surface
-    controls.maxDistance = 420;  // Prevents losing globe in deep space
-    controls.enablePan = true;
+    controls.dampingFactor = 0.08;
+    controls.rotateSpeed = 0.85;
+    controls.zoomSpeed = 1.1;
+    controls.enablePan = false; // Strictly pivots around Earth center (0,0,0)
+    controls.minDistance = 92;  // Allows zooming in close to land
+    controls.maxDistance = 360; // Max zoom out
+    controls.minPolarAngle = 0.05; // Free vertical pitch over North Pole
+    controls.maxPolarAngle = Math.PI - 0.05; // Free vertical pitch over South Pole
     controls.target.set(0, 0, 0);
     controls.addEventListener('start', () => { isUserInteracting.current = true; });
     controls.addEventListener('end', () => { isUserInteracting.current = false; });
@@ -328,48 +332,103 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
     globeGroupRef.current = globeGroup;
 
     // 6. Realistic Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
     scene.add(ambientLight);
 
     const sunLight = new THREE.DirectionalLight(0xffffff, 1.6);
     sunLight.position.set(160, 110, 190);
     scene.add(sunLight);
 
-    const rimLight = new THREE.DirectionalLight(0x818cf8, 0.8);
+    const rimLight = new THREE.DirectionalLight(0x818cf8, 0.85);
     rimLight.position.set(-160, -90, -130);
     scene.add(rimLight);
 
-    // 7. Earth Sphere Mesh
+    // 7. Real Earth Sphere Mesh with Accurate Maps
     const radius = 80;
     const geometry = new THREE.SphereGeometry(radius, 64, 64);
-    const proceduralCanvasTexture = generateProceduralEarthTexture();
+
+    const initialTexture = mapTheme === 'night' 
+      ? textures.night 
+      : (mapTheme === 'dark' ? textures.dark : textures.satellite);
 
     const earthMaterial = new THREE.MeshStandardMaterial({
-      map: proceduralCanvasTexture,
-      roughness: 0.55,
-      metalness: 0.15
+      map: initialTexture,
+      bumpMap: textures.topology,
+      bumpScale: mapTheme === 'satellite' ? 0.65 : 0.4,
+      roughness: 0.6,
+      metalness: 0.08
     });
+    if (mapTheme === 'night') {
+      earthMaterial.emissive = new THREE.Color(0xffe082);
+      earthMaterial.emissiveMap = textures.night;
+      earthMaterial.emissiveIntensity = 0.85;
+    } else if (mapTheme === 'dark') {
+      earthMaterial.emissive = new THREE.Color(0x0284c7);
+      earthMaterial.emissiveMap = textures.dark;
+      earthMaterial.emissiveIntensity = 0.35;
+    }
+    earthMaterialRef.current = earthMaterial;
 
     const earthMesh = new THREE.Mesh(geometry, earthMaterial);
     globeGroup.add(earthMesh);
 
-    // Atmospheric outer glow
-    const atmosphereGeo = new THREE.SphereGeometry(radius * 1.04, 32, 32);
+    // Graticule coordinate grid lines (equator, parallels, meridians)
+    const graticuleGroup = new THREE.Group();
+    const graticuleMat = new THREE.LineBasicMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.14
+    });
+
+    // Parallels (Latitude lines at -60, -30, 0, 30, 60)
+    [-60, -30, 0, 30, 60].forEach(lat => {
+      const phi = (90 - lat) * (Math.PI / 180);
+      const ringRadius = radius * Math.sin(phi);
+      const ringY = radius * Math.cos(phi);
+      const ringGeo = new THREE.BufferGeometry();
+      const points: THREE.Vector3[] = [];
+      const segments = 64;
+      for (let i = 0; i <= segments; i++) {
+        const theta = (i / segments) * Math.PI * 2;
+        points.push(new THREE.Vector3(ringRadius * Math.cos(theta), ringY, ringRadius * Math.sin(theta)));
+      }
+      ringGeo.setFromPoints(points);
+      const line = new THREE.Line(ringGeo, graticuleMat);
+      graticuleGroup.add(line);
+    });
+
+    // Meridians (Longitude lines every 45 deg)
+    for (let lng = 0; lng < 360; lng += 45) {
+      const ringGeo = new THREE.BufferGeometry();
+      const points: THREE.Vector3[] = [];
+      const segments = 64;
+      for (let i = 0; i <= segments; i++) {
+        const lat = -90 + (i / segments) * 180;
+        points.push(latLngToVector3(lat, lng, radius * 1.001));
+      }
+      ringGeo.setFromPoints(points);
+      const line = new THREE.Line(ringGeo, graticuleMat);
+      graticuleGroup.add(line);
+    }
+    globeGroup.add(graticuleGroup);
+
+    // Atmospheric outer glow halo
+    const atmosphereGeo = new THREE.SphereGeometry(radius * 1.045, 48, 48);
     const atmosphereMat = new THREE.MeshBasicMaterial({
       color: 0x38bdf8,
       transparent: true,
-      opacity: 0.12,
+      opacity: 0.16,
       side: THREE.BackSide
     });
     const atmosphere = new THREE.Mesh(atmosphereGeo, atmosphereMat);
     globeGroup.add(atmosphere);
 
-    // Cloud layer with gentle rotation
-    const cloudsGeo = new THREE.SphereGeometry(radius * 1.012, 48, 48);
+    // Real Clouds Layer
+    const cloudsGeo = new THREE.SphereGeometry(radius * 1.014, 48, 48);
     const cloudsMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
+      map: textures.clouds,
       transparent: true,
-      opacity: 0.14,
+      opacity: 0.3,
       blending: THREE.AdditiveBlending
     });
     const cloudsMesh = new THREE.Mesh(cloudsGeo, cloudsMat);
@@ -378,25 +437,29 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
 
     // 8. Dynamic Threat Location Markers & Pulsing Radar Rings
     const pulseRings: THREE.Mesh[] = [];
+    const pinMeshes: THREE.Mesh[] = [];
+
     allThreatLocations.forEach((threat) => {
-      const pos = latLngToVector3(threat.lat, threat.lng, radius + 0.8);
+      const pos = latLngToVector3(threat.lat, threat.lng, radius + 0.9);
       const score = threat.threatScore ?? 0;
       const color = score > 80 ? 0xef4444 : (score >= 50 ? 0xf97316 : 0x10b981);
 
-      // Core Solid Pin
-      const pinGeo = new THREE.SphereGeometry(1.9, 16, 16);
+      // Core Solid Pin (Interactive Raycast target)
+      const pinGeo = new THREE.SphereGeometry(2.0, 16, 16);
       const pinMat = new THREE.MeshStandardMaterial({ 
         color,
         emissive: color,
-        emissiveIntensity: 0.6,
-        roughness: 0.2
+        emissiveIntensity: 0.75,
+        roughness: 0.15
       });
       const pin = new THREE.Mesh(pinGeo, pinMat);
       pin.position.copy(pos);
+      pin.userData = { threat };
       globeGroup.add(pin);
+      pinMeshes.push(pin);
 
       // Expanding Radar Pulse Ring
-      const ringGeo = new THREE.RingGeometry(2.0, 3.6, 32);
+      const ringGeo = new THREE.RingGeometry(2.0, 3.8, 32);
       const ringMat = new THREE.MeshBasicMaterial({
         color,
         side: THREE.DoubleSide,
@@ -404,13 +467,14 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
         opacity: 0.75
       });
       const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.position.copy(pos.clone().multiplyScalar(1.006));
+      ring.position.copy(pos.clone().multiplyScalar(1.008));
       ring.lookAt(pos.clone().multiplyScalar(2));
       ring.userData = { initialScale: 1.0, phase: Math.random() * Math.PI * 2 };
       globeGroup.add(ring);
       pulseRings.push(ring);
     });
     pulseRingsRef.current = pulseRings;
+    pinMeshesRef.current = pinMeshes;
 
     // 9. Selected Active Threat Beacon Beam
     const beaconGeo = new THREE.CylinderGeometry(0.3, 1.8, 14, 16, 1, true);
@@ -453,9 +517,62 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
       globeGroup.add(arc);
     });
 
-    // 11. Animation Loop with Smooth Camera Interpolation
+    // 11. Raycaster for Interactive 3D Pin Inspection
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let pointerDownPos = { x: 0, y: 0 };
+
+    const onPointerDown = (e: MouseEvent) => {
+      pointerDownPos = { x: e.clientX, y: e.clientY };
+    };
+
+    const onPointerMove = (e: MouseEvent) => {
+      if (!renderer.domElement) return;
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(pinMeshesRef.current, false);
+
+      if (intersects.length > 0) {
+        renderer.domElement.style.cursor = 'pointer';
+        const hit = intersects[0].object.userData.threat as ThreatLocationItem;
+        setHoveredThreat(hit);
+        setHoverPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      } else {
+        renderer.domElement.style.cursor = isUserInteracting.current ? 'grabbing' : 'grab';
+        setHoveredThreat(null);
+        setHoverPosition(null);
+      }
+    };
+
+    const onPointerUp = (e: MouseEvent) => {
+      const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+      if (dist < 6) {
+        // Genuine click on pin
+        if (!renderer.domElement) return;
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(pinMeshesRef.current, false);
+        if (intersects.length > 0) {
+          const hit = intersects[0].object.userData.threat as ThreatLocationItem;
+          flyToThreatLocation(hit, true);
+        }
+      }
+    };
+
+    const dom = renderer.domElement;
+    dom.addEventListener('pointerdown', onPointerDown);
+    dom.addEventListener('pointermove', onPointerMove);
+    dom.addEventListener('pointerup', onPointerUp);
+
+    // 12. Animation Loop with Smooth Camera Interpolation
     const animate = (timestamp: number) => {
-      // Rotate clouds slowly
+      // Rotate clouds slowly for living atmosphere
       if (cloudsMeshRef.current) {
         cloudsMeshRef.current.rotation.y += 0.0003;
       }
@@ -498,9 +615,9 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
           isAnimatingCamera.current = false;
         }
       } else {
-        // Auto-rotation when not animating camera or manually interacting
+        // Auto-rotation only when enabled and not actively interacting
         if (isAutoRotating && !isUserInteracting.current) {
-          globeGroup.rotation.y += 0.001;
+          globeGroup.rotation.y += 0.0012;
         }
         controls.update();
       }
@@ -531,10 +648,13 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
     return () => {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
       window.removeEventListener('resize', handleResize);
+      dom.removeEventListener('pointerdown', onPointerDown);
+      dom.removeEventListener('pointermove', onPointerMove);
+      dom.removeEventListener('pointerup', onPointerUp);
       controls.dispose();
       renderer.dispose();
     };
-  }, [allThreatLocations]);
+  }, [allThreatLocations, textures]);
 
   // Smooth Fly-To & Zoom In on Specific Location
   const flyToThreatLocation = (threat: ThreatLocationItem, zoomIn: boolean = true) => {
@@ -558,8 +678,9 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
       );
     }
 
-    // Calculate ideal viewing vector in world coordinates
-    const direction = surfacePos.clone().normalize();
+    // Calculate ideal viewing vector in world coordinates taking globe rotation into account
+    const worldPos = surfacePos.clone().applyEuler(globeGroupRef.current.rotation);
+    const direction = worldPos.clone().normalize();
     const targetZoomDistance = zoomIn ? 145 : 210; // Zoom in close enough for high detail
     const targetCameraPosition = direction.multiplyScalar(targetZoomDistance);
 
@@ -811,6 +932,68 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
           <div className="relative w-full h-[460px] bg-slate-950 overflow-hidden">
             <div ref={canvasContainerRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
+            {/* Map Theme & Real Map Selector Pill */}
+            <div className="absolute right-4 top-4 bg-slate-900/85 backdrop-blur-md border border-slate-700/80 rounded-xl p-1 flex items-center gap-1 z-20 shadow-xl">
+              <button
+                onClick={() => setMapTheme('satellite')}
+                title="NASA Blue Marble Real Satellite Imagery"
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                  mapTheme === 'satellite' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>🛰️ Satellite</span>
+              </button>
+              <button
+                onClick={() => setMapTheme('night')}
+                title="Earth Night City Lights & Infrastructure"
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                  mapTheme === 'night' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>🌃 Night</span>
+              </button>
+              <button
+                onClick={() => setMapTheme('dark')}
+                title="Cyber Defense Tactical Radar Map"
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                  mapTheme === 'dark' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>🛡️ Tactical</span>
+              </button>
+            </div>
+
+            {/* Free Move Mode Badge & Instructions */}
+            <div className="absolute left-4 bottom-4 bg-slate-900/85 backdrop-blur-md border border-slate-700/80 rounded-xl px-3 py-1.5 flex items-center gap-2 text-[11px] text-slate-300 font-mono z-10 pointer-events-none shadow-lg">
+              <span className={`w-2 h-2 rounded-full ${isAutoRotating ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
+              <span>{isAutoRotating ? 'Auto-Rotating (Click Pause for Free Move)' : '✨ Free Move Active: Drag 360° • Scroll Zoom • Click Pins'}</span>
+            </div>
+
+            {/* Interactive Raycast Hover Tooltip */}
+            {hoveredThreat && hoverPosition && (
+              <div
+                style={{ 
+                  left: `${Math.min(hoverPosition.x + 14, 520)}px`, 
+                  top: `${Math.max(hoverPosition.y - 14, 60)}px` 
+                }}
+                className="absolute pointer-events-none z-30 bg-slate-900/95 border border-indigo-500/50 text-white p-3 rounded-xl shadow-2xl backdrop-blur-md max-w-xs -translate-y-full animate-in fade-in zoom-in-95 duration-100"
+              >
+                <div className="flex items-center gap-1.5 mb-1 font-bold text-xs text-white">
+                  <MapPin className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                  <span className="truncate">{hoveredThreat.city}, {hoveredThreat.country}</span>
+                </div>
+                <div className="text-[10px] font-mono text-slate-300 truncate mb-1">{hoveredThreat.sender}</div>
+                <div className="flex items-center justify-between gap-3 pt-1 border-t border-slate-800 text-[10px] font-mono">
+                  <span className="text-slate-400">IP: {hoveredThreat.ip}</span>
+                  <span className={`font-bold px-1.5 py-0.5 rounded ${
+                    hoveredThreat.threatScore > 80 ? 'bg-red-900/60 text-red-300' : (hoveredThreat.threatScore >= 50 ? 'bg-orange-900/60 text-orange-300' : 'bg-emerald-900/60 text-emerald-300')
+                  }`}>
+                    {hoveredThreat.threatScore}/100
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Navigation & Zoom HUD Buttons */}
             <div className="absolute right-4 bottom-4 flex flex-col gap-1.5 z-10">
               <button
@@ -836,8 +1019,12 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
               </button>
               <button
                 onClick={() => setIsAutoRotating(!isAutoRotating)}
-                title={isAutoRotating ? "Pause Auto-Rotation" : "Start Auto-Rotation"}
-                className="w-8 h-8 bg-white/90 hover:bg-white text-slate-700 hover:text-indigo-600 rounded-lg shadow-md border border-slate-200 flex items-center justify-center transition-all backdrop-blur-xs cursor-pointer"
+                title={isAutoRotating ? "Pause Auto-Rotation & Enable Free Move" : "Start Auto-Rotation"}
+                className={`w-8 h-8 rounded-lg shadow-md border flex items-center justify-center transition-all backdrop-blur-xs cursor-pointer ${
+                  isAutoRotating 
+                    ? 'bg-amber-500 text-white border-amber-600 hover:bg-amber-600' 
+                    : 'bg-white/90 hover:bg-white text-slate-700 hover:text-indigo-600 border-slate-200'
+                }`}
               >
                 {isAutoRotating ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
               </button>
