@@ -46,6 +46,7 @@ export type MapTheme = 'satellite' | 'night' | 'dark';
 
 import { getOrCreateSessionId } from './LiveEmailInterceptor';
 import { SAMPLE_EMAILS } from '../data/threatData';
+import { StreetMapView } from './StreetMapView';
 
 const CITY_COORDINATES: Record<string, { lat: number; lng: number; country: string }> = {
   'frankfurt': { lat: 50.1109, lng: 8.6821, country: 'Germany' },
@@ -195,6 +196,7 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
   }, [allThreatLocations]);
 
   const [mapTheme, setMapTheme] = useState<MapTheme>('satellite');
+  const [viewMode, setViewMode] = useState<'globe' | 'street'>('globe');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAutoRotating, setIsAutoRotating] = useState(false);
@@ -521,6 +523,8 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
     let pointerDownPos = { x: 0, y: 0 };
+    let lastPinClickTime = 0;
+    let lastPinClickedId = '';
 
     const onPointerDown = (e: MouseEvent) => {
       pointerDownPos = { x: e.clientX, y: e.clientY };
@@ -560,8 +564,24 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
         const intersects = raycaster.intersectObjects(pinMeshesRef.current, false);
         if (intersects.length > 0) {
           const hit = intersects[0].object.userData.threat as ThreatLocationItem;
-          flyToThreatLocation(hit, true);
+          const now = performance.now();
+          if (lastPinClickedId === hit.id && now - lastPinClickTime < 500) {
+            // Double click on pin -> Seamlessly dive into street level!
+            setSelectedThreat(hit);
+            setViewMode('street');
+          } else {
+            flyToThreatLocation(hit, true);
+          }
+          lastPinClickTime = now;
+          lastPinClickedId = hit.id;
         }
+      }
+    };
+
+    // Deep zoom scroll wheel listener: entering street level when scrolling past low orbit
+    const onCanvasWheel = (e: WheelEvent) => {
+      if (e.deltaY < 0 && camera.position.length() <= 116) {
+        setViewMode('street');
       }
     };
 
@@ -569,6 +589,7 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
     dom.addEventListener('pointerdown', onPointerDown);
     dom.addEventListener('pointermove', onPointerMove);
     dom.addEventListener('pointerup', onPointerUp);
+    dom.addEventListener('wheel', onCanvasWheel, { passive: true });
 
     // 12. Animation Loop with Smooth Camera Interpolation
     const animate = (timestamp: number) => {
@@ -651,6 +672,7 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
       dom.removeEventListener('pointerdown', onPointerDown);
       dom.removeEventListener('pointermove', onPointerMove);
       dom.removeEventListener('pointerup', onPointerUp);
+      dom.removeEventListener('wheel', onCanvasWheel);
       controls.dispose();
       renderer.dispose();
     };
@@ -696,6 +718,11 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
     if (!cameraRef.current || !controlsRef.current) return;
     const camera = cameraRef.current;
     const currentLen = camera.position.length();
+    if (currentLen <= 126) {
+      // Zooming closer than lowest planetary orbit -> dive straight into streets!
+      setViewMode('street');
+      return;
+    }
     const nextLen = Math.max(115, currentLen * 0.78);
     
     cameraStartPos.current.copy(camera.position);
@@ -921,16 +948,70 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
               )}
             </div>
 
-            {/* Live Indicator */}
-            <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
-              <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
-              <span>RADAR ONLINE</span>
+            {/* View Mode Switcher (3D Orbit vs Street Zoom) & Live Indicator */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-xl border border-slate-200">
+                <button
+                  onClick={() => setViewMode('globe')}
+                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                    viewMode === 'globe'
+                      ? 'bg-white text-indigo-600 shadow-xs'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  <GlobeIcon className="w-3.5 h-3.5" />
+                  <span>3D Orbit</span>
+                </button>
+                <button
+                  onClick={() => setViewMode('street')}
+                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                    viewMode === 'street'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>Street Zoom</span>
+                </button>
+              </div>
+
+              <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-500">
+                <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
+                <span>RADAR ONLINE</span>
+              </div>
             </div>
           </div>
 
+          {/* Main Visual Display: Street Level Map OR 3D Planetary Globe */}
+          {/* Street Map Container */}
+          <div className={viewMode === 'street' ? 'block' : 'hidden'}>
+            <StreetMapView
+              threat={activeThreat}
+              allThreats={allThreatLocations}
+              onSelectThreat={(t) => {
+                setSelectedThreat(t);
+                onSelectThreat(t.id);
+              }}
+              onReturnToOrbit={() => setViewMode('globe')}
+              onOpenForensics={onOpenForensics}
+              initialLayer={mapTheme === 'satellite' ? 'satellite' : (mapTheme === 'dark' ? 'dark' : 'streets')}
+            />
+          </div>
+
           {/* Three.js Canvas Container */}
-          <div className="relative w-full h-[460px] bg-slate-950 overflow-hidden">
+          <div className={viewMode === 'globe' ? 'relative w-full h-[460px] bg-slate-950 overflow-hidden' : 'hidden'}>
             <div ref={canvasContainerRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
+
+            {/* Low Altitude Street Zoom Prompt */}
+            {cameraDistance <= 140 && activeThreat && (
+              <div 
+                onClick={() => setViewMode('street')}
+                className="absolute top-16 left-1/2 -translate-x-1/2 z-20 bg-indigo-600/95 hover:bg-indigo-500 text-white border border-indigo-400 px-4 py-1.5 rounded-full text-xs font-bold shadow-2xl backdrop-blur-md cursor-pointer animate-pulse flex items-center gap-2 transition-transform hover:scale-105"
+              >
+                <MapPin className="w-3.5 h-3.5 text-white" />
+                <span>Low Altitude Reached: Click to Zoom Deep into {activeThreat.city} Streets 🏙️</span>
+              </div>
+            )}
 
             {/* Map Theme & Real Map Selector Pill */}
             <div className="absolute right-4 top-4 bg-slate-900/85 backdrop-blur-md border border-slate-700/80 rounded-xl p-1 flex items-center gap-1 z-20 shadow-xl">
@@ -966,7 +1047,7 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
             {/* Free Move Mode Badge & Instructions */}
             <div className="absolute left-4 bottom-4 bg-slate-900/85 backdrop-blur-md border border-slate-700/80 rounded-xl px-3 py-1.5 flex items-center gap-2 text-[11px] text-slate-300 font-mono z-10 pointer-events-none shadow-lg">
               <span className={`w-2 h-2 rounded-full ${isAutoRotating ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
-              <span>{isAutoRotating ? 'Auto-Rotating (Click Pause for Free Move)' : '✨ Free Move Active: Drag 360° • Scroll Zoom • Click Pins'}</span>
+              <span>{isAutoRotating ? 'Auto-Rotating (Click Pause for Free Move)' : '✨ Free Move Active: Drag 360° • Scroll Zoom • Double Click Pin for Streets'}</span>
             </div>
 
             {/* Interactive Raycast Hover Tooltip */}
@@ -991,6 +1072,9 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
                     {hoveredThreat.threatScore}/100
                   </span>
                 </div>
+                <div className="mt-1 pt-1 border-t border-slate-800/60 text-[9px] text-indigo-300 font-mono">
+                  Double click pin to zoom to streets 🏙️
+                </div>
               </div>
             )}
 
@@ -998,7 +1082,7 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
             <div className="absolute right-4 bottom-4 flex flex-col gap-1.5 z-10">
               <button
                 onClick={handleZoomIn}
-                title="Zoom In"
+                title="Zoom In (Dives into streets when close)"
                 className="w-8 h-8 bg-white/90 hover:bg-white text-slate-700 hover:text-indigo-600 rounded-lg shadow-md border border-slate-200 flex items-center justify-center transition-all backdrop-blur-xs cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
@@ -1009,6 +1093,13 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
                 className="w-8 h-8 bg-white/90 hover:bg-white text-slate-700 hover:text-indigo-600 rounded-lg shadow-md border border-slate-200 flex items-center justify-center transition-all backdrop-blur-xs cursor-pointer"
               >
                 <Minus className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('street')}
+                title="Zoom Deeper into Streets & Buildings"
+                className="w-8 h-8 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg shadow-md border border-indigo-400 flex items-center justify-center transition-all backdrop-blur-xs cursor-pointer"
+              >
+                <MapPin className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={handleResetView}
@@ -1032,7 +1123,7 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
 
             {/* Active Target Floating Pin Tag */}
             {activeThreat && (
-              <div className="absolute left-4 top-4 bg-slate-900/90 text-white border border-slate-700/80 rounded-xl p-3 shadow-xl backdrop-blur-md max-w-xs z-10 pointer-events-none transition-all">
+              <div className="absolute left-4 top-4 bg-slate-900/90 text-white border border-slate-700/80 rounded-xl p-3 shadow-xl backdrop-blur-md max-w-xs z-10 pointer-events-auto transition-all">
                 <div className="flex items-center gap-2 pb-1.5 border-b border-slate-800">
                   <Crosshair className="w-3.5 h-3.5 text-indigo-400 animate-spin" style={{ animationDuration: '6s' }} />
                   <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-300">
@@ -1054,6 +1145,13 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
                     <span>•</span>
                     <span>{activeThreat.asn?.split(' ')[0]}</span>
                   </div>
+                  <button
+                    onClick={() => setViewMode('street')}
+                    className="mt-2 w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    <span>Zoom Deeper to Streets ({activeThreat.city})</span>
+                  </button>
                 </div>
               </div>
             )}
@@ -1081,24 +1179,43 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
 
           {/* Quick Location Jump Badges */}
           {allThreatLocations.length > 0 && (
-            <div className="p-3 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center gap-2 text-xs">
-              <span className="font-bold text-slate-500 text-[11px] uppercase tracking-wider mr-1">
-                Quick Focus:
-              </span>
-              {allThreatLocations.slice(0, 6).map((threat) => (
-                <button
-                  key={threat.id}
-                  onClick={() => flyToThreatLocation(threat, true)}
-                  className={`px-2.5 py-1 rounded-lg font-medium border text-[11px] transition-all flex items-center gap-1 cursor-pointer ${
-                    activeThreat?.id === threat.id
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                      : 'bg-white hover:bg-indigo-50 hover:text-indigo-600 border-slate-200 text-slate-700'
-                  }`}
-                >
-                  <span>{threat.city}</span>
-                  <span className={`w-1.5 h-1.5 rounded-full ${threat.severity === 'safe' ? 'bg-emerald-400' : 'bg-red-400'}`} />
-                </button>
-              ))}
+            <div className="p-3 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-bold text-slate-500 text-[11px] uppercase tracking-wider mr-1">
+                  Quick Focus:
+                </span>
+                {allThreatLocations.slice(0, 6).map((threat) => (
+                  <button
+                    key={threat.id}
+                    onClick={() => flyToThreatLocation(threat, true)}
+                    className={`px-2.5 py-1 rounded-lg font-medium border text-[11px] transition-all flex items-center gap-1 cursor-pointer ${
+                      activeThreat?.id === threat.id
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
+                        : 'bg-white hover:bg-indigo-50 hover:text-indigo-600 border-slate-200 text-slate-700'
+                    }`}
+                  >
+                    <span>{threat.city}</span>
+                    <span className={`w-1.5 h-1.5 rounded-full ${threat.severity === 'safe' ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setViewMode(viewMode === 'globe' ? 'street' : 'globe')}
+                className="px-2.5 py-1 rounded-lg font-bold border border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white text-[11px] transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ml-auto"
+              >
+                {viewMode === 'globe' ? (
+                  <>
+                    <MapPin className="w-3 h-3" />
+                    <span>Zoom Deeper into Streets</span>
+                  </>
+                ) : (
+                  <>
+                    <GlobeIcon className="w-3 h-3" />
+                    <span>Return to 3D Orbit</span>
+                  </>
+                )}
+              </button>
             </div>
           )}
 
@@ -1171,6 +1288,22 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
                           <div className="text-[10px] font-mono text-slate-400">
                             {item.ip} • {item.timestamp}
                           </div>
+
+                          {isItemActive && (
+                            <div className="mt-2.5 pt-2 border-t border-indigo-200/60 flex items-center gap-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedThreat(item);
+                                  setViewMode('street');
+                                }}
+                                className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                              >
+                                <MapPin className="w-3 h-3" />
+                                <span>Zoom into Streets ({item.city})</span>
+                              </button>
+                            </div>
+                          )}
                         </div>
 
                         <div className="text-right shrink-0">
