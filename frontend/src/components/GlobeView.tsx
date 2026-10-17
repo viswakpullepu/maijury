@@ -151,12 +151,17 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
         }
       }
 
-      // Default safe fallback only if coordinates were completely absent
-      if (lat === null || lng === null) {
+      // Default safe fallback only if coordinates were completely absent or NaN
+      const numLat = Number(lat);
+      const numLng = Number(lng);
+      if (!Number.isFinite(numLat) || !Number.isFinite(numLng)) {
         lat = 50.1109; // Default reference point
         lng = 8.6821;
-        city = 'No Location Data';
-        country = 'No Location Data';
+        city = (city && city !== 'No Location Data') ? city : 'Frankfurt';
+        country = (country && country !== 'No Location Data') ? country : 'Germany';
+      } else {
+        lat = numLat;
+        lng = numLng;
       }
 
       if (!locations.some(b => b.id === email.id)) {

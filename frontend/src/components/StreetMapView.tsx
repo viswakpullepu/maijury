@@ -86,8 +86,8 @@ export const StreetMapView: React.FC<StreetMapViewProps> = ({
   const [isLayerMenuOpen, setIsLayerMenuOpen] = useState(false);
 
   // Active coordinates
-  const activeLat = threat ? threat.lat : 50.1109;
-  const activeLng = threat ? threat.lng : 8.6821;
+  const activeLat = (threat && typeof threat.lat === 'number' && Number.isFinite(threat.lat)) ? threat.lat : 50.1109;
+  const activeLng = (threat && typeof threat.lng === 'number' && Number.isFinite(threat.lng)) ? threat.lng : 8.6821;
   const activeCityKey = threat?.city?.toLowerCase() || 'frankfurt';
   const infraInfo = KNOWN_INFRASTRUCTURE[activeCityKey] || {
     facility: 'ISP Edge Datacenter & Carrier Hub',
@@ -159,9 +159,12 @@ export const StreetMapView: React.FC<StreetMapViewProps> = ({
     if (!mapContainerRef.current) return;
     if (mapInstanceRef.current) return;
 
-    // Create Leaflet map instance
+    // Create Leaflet map instance with robust finite coordinates
+    const initialLat = Number.isFinite(activeLat) ? activeLat : 50.1109;
+    const initialLng = Number.isFinite(activeLng) ? activeLng : 8.6821;
+
     const map = L.map(mapContainerRef.current, {
-      center: [activeLat, activeLng],
+      center: [initialLat, initialLng],
       zoom: 15,
       minZoom: 3,
       maxZoom: 19,
@@ -258,10 +261,12 @@ export const StreetMapView: React.FC<StreetMapViewProps> = ({
     }
 
     if (threat) {
+      const targetLat = Number.isFinite(threat.lat) ? threat.lat : 50.1109;
+      const targetLng = Number.isFinite(threat.lng) ? threat.lng : 8.6821;
       const score = threat.threatScore ?? 0;
       const strokeColor = score > 80 ? '#ef4444' : (score >= 50 ? '#f97316' : '#10b981');
 
-      const circle = L.circle([threat.lat, threat.lng], {
+      const circle = L.circle([targetLat, targetLng], {
         radius: 650, // 650m estimated ISP subnet range
         color: strokeColor,
         weight: 1.5,
@@ -274,7 +279,7 @@ export const StreetMapView: React.FC<StreetMapViewProps> = ({
       accuracyCircleRef.current = circle;
 
       // Smooth camera pan and deep zoom into streets
-      map.flyTo([threat.lat, threat.lng], 16, {
+      map.flyTo([targetLat, targetLng], 16, {
         duration: 1.2,
         easeLinearity: 0.25
       });
@@ -282,6 +287,7 @@ export const StreetMapView: React.FC<StreetMapViewProps> = ({
 
     // Add markers for all threats
     allThreats.forEach((item) => {
+      if (!item || !Number.isFinite(item.lat) || !Number.isFinite(item.lng)) return;
       const isSelected = item.id === threat?.id;
       const marker = L.marker([item.lat, item.lng], {
         icon: createThreatDivIcon(item, isSelected),
