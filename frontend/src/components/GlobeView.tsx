@@ -292,8 +292,13 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
     camera.position.set(0, 40, 230);
     cameraRef.current = camera;
 
-    // 3. Renderer with high-DPI antialiasing
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    } catch (e) {
+      console.warn('[ThreatLens] WebGL hardware renderer unavailable, using fallback', e);
+      return;
+    }
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -337,29 +342,16 @@ export const GlobeView: React.FC<GlobeViewProps> = ({
     // 7. Earth Sphere Mesh
     const radius = 80;
     const geometry = new THREE.SphereGeometry(radius, 64, 64);
-    const textureLoader = new THREE.TextureLoader();
-    const fallbackCanvasTexture = generateProceduralEarthTexture();
+    const proceduralCanvasTexture = generateProceduralEarthTexture();
 
     const earthMaterial = new THREE.MeshStandardMaterial({
-      map: fallbackCanvasTexture,
+      map: proceduralCanvasTexture,
       roughness: 0.55,
       metalness: 0.15
     });
 
     const earthMesh = new THREE.Mesh(geometry, earthMaterial);
     globeGroup.add(earthMesh);
-
-    // Asynchronously load ultra-detailed Earth texture
-    textureLoader.load(
-      'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_atmos_2048.jpg',
-      (tex) => {
-        tex.anisotropy = 8;
-        earthMaterial.map = tex;
-        earthMaterial.needsUpdate = true;
-      },
-      undefined,
-      () => { /* fallback is already seamlessly active */ }
-    );
 
     // Atmospheric outer glow
     const atmosphereGeo = new THREE.SphereGeometry(radius * 1.04, 32, 32);
