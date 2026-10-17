@@ -185,6 +185,7 @@ export const OfficialTestArena: React.FC = () => {
           {/* 1-CLICK RUN BUTTON */}
           <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <button
+              data-tour="test-arena-run-btn"
               onClick={() => runBenchmark()}
               disabled={isRunning}
               className={`inline-flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-bold text-base shadow-lg transition-all ${
@@ -209,7 +210,10 @@ export const OfficialTestArena: React.FC = () => {
         </div>
 
         {/* CONTROLS BAR: SUITE & VARIANT */}
-        <div className="mt-6 pt-6 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs font-medium text-slate-300">
+        <div 
+          data-tour="test-arena-variant-controls"
+          className="mt-6 pt-6 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs font-medium text-slate-300"
+        >
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-slate-400">Test Suite:</span>

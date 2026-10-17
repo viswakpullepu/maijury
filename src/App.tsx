@@ -13,9 +13,11 @@ import { MLComparisonView } from './components/MLComparisonView';
 import { OfficialTestArena } from './components/OfficialTestArena';
 import { AuthProvider } from './context/AuthContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { JuryGuidedTour } from './components/JuryGuidedTour';
 
 export const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
+  const [isTourOpen, setIsTourOpen] = useState<boolean>(false);
 
   const handleSelectEmailForForensics = (_email: any) => {
     setActiveTab('forensics');
@@ -27,10 +29,19 @@ export const AppContent: React.FC = () => {
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        onStartTour={() => setIsTourOpen(true)}
       />
 
       {/* Global Automated Live Ingestion & Threat Interceptor */}
       <LiveEmailInterceptor onSelectEmailForForensics={handleSelectEmailForForensics} />
+
+      {/* Interactive Jury Guided Tour */}
+      <JuryGuidedTour
+        isOpen={isTourOpen}
+        onClose={() => setIsTourOpen(false)}
+        currentTab={activeTab}
+        onSwitchTab={setActiveTab}
+      />
 
       {/* Main Dynamic View Area wrapped in fault-tolerant ErrorBoundary */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">

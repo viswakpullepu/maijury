@@ -43,11 +43,13 @@ export type ActiveTab =
 interface HeaderProps {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
+  onStartTour?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
-  setActiveTab
+  setActiveTab,
+  onStartTour
 }) => {
   const { user, isAuthenticated, isLoading, loginWithGoogle, loginWithDemoAccount, logout } = useAuth();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -103,7 +105,10 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="font-extrabold text-base tracking-tight text-slate-950">
                   ThreatLens
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                <span 
+                  data-tour="live-radar-badge"
+                  className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1"
+                >
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   LIVE RADAR ACTIVE
                 </span>
@@ -121,6 +126,7 @@ export const Header: React.FC<HeaderProps> = ({
               return (
                 <button
                   key={tab.id}
+                  data-tour={`tab-${tab.id}`}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl whitespace-nowrap transition-all ${
                     isActive
@@ -137,8 +143,25 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Right Action: Authentication & Demo Portal Section */}
           <div className="flex items-center gap-2 shrink-0">
+            {/* 1-Click Jury Demo & Guided Tour Launcher Button */}
+            <button
+              data-tour="judge-demo-btn"
+              onClick={async () => {
+                if (!isUserLoggedIn) {
+                  await loginWithDemoAccount('Lead Defense Judge');
+                }
+                onStartTour?.();
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer ring-1 ring-amber-400/50"
+              title="1-Click Instant Evaluation & Guided Interactive Tour for Hackathon Judges"
+            >
+              <Zap className="w-3.5 h-3.5 fill-white" />
+              <span>⚡ Jury Demo Tour</span>
+            </button>
+
             {/* Persistent Demo Credentials Quick Access */}
             <button
+              data-tour="jury-creds-btn"
               onClick={() => setIsDemoModalOpen(true)}
               className="p-2 px-2.5 text-slate-700 hover:text-slate-900 bg-amber-50 hover:bg-amber-100/80 border border-amber-200/80 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
               title="View Demo Credentials & Evaluation Accounts"
@@ -210,6 +233,17 @@ export const Header: React.FC<HeaderProps> = ({
                     <div className="space-y-1">
                       <button
                         onClick={() => {
+                          setIsProfileOpen(false);
+                          onStartTour?.();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-50 rounded-lg transition-all text-left cursor-pointer"
+                      >
+                        <Sparkles className="w-4 h-4 text-indigo-600" />
+                        <span>🚀 Launch Jury Guided Tour</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
                           setActiveTab('forensics');
                           setIsProfileOpen(false);
                         }}
@@ -245,17 +279,8 @@ export const Header: React.FC<HeaderProps> = ({
                 )}
               </div>
             ) : (
-              /* Unauthenticated: Clean Action Bar with 1-Click Judge Login & Google OAuth */
+              /* Unauthenticated: Clean Action Bar with Google OAuth */
               <div className="flex items-center gap-2">
-                {/* 1-Click Judge Demo Login Button */}
-                <button
-                  onClick={() => loginWithDemoAccount('Lead Defense Judge')}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer ring-1 ring-amber-400/50"
-                  title="1-Click Instant Evaluation Login for Hackathon Judges"
-                >
-                  <Zap className="w-3.5 h-3.5 fill-white" />
-                  <span>⚡ Judge Demo</span>
-                </button>
 
                 {/* Live Google OAuth Button */}
                 <button
@@ -326,14 +351,15 @@ export const Header: React.FC<HeaderProps> = ({
                   Instantly authenticates as <code>judge.evaluator@mailjury.security</code> with active defense posture and pre-populated live mailbox triage.
                 </p>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     setIsDemoModalOpen(false);
-                    loginWithDemoAccount('Lead Defense Judge');
+                    await loginWithDemoAccount('Lead Defense Judge');
+                    onStartTour?.();
                   }}
                   className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer"
                 >
                   <Zap className="w-4 h-4 fill-white" />
-                  <span>Authenticate as Lead Judge in 1-Click</span>
+                  <span>Authenticate as Lead Judge & Launch Tour</span>
                 </button>
               </div>
 
